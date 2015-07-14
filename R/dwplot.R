@@ -24,6 +24,12 @@
 #' # Plot regression coefficients
 #' dwplot(m1_df)
 #'
+#' # Make it pretty with ggplot options
+#' dwplot(m1_df) +
+#'      scale_y_discrete(labels=c("Displacement", "Cylinders", "Weight", "Intercept")) +
+#'      theme_bw() + xlab("Coefficient") + ylab("") +
+#'      geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
+#'      theme(legend.justification=c(1,0), legend.position=c(1,0))
 #' @export
 
 # Some useful keyboard shortcuts for package authoring:
@@ -32,7 +38,7 @@
 #   Check Package:             'Cmd + Shift + E'
 #   Test Package:              'Cmd + Shift + T'
 
-dwplot <- function(df, varnames=NULL) {
+dwplot <- function(df, dodge_size=.25) {
 
     n_vars <- length(unique(df$term))
     if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
@@ -42,22 +48,23 @@ dwplot <- function(df, varnames=NULL) {
         } else stop("Please add a variable named \'model\' to distinguish different models")
     }
     m_names <- unique(df$model)
-    if (is.null(varnames)) v_names <- df$term else v_names <- rep(varnames, n_models)
+    v_names <- df$term
 
-    vars <- rep(seq(n_vars, 1), n_models)
+    y_ind <- rep(seq(n_vars, 1), n_models)
+    df$y_ind <- y_ind
 
     if (n_models==1) shift <- 0 else
-        if (n_models==2) shift <- c(rep(.25, n_vars), rep(-.25, n_vars)) else
-            if (n_model==3) shift <- c(rep(.25, n_vars), rep(0, n_vars), rep(-.25, n_vars)) else
+        if (n_models==2) shift <- c(rep(dodge_size, n_vars), rep(-dodge_size, n_vars)) else
+            if (n_model==3) shift <- c(rep(dodge_size, n_vars), rep(0, n_vars), rep(-dodge_size, n_vars)) else
                 stop('No more than three models can be plotted at once.')
+    df$shift <- shift
 
-    p <- ggplot(df, aes(x = estimate, y = vars+shift, alpha=factor(model))) +
-        geom_point() + theme_bw() +
+    p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
+        geom_point() +
         geom_segment(aes(x = estimate-qnorm(.975)*std.error, xend = estimate+qnorm(.975)*std.error,
-                         y = vars+shift, yend = vars+shift,
-                         alpha=factor(model))) +
-        scale_alpha_discrete(range = c(0.4, 0.8)) +
-        scale_y_discrete(breaks=vars, labels=v_names) +
+                         y = y_ind+shift, yend = y_ind+shift,
+                         colour=factor(model))) +
+        scale_y_discrete(breaks=y_ind, labels=v_names) +
         coord_cartesian(ylim=c(.5, n_vars+.5))
 
     return(p)
