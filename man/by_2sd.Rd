@@ -18,7 +18,10 @@ A tidy data.frame
 \code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dwplot]{dwplot}}.
 }
 \details{
-\code{by_2sd} multiplies the results from regression models saved as tidy data frames for continuous and ordinal variables (but not dichotomous variables) by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dwplot}}.
+\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dwplot}}.
+}
+\note{
+Issues. As yet \code{by_2sd} does not handle factors appropriately.
 }
 \examples{
 data(mtcars)

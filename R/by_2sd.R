@@ -5,7 +5,7 @@
 #' @param df A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.
 #' @param dataset The data analyzed in the models whose results are recorded in df
 #'
-#' @details \code{by_2sd} multiplies the results from regression models saved as tidy data frames for continuous and ordinal variables (but not dichotomous variables) by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dwplot}}.
+#' @details \code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dwplot}}.
 #'
 #'
 #' @return A tidy data.frame
@@ -16,6 +16,10 @@
 #'
 #' @references
 #' Gelman, Andrew. 2008. Scaling regression inputs by dividing by two standard deviations. Statistics in Medicine, 27:2865–2873.
+#'
+#' @note As yet \code{by_2sd} does not handle factors appropriately.
+#'
+#' @import dplyr magrittr
 #'
 #' @export
 
