@@ -2,17 +2,30 @@
 % Please edit documentation in R/by_2sd.R
 \name{by_2sd}
 \alias{by_2sd}
-\title{Standardize results by multiplying by 2 standard deviations
-Per:
-Gelman, Andrew. 2008. Scaling regression inputs by dividing by two standard deviations.
-     Statistics in Medicine, 27:2865–2873.}
+\title{Rescale regression results by multiplying by 2 standard deviations}
 \usage{
-by_2sd(tr, df)
+by_2sd(df, dataset)
+}
+\arguments{
+\item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.}
+
+\item{dataset}{The data analyzed in the models whose results are recorded in df}
+}
+\value{
+A tidy data.frame
 }
 \description{
-Standardize results by multiplying by 2 standard deviations
-Per:
-Gelman, Andrew. 2008. Scaling regression inputs by dividing by two standard deviations.
-     Statistics in Medicine, 27:2865–2873.
+\code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dwplot]{dwplot}}.
+}
+\details{
+\code{by_2sd} multiplies the results from regression models saved as tidy data frames for continuous and ordinal variables (but not dichotomous variables) by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dwplot}}.
+}
+\examples{
+data(mtcars)
+m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
+m1_df <- tidy(m1) \%>\% by_2sd # create data.frame of rescaled regression results
+}
+\references{
+Gelman, Andrew. 2008. Scaling regression inputs by dividing by two standard deviations. Statistics in Medicine, 27:2865–2873.
 }
 
