@@ -15,7 +15,7 @@
 #' m1_df <- tidy(m1) %>% by_2sd # create data.frame of rescaled regression results
 #'
 #' @references
-#' Gelman, Andrew. 2008. Scaling regression inputs by dividing by two standard deviations. Statistics in Medicine, 27:2865–2873.
+#' Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865–2873.
 #'
 #' @note As yet \code{by_2sd} does not handle factors appropriately.
 #'

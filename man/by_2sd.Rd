@@ -21,7 +21,7 @@ A tidy data.frame
 \code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dwplot}}.
 }
 \note{
-Issues. As yet \code{by_2sd} does not handle factors appropriately.
+As yet \code{by_2sd} does not handle factors appropriately.
 }
 \examples{
 data(mtcars)
@@ -29,6 +29,6 @@ m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 m1_df <- tidy(m1) \%>\% by_2sd # create data.frame of rescaled regression results
 }
 \references{
-Gelman, Andrew. 2008. Scaling regression inputs by dividing by two standard deviations. Statistics in Medicine, 27:2865–2873.
+Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865–2873.
 }
 

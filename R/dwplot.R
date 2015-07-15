@@ -9,6 +9,9 @@
 #'
 #' Because the function takes a data.frame as input, it is easily employed for a wide range of models, and because the output is a \code{ggplot} object, it can be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #'
+#' @references
+#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755–771.
+#'
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @import  ggplot2
