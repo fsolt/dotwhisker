@@ -1,0 +1,57 @@
+---
+title: "dwplot: Plot Comparable Estimates"
+author: "Frederick Solt and Yue Hu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: vignette_dwplot.bib
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{ASCII}
+---
+
+The `dwplot` package provides a way to create highly customizable plot for presenting and comparing statistics. Users can use it to plot coefficients or other estimates (e.g., predicted probabilities) within a model or compare them across different models. The estimates are presented as dots with confidential interval whiskers, and grouped based on variables.
+
+Users can easily custmize the number of models, the exact variables present, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dwplot` allows users to easily further manage their graphs.
+
+This vignette purposes to illustrate how users can customize the presenting data frame, and produce decent plots.
+
+
+## Create a Data Frame of Estimations
+
+```{r message = F}
+library(dplyr)
+library(broom)
+library(ggplot2)
+```
+
+### Standardized Results
+@Gelman2008 suggest that 
+
+
+## Decently Use `dwplot`
+
+### Plot Coeffients
+
+
+### Plot Predicted Probabilities
+
+
+### Plot Models with Different Variables
+
+```{r}
+# The "Secret Weapon" (plot one coefficient for many models)
+data(diamonds)
+
+by_clarity <- diamonds %>% group_by(clarity) %>% 
+    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% rename(model=clarity) 
+
+carat_results <- by_clarity %>% filter(term=="carat") %>% select(-term) %>% 
+    rename(term=model) 
+
+#dwplot(carat_results) + 
+#    xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") + 
+#    ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
+#    theme(plot.title = element_text(face="bold"), 
+#          legend.position = "none")
+```

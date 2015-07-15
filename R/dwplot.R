@@ -54,32 +54,40 @@
 
 dwplot <- function(df, dodge_size=.15) {
 
-    n_vars <- length(unique(df$term))
-    if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
-        if (length(df$term) == n_vars) {
-            df$model <- "df"
-            n_models <- 1
-        } else stop("Please add a variable named \'model\' to distinguish different models")
-    }
-    m_names <- unique(df$model)
-    v_names <- df$term
-
-    y_ind <- rep(seq(n_vars, 1), n_models)
-    df$y_ind <- y_ind
-
-    if (n_models==1) shift <- 0 else
-        if (n_models==2) shift <- c(rep(dodge_size, n_vars), rep(-dodge_size, n_vars)) else
-            if (n_model==3) shift <- c(rep(dodge_size, n_vars), rep(0, n_vars), rep(-dodge_size, n_vars)) else
-                stop('No more than three models can be plotted at once.')
-    df$shift <- shift
-
-    p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
-        geom_point() +
-        geom_segment(aes(x = estimate-qnorm(.975)*std.error, xend = estimate+qnorm(.975)*std.error,
-                         y = y_ind+shift, yend = y_ind+shift,
-                         colour=factor(model))) +
-        scale_y_discrete(breaks=y_ind, labels=v_names) +
-        coord_cartesian(ylim=c(.5, n_vars+.5))
-
-    return(p)
+  n_vars <- length(unique(df$term))
+  if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
+    if (length(df$term) == n_vars) {
+      df$model <- "df"
+      n_models <- 1
+    } else stop("Please add a variable named \'model\' to distinguish different models")
+  }
+  
+  if(n_models > 3) stop('No more than three models can be plotted at once.')
+  
+  m_names <- unique(df$model)
+  v_names <- df$term
+  
+  
+  y_ind <- rep(seq(n_vars, 1), n_models)
+  df$y_ind  <- y_ind
+  
+  
+  shift_2models <- c(rep(dodge_size, n_vars), rep(-dodge_size, n_vars))
+  shift_3models <- c(rep(dodge_size, n_vars), rep(0, n_vars), rep(-dodge_size, n_vars))
+  
+  shift_list <- list(0, shift_2models, shift_3models)
+  
+  
+  df$shift <- shift_list[[n_models]]
+  
+  p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
+    geom_point() +
+    geom_segment(aes(x = estimate - qnorm(.975) * std.error, 
+                     xend = estimate + qnorm(.975) * std.error,
+                     y = y_ind + shift, yend = y_ind + shift,
+                     colour=factor(model))) +
+    scale_y_discrete(breaks=y_ind, labels=v_names) +
+    coord_cartesian(ylim=c(.5, n_vars+.5))
+  
+  return(p)
 }

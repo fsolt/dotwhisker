@@ -9,3 +9,5 @@ Description: Quick and easy dot-and-whisker plots of regression models saved in 
 Depends: R (>= 3.2.1), ggplot2
 License: MIT + file LICENSE
 LazyData: TRUE
+Suggests: knitr
+VignetteBuilder: knitr
