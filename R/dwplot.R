@@ -14,7 +14,7 @@
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
-#' @import  ggplot2
+#' @import ggplot2
 #'
 #' @examples
 #'
