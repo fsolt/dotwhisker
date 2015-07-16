@@ -23,13 +23,13 @@
 #'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
 #'     theme(legend.position="none")
 #'
-#' p %>% add_bracket(label="Engine", top=2, bottom=1, xloc=-29, last = FALSE) %>% add_bracket(label="Not Engine", top=4, bottom=3, xloc=-29)
+#' p %>% add_bracket(label="Engine", top=2, bottom=1, xloc=-29) %>% add_bracket(label="Not Engine", top=4, bottom=3, xloc=-29, last = TRUE)
 #'
 #' @import grid
 #'
 #' @export
 
-add_bracket <- function(p, label, top, bottom, xloc, face="italic", last = TRUE) {
+add_bracket <- function(p, label, top, bottom, xloc, face="italic", last = FALSE) {
     pd <- p$data
     if (is.character(top)) top <- pd$y_ind[which(unique(pd$term)==top)]
     if (is.character(bottom)) bottom <- pd$y_ind[which(unique(pd$term)==bottom)]
