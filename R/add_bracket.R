@@ -12,6 +12,18 @@
 #'
 #' @return The function returns a \code{ggplot} (if \code{last = FALSE}) or \code{gtable} (if \code{last = TRUE}) object.
 #'
+#' @examples
+#' data(mtcars)
+#' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
+#' m1_df <- tidy(m1) # create data.frame of regression results
+#'
+#' p <- dwplot(m1_df) +
+#'     scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Displacement")) +
+#'     theme_bw() + xlab("Coefficient") + ylab("") +
+#'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
+#'     theme(legend.position="none")
+#'
+#' p %>% add_bracket(label="Engine", top=2, bottom=1, xloc=-29, last = FALSE) %>% add_bracket(label="Not Engine", top=4, bottom=3, xloc=-29)
 #'
 #' @import grid
 #'
