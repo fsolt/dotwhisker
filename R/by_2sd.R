@@ -17,6 +17,8 @@
 #' @references
 #' Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865–2873.
 #'
+#' @seealso \code{\link[arm::standardize]{arm::standardize}}
+#'
 #' @note As yet \code{by_2sd} does not handle factors appropriately.
 #'
 #' @import dplyr magrittr
