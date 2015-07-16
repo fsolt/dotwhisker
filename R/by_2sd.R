@@ -12,7 +12,7 @@
 #' @examples
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-#' m1_df <- tidy(m1) %>% by_2sd # create data.frame of rescaled regression results
+#' m1_df <- tidy(m1) %>% by_2sd(mtcars) # create data.frame of rescaled regression results
 #'
 #' @references
 #' Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865–2873.
