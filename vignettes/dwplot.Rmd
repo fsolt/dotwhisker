@@ -56,7 +56,7 @@ During the process creating the data frame format, users are free to select or d
 # Customize the input data frame
 m1_df  # the original tidy data.frame
 
-m1_df_sd <- arm::standardize(m1) %>% tidy   # Standardize the coefficients
+m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)   # Standardize the coefficients
 m1_df_sel <- filter(m1_df_sd, term != "(Intercept)" & term != "c.vs") # Select variables
 m1_df_sel2 <- arrange(m1_df_sel, term) # reorder the variables
 
