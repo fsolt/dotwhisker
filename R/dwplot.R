@@ -71,6 +71,8 @@ dwplot <- function(df, dodge_size=.15) {
   y_ind <- rep(seq(n_vars, 1), n_models)
   df$y_ind  <- y_ind
   
+  df$estimate <- as.numeric(df$estimate)
+  df$std.error <- as.numeric(df$std.error)
   
   shift_2models <- c(rep(dodge_size, n_vars), rep(-dodge_size, n_vars))
   shift_3models <- c(rep(dodge_size, n_vars), rep(0, n_vars), rep(-dodge_size, n_vars))
@@ -83,7 +85,7 @@ dwplot <- function(df, dodge_size=.15) {
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
     geom_point() +
     geom_segment(aes(x = estimate - qnorm(.975) * std.error, 
-                     xend = estimate + qnorm(.975) * std.error,
+                     xend = estimate - qnorm(.975) * std.error,
                      y = y_ind + shift, yend = y_ind + shift,
                      colour=factor(model))) +
     scale_y_discrete(breaks=y_ind, labels=v_names) +

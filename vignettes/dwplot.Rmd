@@ -50,7 +50,7 @@ m2_df
 
 
 
-During the process creating the data frame format, users are free to select or delete variables, standarize the scale of them [@Gelman2008], or change the order of them based on their interests. 
+During the process creating the data frame format, users are free to select or delete variables, standarize the scale of them [@Gelman2008], or change the order of them based on their interests. Especially, in some cases, users may consider omit the intercept, since they are not theoretically interesting [@Kastellec2007, 765].
 
 ```{r}
 # Customize the input data frame
@@ -108,7 +108,7 @@ dwplot(m1_df_sel2) +
 
 
 ## Multi-Model Comparison 
-`dwplot` can also be used for cross-model comparisons. To do that, one needs to append the data frame of the new model to the results of the old model, and creates an identification column `model` labeling the two models
+`dwplot` can also be used for cross-model comparisons. To do that, one needs to append the data frame of the new model to the results of the old model, and creates an identification column `model` labeling the two models.
 
 
 ```{r fig.width= 7, warning=FALSE}
@@ -118,6 +118,44 @@ m1_df_sd <- mutate(m1_df_sd, model = "standardized")
 m1_df_sd$term <- m1_df$term
   
 m1_comb <- rbind(m1_df, m1_df_sd)
+
+dwplot(m1_comb, dodge_size = .05) +
+     scale_y_discrete(breaks = 5:1, 
+                      labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage, OLS Estimates") +
+     scale_colour_discrete(name = "Model",
+                       labels = c("Unstandardized", "Standardized")) +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 0), legend.position=c(1,0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title.align = .5) 
+
+```
+
+If comparing the constrained and unconstrained models or models with different variables, one needs to ensure the `term` are identical across the models, even if the comparing models does not include the certain variables.
+
+```{r fig.width= 7, warning=FALSE}
+
+
+# Comparing the estimates of the unstandardized and standardized models
+m1_df_sd
+m1_df_sel
+
+diff <- setdiff(m1_df_sd$term, m1_df_sel$term) # extract the difference of variables in two lists.
+
+m1_df_sel <- rbind(m1_df_sel, 
+                   c(diff[1], rep(NA, times = ncol(m1_df_sel) - 1)),
+                   c(diff[2], rep(NA, times = ncol(m1_df_sel) - 1)))
+  
+m1_df_sel <- m1_df_sel[match(m1_df_sd$term, m1_df_sel$term),] #order matters
+
+m1_df_sd <- mutate(m1_df_sd, model = "unconstrained") 
+m1_df_sel <- mutate(m1_df_sel, model = "constrained")
+
+
+m1_comb <- rbind(m1_df_sd, m1_df_sel)
 
 dwplot(m1_comb, dodge_size = .05) +
      scale_y_discrete(breaks = 5:1, 
