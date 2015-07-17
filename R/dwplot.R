@@ -56,6 +56,7 @@
 dwplot <- function(df, interval = .05, dodge_size = .15) {
   
   n_vars <- length(unique(df$term))
+  
   if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
     if (length(df$term) == n_vars) {
       df$model <- "df"
@@ -63,7 +64,6 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
     } else stop("Please add a variable named \'model\' to distinguish different models")
   }
   
-  if(n_models > 3) stop('No more than three models can be plotted at once.')
   
   m_names <- unique(df$model)
   v_names <- df$term
@@ -74,6 +74,7 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
   
   df$estimate <- as.numeric(df$estimate)
   df$std.error <- as.numeric(df$std.error)
+  
   
   interval_list <- c("0.01" = 1, "0.05" = 2, "0.1" = 3)
   
@@ -86,13 +87,11 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
   df <- cbind(df, lb, ub)
   
   
-  shift_2models <- c(rep(dodge_size, n_vars), rep(-dodge_size, n_vars))
-  shift_3models <- c(rep(dodge_size, n_vars), rep(0, n_vars), rep(-dodge_size, n_vars))
+  if(n_models == 1) shift <- 0 else{
+    shift <- seq(dodge_size, -dodge_size, length.out=n_models)}
   
-  shift_list <- list(0, shift_2models, shift_3models)
-  
-  
-  df$shift <- shift_list[[n_models]]
+  shift_index <- data.frame(model = unique(df$model), shift)
+  df <- right_join(df, shift_index)
   
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
     geom_point(na.rm = TRUE) +

@@ -57,12 +57,12 @@ During the process creating the data frame format, users are free to select or d
 m1_df  # the original tidy data.frame
 
 m1_df_sd <- arm::standardize(m1) %>% tidy   # Standardize the coefficients
-m1_df_sd
-
 m1_df_sel <- filter(m1_df_sd, term != "(Intercept)" & term != "c.vs") # Select variables
-m1_df_sel
-
 m1_df_sel2 <- arrange(m1_df_sel, term) # reorder the variables
+
+
+m1_df_sd
+m1_df_sel
 m1_df_sel2
 
 ```
@@ -82,17 +82,18 @@ m3_margin
 
 ## Plot Estimates with `dwplot`
 
-The `dotwhisker::dwplot` function is very easy to use. It only has two components: `dwplot(df, dodge_size)`. `df` is the object to plot, which is the data frame we create in the previous section. `dodge_size` is used to adjust the interspace between estimates under one variable, if results of multiple models are involved.
+The `dotwhisker::dwplot` function is very easy to use. It only has three components: `dwplot(df, interal, dodge_size)`. `df` is the object to plot, which is the data frame we create in the previous section. `interval` sets the criterion of the "whisker" (the confidence intervals). The default value is .05, i.e., a 95% CI. `dodge_size` is used to adjust the interspace between estimates under one variable, if results of multiple models are involved.
 
 ```{r fig.width= 7, warning= FALSE}
 library(dotwhisker)
 
-dwplot(m1_df) 
+dwplot(m1_df)
+dwplot(m1_df, interval = .01)  # using 99% CI
 ```
 
 If the users intend to plot a customized data frame, they do exactly the same thing as above; no specific setting is required. Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are free to add or rewrite any `ggplot` layers after `dwplot`.
 
-```{r fig.width= 7}
+```{r fig.width= 7, warning= FALSE}
 dwplot(m1_df_sel2) +
      scale_y_discrete(breaks = 4:1, 
                       labels=c("V/S", "Cylinders", "Displacement", "Weight")) +
@@ -119,7 +120,7 @@ m1_df_sd$term <- m1_df$term
   
 m1_comb <- rbind(m1_df, m1_df_sd)
 
-dwplot(m1_comb, dodge_size = .05) +
+dwplot(m1_comb, dodge_size = .15) +
      scale_y_discrete(breaks = 5:1, 
                       labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
@@ -134,12 +135,11 @@ dwplot(m1_comb, dodge_size = .05) +
 
 ```
 
-If comparing the constrained and unconstrained models or models with different variables, one needs to ensure the `term` are identical across the models, even if the comparing models does not include the certain variables.
+If comparing the constrained and unconstrained models or models with different variables, one needs to ensure the `term` are identical across the models, even if the comparing models does not include the certain variables. Note that it is important to make sure the order of variables of both models are identical. 
 
 ```{r fig.width= 7, warning=FALSE}
-
-
 # Comparing the estimates of the unstandardized and standardized models
+m1_df_sd <- arm::standardize(m1) %>% tidy 
 m1_df_sd
 m1_df_sel
 
@@ -156,8 +156,9 @@ m1_df_sel <- mutate(m1_df_sel, model = "constrained")
 
 
 m1_comb <- rbind(m1_df_sd, m1_df_sel)
+m1_comb
 
-dwplot(m1_comb, dodge_size = .05) +
+dwplot(m1_comb, dodge_size = .15) +
      scale_y_discrete(breaks = 5:1, 
                       labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
@@ -171,3 +172,23 @@ dwplot(m1_comb, dodge_size = .05) +
            legend.title.align = .5) 
 
 ```
+
+For comparisons of more than two models, users only need to continue to combine the data frame, as they do in two-model comparisions. 
+
+```{r fig.width= 7, warning=FALSE, message=FALSE}
+by_trans <- mtcars %>% group_by(gear) %>%
+  do(tidy(lm(mpg ~ wt + cyl, data = .))) %>% rename(model=gear)
+
+dwplot(by_trans, dodge_size = .15) +
+     scale_y_discrete(breaks = 3:1, 
+                      labels=c("Intercept", "Weight", "Cylinders")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage, OLS Estimates") +
+     scale_colour_discrete(name = "Gear Number") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 0), legend.position=c(1,0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title.align = .5) 
+```
+
