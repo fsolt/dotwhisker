@@ -173,7 +173,7 @@ dwplot(m1_comb, dodge_size = .15) +
 
 ```
 
-For comparisons of more than two models, users only need to continue to combine the data frame, as they do in two-model comparisions. 
+For comparisons of more than two models, users only need to continuely combine the data frame, as they do in two-model comparisions. Then, one can easily use `dwplot` to practic the so-called "[secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)" analysis by Andrew Gelman.
 
 ```{r fig.width= 7, warning=FALSE, message=FALSE}
 by_trans <- mtcars %>% group_by(gear) %>%
