@@ -75,21 +75,15 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
   df$estimate <- as.numeric(df$estimate)
   df$std.error <- as.numeric(df$std.error)
   
-  ci_list <- list()
+  interval_list <- c("0.01" = 1, "0.05" = 2, "0.1" = 3)
   
   alpha <- c(.995, .975, .95)
   
-  for(i in 1:3) {
-    lb <- c(df$estimate - qnorm(alpha[i]) * df$std.error)
-    ub <- c(df$estimate + qnorm(alpha[i]) * df$std.error)
-    ci <- cbind(lb, ub)
-    ci_list[[i]] <- ci
-  }
+  lb <- c(df$estimate - qnorm(alpha[interval_list[as.character(interval)]]) * df$std.error)
+  ub <- c(df$estimate + qnorm(alpha[interval_list[as.character(interval)]]) * df$std.error)
   
-  interval_list <- c("0.01" = 1, "0.05" = 2, "0.1" = 3)
-  interval_list[as.character(interval)]
   
-  df <- cbind(df, ci_list[[interval_list[as.character(interval)]]])
+  df <- cbind(df, lb, ub)
   
   
   shift_2models <- c(rep(dodge_size, n_vars), rep(-dodge_size, n_vars))
