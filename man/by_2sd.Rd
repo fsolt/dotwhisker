@@ -22,9 +22,6 @@ A tidy data.frame
 
 An alternative available in some circumstances is to pass a model object to \code{\link[arm::standardize]{arm::standardize}} before passing the results to \code{\link[broom::tidy]{broom::tidy}} and then on to \code{\link[dwplot]{dwplot}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data.frame and so is not restricted to only those model objects that \code{standardize} accepts.
 }
-\note{
-As yet \code{by_2sd} does not handle factors appropriately.
-}
 \examples{
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)

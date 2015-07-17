@@ -21,8 +21,6 @@
 #'
 #' @seealso \code{\link[arm::standardize]{arm::standardize}}
 #'
-#' @note As yet \code{by_2sd} does not handle factors appropriately.
-#'
 #' @import dplyr magrittr
 #'
 #' @export
@@ -30,8 +28,10 @@
 by_2sd <- function(df, dataset) {
     sdX2 <- df$term %>% as.list %>%
         lapply(function(x) {
-            dich <- unique(dataset[[x]]) %>% extract(!is.na(.)) %>% sort %>% identical(c(0,1))
-            ifelse(!dich, 2*sd(dataset[[x]], na.rm=T), 1)
+            unmatched <- !x %in% names(dataset)
+            dich <- ifelse(unmatched, TRUE, unique(dataset[[x]]) %>%
+                               extract(!is.na(.)) %>% sort %>% identical(c(0,1)))
+            ifelse(any(dich, unmatched), 1, 2*sd(dataset[[x]], na.rm=T))
         }) %>% unlist
     df$estimate %<>% multiply_by(sdX2)
     df$std.error %<>% multiply_by(sdX2)
