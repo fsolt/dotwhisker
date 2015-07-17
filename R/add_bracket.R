@@ -29,25 +29,22 @@
 #'
 #' @export
 
-add_bracket <- function(p, label, top, bottom, xloc, face="italic", last = FALSE) {
+add_bracket <- function(p, label, top, bottom, face="italic", last = FALSE) {
     pd <- p$data
     if (is.character(top)) top <- pd$y_ind[which(unique(pd$term)==top)]
     if (is.character(bottom)) bottom <- pd$y_ind[which(unique(pd$term)==bottom)]
 
     overhang <- max(pd$y_ind)/40
-    x_range <- max(pd$estimate - 2*pd$std.error) - min(pd$estimate - 2*pd$std.error)
-    fin_size <- x_range/25
 #    label_width <- p$scales$scales[[1]]$labels
-#    xloc <- min(pd$estimate - 2*pd$std.error) - label_width
+    xloc <-
     p1 <- p + theme(panel.margin = unit(c(1, 1, 1, 1.3), "lines")) +
         annotation_custom(
             grob = textGrob(label = label, gp = gpar(cex = .7, fontface = face), rot = 90),
             ymin = (top+bottom)/2, ymax = (top+bottom)/2,
-            xmin = xloc-(.8*fin_size), xmax = xloc-(.8*fin_size)) +
-        annotation_custom(grob = linesGrob(), xmin = xloc, xmax = xloc, ymin = bottom-overhang, ymax = top+overhang) +
-        annotation_custom(grob = linesGrob(), xmin = xloc, xmax = xloc+fin_size, ymin = top+overhang, ymax = top+overhang) +
-        annotation_custom(grob = linesGrob(), xmin = xloc, xmax = xloc+fin_size, ymin = bottom-overhang, ymax = bottom-overhang)
-
+            xmin = unit(.05, "lines"), xmax = unit(.05, "lines")) +
+        annotation_custom(grob = linesGrob(), xmin = unit(.1, "lines"), xmax = unit(.1, "lines"), ymin = bottom-overhang, ymax = top+overhang) +
+        annotation_custom(grob = linesGrob(), xmin = unit(.1, "lines"), xmax = unit(.15, "lines"), ymin = top+overhang, ymax = top+overhang) +
+        annotation_custom(grob = linesGrob(), xmin = unit(.1, "lines"), xmax = unit(.15, "lines"), ymin = bottom-overhang, ymax = bottom-overhang)
     if (last==TRUE) {
         gt <- ggplot_gtable(ggplot_build(p1)) # Code to override clipping
         gt$layout$clip[gt$layout$name == "panel"] <- "off"
