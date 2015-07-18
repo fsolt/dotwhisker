@@ -1,5 +1,5 @@
 ---
-title: "dwplot: Plot Comparable Estimates"
+title: "dwplot: Generating Dot-Whisker Plots of Estimates in Tidy Data Frames"
 author: "Frederick Solt and Yue Hu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -27,6 +27,7 @@ The valid input object for `dotwhisker` is a data frame including three columns:
 library(dplyr)
 library(broom)
 library(ggplot2)
+library(dotwhisker)
 
 data(mtcars)
 
@@ -49,8 +50,7 @@ m2_df
 ```
 
 
-
-During the process creating the data frame format, users are free to select or delete variables, standarize the scale of them [@Gelman2008], or change the order of them based on their interests. Especially, in some cases, users may consider omit the intercept, since they are not theoretically interesting [@Kastellec2007, 765].
+During the process creating the data frame format, users are free to select, delete variables, or change the order of them based on their interests. Especially, in some cases, users may consider omit the intercept, since they are not theoretically interesting [@Kastellec2007, 765]. A special data transition is standarize the scales of variables. @Gelman2008 indicates that using standardized scaling can unify the measuring unit of variable, so that their coefficients are comparable. Carring on this idea and the method @Gelman2008 recommonds (dividing by two standard deviations), we offer a covenient function to standardize variable scaling in a tidy data frame.
 
 ```{r}
 # Customize the input data frame
@@ -64,7 +64,6 @@ m1_df_sel2 <- arrange(m1_df_sel, term) # reorder the variables
 m1_df_sd
 m1_df_sel
 m1_df_sel2
-
 ```
 
 They can also create a data frame of other qualities, such as margins and predicted probabilities, instead of coefficients. 
@@ -85,8 +84,6 @@ m3_margin
 The `dotwhisker::dwplot` function is very easy to use. It only has three components: `dwplot(df, interal, dodge_size)`. `df` is the object to plot, which is the data frame we create in the previous section. `interval` sets the criterion of the "whisker" (the confidence intervals). The default value is .05, i.e., a 95% CI. `dodge_size` is used to adjust the interspace between estimates under one variable, if results of multiple models are involved.
 
 ```{r fig.width= 7, warning= FALSE}
-library(dotwhisker)
-
 dwplot(m1_df)
 dwplot(m1_df, interval = .01)  # using 99% CI
 ```
@@ -137,9 +134,9 @@ dwplot(m1_comb, dodge_size = .15) +
 
 If comparing the constrained and unconstrained models or models with different variables, one needs to ensure the `term` are identical across the models, even if the comparing models does not include the certain variables. Note that it is important to make sure the order of variables of both models are identical. 
 
-```{r fig.width= 7, warning=FALSE}
+```{r fig.width= 7, warning=FALSE, message=FALSE}
 # Comparing the estimates of the unstandardized and standardized models
-m1_df_sd <- arm::standardize(m1) %>% tidy 
+m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)  
 m1_df_sd
 m1_df_sel
 

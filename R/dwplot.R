@@ -59,7 +59,7 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
   
   if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
     if (length(df$term) == n_vars) {
-      df$model <- "df"
+      df$model <- 1
       n_models <- 1
     } else stop("Please add a variable named \'model\' to distinguish different models")
   }
