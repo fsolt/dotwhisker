@@ -189,3 +189,43 @@ dwplot(by_trans, dodge_size = .15) +
            legend.title.align = .5) 
 ```
 
+## Conclusion
+
+The `downwhisker` package provides a flexible and convenient way to visualize and compare estimates across various models. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
+
+The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. Please contact us with any questions, bug reports, and comments.
+
+## Affiliation
+
+Frederick Solt
+
+Department of Political Science,
+
+University of Iowa, 
+
+324 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <frederick-solt@uiowa.edu>
+
+Website: <http://myweb.uiowa.edu/fsolt>
+
+<br></br>
+
+Yue Hu
+
+Department of Political Science,
+
+University of Iowa, 
+
+313 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <yue-hu-1@uiowa.edu>
+
+Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
+
+
+
