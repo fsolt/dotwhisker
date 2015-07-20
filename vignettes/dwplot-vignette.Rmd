@@ -1,0 +1,231 @@
+---
+title: "dwplot: Generating Dot-Whisker Plots of Estimates in Tidy Data Frames"
+author: "Frederick Solt and Yue Hu"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: vignette_dwplot.bib
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{ASCII}
+---
+
+As @Kastellec2007 point out, graph has a salient advantage in presentation and communication of empirical results. The `dotwhisker` package provides a convenient way to create highly customizable plot for presenting and comparing statistics. Users can use it to plot coefficients or other estimates (e.g., predicted probabilities) within a model or compare them across different models. The estimates are presented as dots with confidential interval whiskers, and grouped based on variables.
+
+Users can easily custmize the number of models, the exact variables present, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dotwhisker` allows users to easily further manage their graphs.
+
+This vignette purposes to illustrate how users can customize the presenting data frame and produce decent plots with `dotwhisker` functions.
+
+
+## Prepare a Data Frame for Graphing
+The key for the high customizability of `dotwhisker` comes from its property to dispose data frames rather than the direct outputs from regressions. In the process of creating the estimate data frame, users can freely manipulate the input information for special interests. It should not be very difficult to split them from the orignial outputs, since most regression estimates can be extract by `coef()`. The `broom` package from Robinson et. al. makes this process even easier. 
+
+The valid input object for `dotwhisker` is a data frame including three columns: term (i.e., variable name), estimate (i.e., coefficients), and std.error. For regular regressions from `lm` or `glm`, one can use `broom::tidy` to produce a usable estimate data frame. 
+
+```{r message = F, warning=FALSE}
+#Package preload
+library(dplyr)
+library(broom)
+library(ggplot2)
+library(dotwhisker)
+
+data(mtcars)
+
+# regression compatble with tidy
+m1 <- lm(mpg ~ wt + cyl + disp + vs, data = mtcars)
+m1_df <- tidy(m1) # create data.frame of regression results
+m1_df # available for dwplot
+```
+
+For those results uncompatble with `tidy`, one has to create the data frame by hand. 
+
+```{r}
+# regression uncompatble with tidy
+m2 <- ordinal::clm(factor(gear) ~ wt + cyl + disp, data = mtcars)
+m2_df <- coef(summary(m2)) %>% 
+  data.frame() %>% 
+  add_rownames("term") %>%
+  rename(estimate = Estimate, std.error = Std..Error)
+m2_df
+```
+
+
+During the process creating the data frame format, users are free to select, delete variables, or change the order of them based on their interests. Especially, in some cases, users may consider omit the intercept, since they are not theoretically interesting [@Kastellec2007, 765]. A special data transition is standarize the scales of variables. @Gelman2008 indicates that using standardized scaling can unify the measuring unit of variable, so that their coefficients are comparable. Carring on this idea and the method @Gelman2008 recommonds (dividing by two standard deviations), we offer a covenient function to standardize variable scaling in a tidy data frame.
+
+```{r}
+# Customize the input data frame
+m1_df  # the original tidy data.frame
+
+m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)   # Standardize the coefficients
+m1_df_sel <- filter(m1_df_sd, term != "(Intercept)" & term != "c.vs") # Select variables
+m1_df_sel2 <- arrange(m1_df_sel, term) # reorder the variables
+
+
+m1_df_sd
+m1_df_sel
+m1_df_sel2
+```
+
+They can also create a data frame of other qualities, such as margins and predicted probabilities, instead of coefficients. 
+```{r message= FALSE}
+# Create a data.frame of marginal effects
+library(mfx)
+m3 <- logitmfx(formula= vs ~ mpg + wt + disp, data = mtcars) 
+m3_margin <- data.frame(m3$mfxest) %>% 
+  add_rownames("term") %>% 
+  rename(estimate = dF.dx, std.error = Std..Err.)
+m3_margin
+```
+
+
+
+## Plot Estimates with `dwplot`
+
+The `dotwhisker::dwplot` function is very easy to use. It only has three components: `dwplot(df, interal, dodge_size)`. `df` is the object to plot, which is the data frame we create in the previous section. `interval` sets the criterion of the "whisker" (the confidence intervals). The default value is .05, i.e., a 95% CI. `dodge_size` is used to adjust the interspace between estimates under one variable, if results of multiple models are involved.
+
+```{r fig.width= 7, warning= FALSE, message= FALSE}
+dwplot(m1_df)
+dwplot(m1_df, interval = .01)  # using 99% CI
+```
+
+If the users intend to plot a customized data frame, they do exactly the same thing as above; no specific setting is required. Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are free to add or rewrite any `ggplot` layers after `dwplot`.
+
+```{r fig.width= 7, warning= FALSE, message= FALSE}
+dwplot(m1_df_sel2) +
+     scale_y_discrete(breaks = 4:1, 
+                      labels=c("V/S", "Cylinders", "Displacement", "Weight")) +
+     theme_bw() + xlab("Standardized Coefficent") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1,0), legend.position=c(1,0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title.align = .5) 
+```
+
+
+
+## Multi-Model Comparison 
+`dwplot` can also be used for cross-model comparisons. To do that, one needs to append the data frame of the new model to the results of the old model, and creates an identification column `model` labeling the two models.
+
+
+```{r fig.width= 7, warning=FALSE, message= FALSE}
+# Comparing the estimates of the unstandardized and standardized models
+m1_df <- mutate(m1_df, model = "unstandardized")
+m1_df_sd <- mutate(m1_df_sd, model = "standardized") 
+m1_df_sd$term <- m1_df$term
+  
+m1_comb <- rbind(m1_df, m1_df_sd)
+
+dwplot(m1_comb, dodge_size = .15) +
+     scale_y_discrete(breaks = 5:1, 
+                      labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage, OLS Estimates") +
+     scale_colour_discrete(name = "Model",
+                       labels = c("Unstandardized", "Standardized")) +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 0), legend.position=c(1,0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title.align = .5) 
+
+```
+
+If comparing the constrained and unconstrained models or models with different variables, one needs to ensure the `term` are identical across the models, even if the comparing models does not include the certain variables. Note that it is important to make sure the order of variables of both models are identical. 
+
+```{r fig.width= 7, warning=FALSE, message=FALSE}
+# Comparing the estimates of the unstandardized and standardized models
+m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)  
+m1_df_sd
+m1_df_sel
+
+diff <- setdiff(m1_df_sd$term, m1_df_sel$term) # extract the difference of variables in two lists.
+
+m1_df_sel <- rbind(m1_df_sel, 
+                   c(diff[1], rep(NA, times = ncol(m1_df_sel) - 1)),
+                   c(diff[2], rep(NA, times = ncol(m1_df_sel) - 1)))
+  
+m1_df_sel <- m1_df_sel[match(m1_df_sd$term, m1_df_sel$term),] #order matters
+
+m1_df_sd <- mutate(m1_df_sd, model = "unconstrained") 
+m1_df_sel <- mutate(m1_df_sel, model = "constrained")
+
+
+m1_comb <- rbind(m1_df_sd, m1_df_sel)
+m1_comb
+
+dwplot(m1_comb, dodge_size = .15) +
+     scale_y_discrete(breaks = 5:1, 
+                      labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage, OLS Estimates") +
+     scale_colour_discrete(name = "Model",
+                       labels = c("Unstandardized", "Standardized")) +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 0), legend.position=c(1,0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title.align = .5) 
+
+```
+
+For comparisons of more than two models, users only need to continuely combine the data frame, as they do in two-model comparisions. Then, one can easily use `dwplot` to practic the so-called "[secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)" analysis by Andrew Gelman.
+
+```{r fig.width= 7, warning=FALSE, message=FALSE}
+by_trans <- mtcars %>% group_by(gear) %>%
+  do(tidy(lm(mpg ~ wt + cyl, data = .))) %>% rename(model=gear)
+
+dwplot(by_trans, dodge_size = .15) +
+     scale_y_discrete(breaks = 3:1, 
+                      labels=c("Intercept", "Weight", "Cylinders")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage, OLS Estimates") +
+     scale_colour_discrete(name = "Gear Number") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 0), legend.position=c(1,0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title.align = .5) 
+```
+
+## Conclusion
+
+The `downwhisker` package provides a flexible and convenient way to visualize and compare estimates across various models. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
+
+The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. Please contact us with any questions, bug reports, and comments.
+
+## Affiliation
+
+Frederick Solt
+
+Department of Political Science,
+
+University of Iowa, 
+
+324 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <frederick-solt@uiowa.edu>
+
+Website: <http://myweb.uiowa.edu/fsolt>
+
+<br></br>
+
+Yue Hu
+
+Department of Political Science,
+
+University of Iowa, 
+
+313 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <yue-hu-1@uiowa.edu>
+
+Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
+
+
+
