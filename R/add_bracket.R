@@ -35,10 +35,12 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
     if (is.character(bottom)) bottom <- pd$y_ind[which(unique(pd$term)==bottom)]
 
     overhang <- max(pd$y_ind)/40
-    p1 <- p + theme(plot.margin = unit(c(rep(1, 3), 1.4), c(rep("lines", 3), "cm")))
+    p1 <- p + theme(plot.margin = unit(c(rep(1, 3), -.95), "lines"))
 
-    match_background_theme <- function(bg) {
-        theme_bw() %+replace% theme(line = )
+#     p2_theme <- function(bg) {
+#         theme_bw() %+replace% theme(line = element_blank(), rect = element_blank)
+#     }
+
 
     n_vars <- length(unique(p$data$term))
     p2 <- ggplot(p$data, aes(x = -1, y = y_ind)) + geom_point() +
@@ -56,18 +58,19 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
         annotation_custom(
             grob = textGrob(label = label, gp = gpar(cex = .7, fontface = face), rot = 90),
             ymin = (top+bottom)/2, ymax = (top+bottom)/2,
-            xmin = .22, xmax = .22) +
+            xmin = .3, xmax = .3) +
         annotation_custom(grob = linesGrob(), xmin = .6, xmax = .6, ymin = bottom-overhang, ymax = top+overhang) +
         annotation_custom(grob = linesGrob(), xmin = .6, xmax = 1, ymin = top+overhang, ymax = top+overhang) +
         annotation_custom(grob = linesGrob(), xmin = .6, xmax = 1, ymin = bottom-overhang, ymax = bottom-overhang)
 
-    g1 <- ggplotGrob(p1)
-    g2 <- gtable_filter(ggplotGrob(p2), pattern = "panel", trim = TRUE, fixed=TRUE)
+    g1 <- gtable_add_cols(ggplotGrob(p1), unit(1, "cm"), 0)
+    g2 <- gtable_filter(ggplotGrob(p2), pattern = "panel")
 
-    g <- gtable_add_grob(g1, g2, 3, 1)
+    g <- gtable_add_grob(g1, g2, g1[["layout"]]$t[g1[["layout"]]$name=="panel"], 1)
 
     grid.draw(g)
     g
 }
 
+# until ggplot2 is updated (current dev version works):
 #ggsave <- ggplot2::ggsave; body(ggsave) <- body(ggplot2::ggsave)[-2]
