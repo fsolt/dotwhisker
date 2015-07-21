@@ -25,7 +25,7 @@
 #'
 #' p %>% add_bracket(label="Engine", top="cyl", bottom=1) %>% add_bracket(label="Not Engine", top=4, bottom=3, xloc=-29, last = TRUE)
 #'
-#' @import grid gridExtra
+#' @import grid gridExtra gtable
 #'
 #' @export
 
@@ -35,7 +35,10 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
     if (is.character(bottom)) bottom <- pd$y_ind[which(unique(pd$term)==bottom)]
 
     overhang <- max(pd$y_ind)/40
-    p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -.4), "lines"))
+    p1 <- p + theme(plot.margin = unit(c(rep(1, 3), 1.4), c(rep("lines", 3), "cm")))
+
+    match_background_theme <- function(bg) {
+        theme_bw() %+replace% theme(line = )
 
     n_vars <- length(unique(p$data$term))
     p2 <- ggplot(p$data, aes(x = -1, y = y_ind)) + geom_point() +
@@ -43,35 +46,28 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
         xlab(p$labels$x) + ylab("") + theme_bw() +
         theme_update(line = element_blank(),
                      rect = element_blank(),
-                     strip.text = element_blank(),
-                     axis.text = element_blank(),
-                     plot.title = element_blank(),
-                     axis.title = element_blank()) +
+                     strip.text = element_text(colour = p$theme$plot.background$colour),
+                     axis.text = element_text(colour = p$theme$plot.background$colour),
+                     plot.title = element_text(colour = p$theme$plot.background$colour),
+                     axis.title = element_text(colour = p$theme$plot.background$colour)) +
         theme(axis.title.x = element_text(colour = p$theme$plot.background$colour),
-              plot.margin = unit(c(1, -.4, 1, 0), "lines")) +
+              plot.margin = unit(c(1, -.5, 1, 0), "lines")) +
         scale_x_continuous(expand = c(0,0)) +
         annotation_custom(
             grob = textGrob(label = label, gp = gpar(cex = .7, fontface = face), rot = 90),
             ymin = (top+bottom)/2, ymax = (top+bottom)/2,
-            xmin = .2, xmax = .2) +
-        annotation_custom(grob = linesGrob(), xmin = .5, xmax = .5, ymin = bottom-overhang, ymax = top+overhang) +
-        annotation_custom(grob = linesGrob(), xmin = .5, xmax = 1, ymin = top+overhang, ymax = top+overhang) +
-        annotation_custom(grob = linesGrob(), xmin = .5, xmax = 1, ymin = bottom-overhang, ymax = bottom-overhang)
+            xmin = .22, xmax = .22) +
+        annotation_custom(grob = linesGrob(), xmin = .6, xmax = .6, ymin = bottom-overhang, ymax = top+overhang) +
+        annotation_custom(grob = linesGrob(), xmin = .6, xmax = 1, ymin = top+overhang, ymax = top+overhang) +
+        annotation_custom(grob = linesGrob(), xmin = .6, xmax = 1, ymin = bottom-overhang, ymax = bottom-overhang)
 
-#         gp1 <- ggplot_gtable(ggplot_build(p1))
-#         gp2 <- ggplot_gtable(ggplot_build(p2))
-#
-#         grid.arrange(p2, p1, nrow = 1, padding = 0, widths = c(.1, 1))
+    g1 <- ggplotGrob(p1)
+    g2 <- gtable_filter(ggplotGrob(p2), pattern = "panel", trim = TRUE, fixed=TRUE)
 
-    grid.newpage()  # Move to a new page
-    pushViewport(viewport(layout = grid.layout(1, 2, widths = unit(c(1, 1), c("cm", "null"))))) # Create layout
-    print(p1, vp = viewport(layout.pos.row = 1, layout.pos.col = 2, width = unit(1, "null")))  # Draw main plot
-    print(p2, vp=viewport(layout.pos.row = 1, layout.pos.col = 1, width = unit(1, "cm")))   # Draw brackets
+    g <- gtable_add_grob(g1, g2, 3, 1)
+
+    grid.draw(g)
+    g
 }
 
-
-# p <- dwplot(m1_df) +
-#          scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Size")) +
-#          theme_bw() + xlab("Coefficient") + ylab("") +
-#          geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
-#          theme(legend.position="none")
+#ggsave <- ggplot2::ggsave; body(ggsave) <- body(ggplot2::ggsave)[-2]
