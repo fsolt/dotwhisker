@@ -4,10 +4,12 @@
 \alias{dwplot}
 \title{Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames}
 \usage{
-dwplot(df, dodge_size = 0.15)
+dwplot(df, interval = 0.05, dodge_size = 0.15)
 }
 \arguments{
 \item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.}
+
+\item{interval}{A number setting the criterion of the confidence intervals. There are three choices: .01, .05, and .1, corresponding to 99-, 95-, and 90-percent confidence intervals, respectively. The default value is .05.}
 
 \item{dodge_size}{A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small.}
 }
