@@ -11,7 +11,7 @@
 #' Because the function takes a data.frame as input, it is easily employed for a wide range of models, and because the output is a \code{ggplot} object, it can be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #'
 #' @references
-#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755–771.
+#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755(C771.
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
@@ -56,7 +56,8 @@
 dwplot <- function(df, interval = .05, dodge_size = .15) {
 
   n_vars <- length(unique(df$term))
-
+  model <- NULL
+  
   if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
     if (length(df$term) == n_vars) {
       df$model <- 1
@@ -72,7 +73,8 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
   y_ind <- rep(seq(n_vars, 1), n_models)
   df$y_ind  <- y_ind
 
-  df$estimate <- as.numeric(df$estimate)
+  estimate <- as.numeric(df$estimate)
+  df$estimate <- estimate
   df$std.error <- as.numeric(df$std.error)
 
   
