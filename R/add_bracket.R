@@ -35,25 +35,18 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
     if (is.character(bottom)) bottom <- pd$y_ind[which(unique(pd$term)==bottom)]
 
     overhang <- max(pd$y_ind)/40
-    p1 <- p + theme(plot.margin = unit(c(rep(1, 3), -.95), "lines"))
+    p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines"))
 
-#     p2_theme <- function(bg) {
-#         theme_bw() %+replace% theme(line = element_blank(), rect = element_blank)
-#     }
+    theme_p2 <- theme_bw()
+    theme_p2$line <- element_blank()
+    theme_p2$rect <- element_blank()
 
 
     n_vars <- length(unique(p$data$term))
     p2 <- ggplot(p$data, aes(x = -1, y = y_ind)) + geom_point() +
         coord_cartesian(ylim = c(.5, n_vars+.5), xlim = c(0, 1)) +
-        xlab(p$labels$x) + ylab("") + theme_bw() +
-        theme_update(line = element_blank(),
-                     rect = element_blank(),
-                     strip.text = element_text(colour = p$theme$plot.background$colour),
-                     axis.text = element_text(colour = p$theme$plot.background$colour),
-                     plot.title = element_text(colour = p$theme$plot.background$colour),
-                     axis.title = element_text(colour = p$theme$plot.background$colour)) +
-        theme(axis.title.x = element_text(colour = p$theme$plot.background$colour),
-              plot.margin = unit(c(1, -.5, 1, 0), "lines")) +
+        xlab(p$labels$x) + ylab("") + theme_p2 +
+        theme(plot.margin = unit(c(1, -.5, 1, 0), "lines")) +
         scale_x_continuous(expand = c(0,0)) +
         annotation_custom(
             grob = textGrob(label = label, gp = gpar(cex = .7, fontface = face), rot = 90),
@@ -64,6 +57,7 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
         annotation_custom(grob = linesGrob(), xmin = .6, xmax = 1, ymin = bottom-overhang, ymax = bottom-overhang)
 
     g1 <- gtable_add_cols(ggplotGrob(p1), unit(1, "cm"), 0)
+    g1[["layout"]]$l[g1[["layout"]]$name=="background"] <- 1
     g2 <- gtable_filter(ggplotGrob(p2), pattern = "panel")
 
     g <- gtable_add_grob(g1, g2, g1[["layout"]]$t[g1[["layout"]]$name=="panel"], 1)
