@@ -21,7 +21,7 @@
 #'
 #' @seealso \code{\link[arm::standardize]{arm::standardize}}
 #'
-#' @import dplyr magrittr
+#' @import dplyr 
 #'
 #' @export
 
@@ -33,7 +33,7 @@ by_2sd <- function(df, dataset) {
                                extract(!is.na(.)) %>% sort %>% identical(c(0,1)))
             ifelse(any(dich, unmatched), 1, 2*sd(dataset[[x]], na.rm=T))
         }) %>% unlist
-    df$estimate %<>% multiply_by(sdX2)
-    df$std.error %<>% multiply_by(sdX2)
+    df$estimate <- df$estimate * sdX2
+    df$std.error <- df$std.error * sdX2
     df
 }
