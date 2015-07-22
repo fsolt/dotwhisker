@@ -22,6 +22,7 @@
 #' @seealso \code{\link[arm::standardize]{arm::standardize}}
 #'
 #' @import dplyr 
+#' @importFrom magrittr extract
 #'
 #' @export
 
