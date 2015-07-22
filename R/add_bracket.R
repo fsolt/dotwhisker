@@ -6,11 +6,11 @@
 #' @param label The text to appear on the bracket
 #' @param top The name of the topmost variable to be bracketed as a character string, or alternately, the numeric position of this variable, counting from the bottom of the y-axis
 #' @param bottom The name of the bottommost variable to be bracketed as a character string, or alternately, the numeric position of this variable, counting from the bottom of the y-axis
-#' @param xloc
 #' @param face Options for label text: "plain", "bold", "italic", "oblique", and "bold.italic"
-#' @param last logical: Is this the last bracket to be added to the plot?
 #'
-#' @return The function returns a \code{ggplot} (if \code{last = FALSE}) or \code{gtable} (if \code{last = TRUE}) object.
+#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[grid.draw]{grid::grid.draw}}.
+#'
+#' To save, wrap the \code{grid.draw} command with \code{\link[pdf]{pdf}} or \code{\link[png]{png}}, etc., and \code{\link[dev.off]{dev.off}}.  Alternately, the next release of \code{ggplot2} (>1.0.1.9002) will enable \code{ggsave} for \code{gtable}s; one can install the development version using \code{devtools::install_github("hadley/ggplot2")}.
 #'
 #' @examples
 #' data(mtcars)
@@ -23,7 +23,7 @@
 #'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
 #'     theme(legend.position="none")
 #'
-#' p %>% add_bracket(label="Engine", top="cyl", bottom=1) %>% add_bracket(label="Not Engine", top=4, bottom=3, xloc=-29, last = TRUE)
+#' p %>% add_bracket(label="Engine", top="cyl", bottom=1)
 #'
 #' @import grid gridExtra gtable
 #'
@@ -35,7 +35,7 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
     if (is.character(bottom)) bottom <- pd$y_ind[which(unique(pd$term)==bottom)]
 
     overhang <- max(pd$y_ind)/40
-    p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines"))
+    p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 
     theme_p2 <- theme_bw()
     theme_p2$line <- element_blank()
