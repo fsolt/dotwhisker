@@ -61,6 +61,8 @@ add_bracket <- function(p, label, top, bottom, face="italic") {
     g2 <- gtable_filter(ggplotGrob(p2), pattern = "panel")
 
     g <- gtable_add_grob(g1, g2, g1[["layout"]]$t[g1[["layout"]]$name=="panel"], 1)
+    g <- gtable_add_cols(g, unit(.7, "line"), 0)
+    g[["layout"]]$l[g[["layout"]]$name=="background"] <- 1
 
     grid.draw(g)
     g
