@@ -105,7 +105,7 @@ dwplot <- function(df, interval = .05, dodge_size = .15) {
     scale_y_discrete(breaks=y_ind, labels=v_names) +
     coord_cartesian(ylim=c(.5, n_vars+.5))
 
-  if(unique(df$model) == 1) p <- p + theme(legend.position="none")
+  if(length(unique(df$model)) == 1) p <- p + theme(legend.position="none")
   
   return(p)
 }
