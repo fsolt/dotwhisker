@@ -105,5 +105,5 @@ add_brackets <- function(p, brackets, face="italic") {
     g <- gtable_add_cols(g, unit(.7, "line"), 0)
     g[["layout"]]$l[g[["layout"]]$name=="background"] <- 1
 
-    g
+    grid.draw(g)
 }
