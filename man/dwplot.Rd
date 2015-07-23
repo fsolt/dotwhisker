@@ -4,12 +4,12 @@
 \alias{dwplot}
 \title{Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames}
 \usage{
-dwplot(df, interval = 0.05, dodge_size = 0.15)
+dwplot(df, alpha = 0.05, dodge_size = 0.15)
 }
 \arguments{
 \item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.}
 
-\item{interval}{A number setting the criterion of the confidence intervals. The default value is .05, correspoinding to 95% confidence intervals.}
+\item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, correspoinding to 95% confidence intervals.}
 
 \item{dodge_size}{A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small.}
 }
@@ -59,6 +59,6 @@ dwplot(by_trans, dodge_size = .05) +
                       labels = c("Automatic", "Manual"))
 }
 \references{
-Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755(C771.
+Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
 }
 
