@@ -30,7 +30,7 @@
 #' grid.draw(g)  # to display
 #'
 #' pdf("plot.pdf")  # to save
-#' grid.draw(g)
+#' g
 #' dev.off()
 #'
 #' @import grid gridExtra gtable
