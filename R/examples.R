@@ -36,6 +36,16 @@ p1 <- dwplot(by_origin, dodge_size = .05) +
                       labels = c("Automatic", "Manual"))
 p1
 
+two_brackets <- list(c("Engine", "cyl", "disp"), c("Not Engine", "(Intercept)", "wt"))
+
+g <- p1 %>% add_brackets(two_brackets)
+
+grid.draw(g)  # to display
+
+pdf("plot.pdf")  # to save
+grid.draw(g)
+dev.off()
+
 # The "Secret Weapon" (plot one coefficient for many models)
 data(diamonds)
 
