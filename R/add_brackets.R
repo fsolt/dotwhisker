@@ -107,6 +107,3 @@ add_brackets <- function(p, brackets, face="italic") {
 
     g
 }
-
-# until ggplot2 is updated (current dev version works):
-#ggsave <- ggplot2::ggsave; body(ggsave) <- body(ggplot2::ggsave)[-2]
