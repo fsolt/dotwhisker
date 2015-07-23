@@ -42,12 +42,7 @@ add_brackets <- function(p, brackets, face="italic") {
     overhang <- max(pd$y_ind)/40
     p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 
-#     if (!is.list(brackets)) stop('Error: argument "brackets" is not a list')
-#
-#     check_bracket <- function(x) {
-#         if (length(x)!=3 | any(!is.character(x)))
-#             stop(paste('Error in', x, ': each element of argument "brackets" must include (1) a label, (2) the name of the topmost variable to be enclosed, and (3) the name of the bottommost variable to be enclosed.'))
-#     }
+    if (!is.list(brackets)) stop('Error: argument "brackets" is not a list')
 
     draw_bracket_label <- function(x, f = face) {
         v1 <- pd$y_ind[which(unique(pd$term)==x[2])]
