@@ -11,6 +11,8 @@
 #' To save, wrap the \code{grid.draw} command with \code{\link[pdf]{pdf}} or \code{\link[png]{png}}, etc., and \code{\link[dev.off]{dev.off}}.  Alternately, the next release of \code{ggplot2} (>1.0.1.9002) will enable \code{ggsave} for \code{gtable}s; one can install the development version using \code{devtools::install_github("hadley/ggplot2")}.
 #'
 #' @examples
+#' library(broom)
+#'
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 #' m1_df <- tidy(m1) # create data.frame of regression results
