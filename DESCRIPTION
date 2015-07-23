@@ -3,10 +3,10 @@ Type: Package
 Title: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames
 Version: 0.1.0.9000
 Date: 2015-07-13
-Author: Frederick Solt <frederick-solt@uiowa.edu>
-Maintainer: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
-Description: Quick and easy dot-and-whisker plots of regression models saved in tidy data frames
-Depends: R (>= 3.2.1), ggplot2
+Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
+Maintainer: Frederick Solt <frederick-solt@uiowa.edu>
+Description: Quick and easy dot-and-whisker plots of regression models saved in tidy data frames.
+Depends: R (>= 3.2.1), ggplot2, dplyr, gridExtra, gtable, magrittr
 License: MIT + file LICENSE
 LazyData: TRUE
 Suggests: knitr
