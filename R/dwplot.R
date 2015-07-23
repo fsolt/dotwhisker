@@ -90,10 +90,10 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
   df <- cbind(df, lb, ub)
 
 
-  if(n_models == 1) shift <- 0 else{
-    shift <- seq(dodge_size, -dodge_size, length.out=n_models)}
+  if(n_models == 1) shift <- 0 else
+    shift <- seq(dodge_size, -dodge_size, length.out=n_models)
 
-  shift_index <- data.frame(model = unique(df$model), shift)
+  shift_index <- data.frame(model = unique(df$model), shift, stringsAsFactors = FALSE)
   df <- dplyr::left_join(df, shift_index)
 
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
