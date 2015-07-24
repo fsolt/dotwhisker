@@ -28,7 +28,6 @@ The valid input object for `dotwhisker` is a data frame including three columns:
 #Package preload
 library(dplyr)
 library(broom)
-library(ggplot2)
 library(dotwhisker)
 
 data(mtcars)
@@ -111,13 +110,13 @@ dwplot(m1_df_sel2) +
 
 
 ## Multi-Model Comparison 
-`dwplot` can also be used to create plots that present multiple models (e.g., across different samples) in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
+An additional advantage of`dwplot` over alternative solutions is that it can be used to create plots that present multiple models---across different samples or specifications---in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
 
 ```{r fig.width= 7, fig.height=5, warning=FALSE, message=FALSE}
-# Compare results across subsets of data
+# Run model on subsets of data, save results as tidy df, drop intercept, and make model variable
 by_trans <- mtcars %>% group_by(am) %>%
-    do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% rename(model=am) %>%
-    filter(term != "(Intercept)")
+    do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>%
+    filter(term != "(Intercept)") %>% rename(model=am)
 
 by_trans
 
@@ -140,7 +139,8 @@ dwplot(by_trans, dodge_size = .05) +
 To include models with different predictors, one must ensure the `term`s are identical across all of the models.  That is, the data frame for each model must include a row for every predictor included in any of the models, in the same order, regardless of whether the predictor is actually included in a particular model.  Quantities not estimated in a particular model should be assigned a value of `NA`.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
-m4 <- lm(mpg ~ wt + cyl + disp + vs, data = mtcars) # same as m1
+# Estimate three models
+m4 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars) # same as m1
 m5 <- update(m4, . ~ . + hp) # add another predictor
 m6 <- update(m5, . ~ . + am) # and another 
 
@@ -175,7 +175,39 @@ dwplot(m456_df, dodge_size = .08) +
            legend.justification=c(1, 1), legend.position=c(1, 1),
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
+```
 
+It is frequently desirable to convey to an audience that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.draw` and saved, at present, by calling a device.
+
+```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
+# Reorder predictors into groups
+ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
+m456_df <- m456_df %>% mutate(term =  factor(term, levels = ordered_vars)) %>%
+  group_by(model) %>% arrange(term) 
+
+# Save finalized plot to an object (note reordered labels to match reordered predictors)
+p456 <- dwplot(m456_df, dodge_size = .08) +
+     scale_y_discrete(breaks = 6:1, 
+                      labels=c("Weight", "Cylinders", "Displacement", 
+                               "Horsepower", "Gear", "Manual")) +
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 1), legend.position=c(1, 1),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
+
+# Create list of brackets (label, topmost incl. predictor, bottommost incl. predictor)
+three_brackets <- list(c("Overall", "wt", "wt"), c("Engine", "cyl", "hp"), c("Transmission", "gear", "am"))
+
+g456 <- p456 %>% add_brackets(three_brackets)
+
+grid.draw(g456)  # to display
+
+# pdf("plot.pdf")  # to save (not run)
+# grid.draw(g456)
+# dev.off()
 ```
 
 An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.
