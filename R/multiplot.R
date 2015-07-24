@@ -5,17 +5,18 @@
 #' @param ... One or several ggplot objects separated by comma which are intended to combine.
 #' @param plotlist A list of ggplot objects.
 #' @param cols A numeric value setting the number of columns in the layout
-#' @param A layout matrix. This setting will overwrite the setting in the \code{cols}.
+#' @param layout A layout matrix. This setting will overwrite the setting in the \code{cols}.
 #' 
 #' @return The function returns a unclassified plot file, which can be saved by regular plot devices, such as \code{pdf("<FileName>.pdf")...dev.off()}. 
+#' 
+#' @import grid
 #' 
 #' @export
 #'
 #'
 #'
 multiplot <- function(..., plotlist=NULL, cols=1, layout=NULL) {
-  library(grid)
-  
+
   # Make a list from the ... arguments and plotlist
   plots <- c(list(...), plotlist)
   

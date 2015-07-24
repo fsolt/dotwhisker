@@ -1,4 +1,4 @@
-#' Create dataset list for small multiple plot
+#' Create dataset list for small multiple plots
 #'
 #' \code{smul} creates a list of datasets for ploting the "small multiple" plots (Kastellec and Leoni 2007, 768).
 #'
@@ -15,6 +15,9 @@
 #'
 #' @examples
 #' data("diamonds")
+#' library(broom)
+#' 
+#' 
 #' diamonds$cut[diamonds$cut == "Fair"] <- "Good"
 #' 
 #'  by_cut <- diamonds %>% group_by(cut) %>%

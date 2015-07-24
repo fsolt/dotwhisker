@@ -2,7 +2,7 @@
 % Please edit documentation in R/smul.R
 \name{smul}
 \alias{smul}
-\title{Create dataset list for small multiple plot}
+\title{Create dataset list for small multiple plots}
 \usage{
 smul(df, by = "term", compare = NULL)
 }
@@ -21,6 +21,9 @@ The function returns a list of tidy datasets.
 }
 \examples{
 data("diamonds")
+library(broom)
+
+
 diamonds$cut[diamonds$cut == "Fair"] <- "Good"
 
  by_cut <- diamonds \%>\% group_by(cut) \%>\%

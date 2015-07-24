@@ -15,7 +15,7 @@
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
-#' @import ggplot2 dplyr magrittr
+#' @import ggplot2 dplyr
 #'
 #' @examples
 #'

@@ -13,7 +13,7 @@ multiplot(..., plotlist = NULL, cols = 1, layout = NULL)
 
 \item{cols}{A numeric value setting the number of columns in the layout}
 
-\item{A}{layout matrix. This setting will overwrite the setting in the \code{cols}.}
+\item{layout}{A layout matrix. This setting will overwrite the setting in the \code{cols}.}
 }
 \value{
 The function returns a unclassified plot file, which can be saved by regular plot devices, such as \code{pdf("<FileName>.pdf")...dev.off()}.
