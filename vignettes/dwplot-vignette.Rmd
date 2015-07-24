@@ -67,12 +67,12 @@ m1_df_sel   # rescaled and intercept omitted
 m1_df_sel2  # rescaled, intercept omitted, and variables reordered alphabetically
 ```
 
-The input data frame can also consist of estimates of other quantities of interest, such as margins and predicted probabilities, rather than coefficients. 
+An input data frame can also be constructed from estimates of other quantities of interest, such as margins and predicted probabilities, rather than coefficients. 
 
 ```{r message= FALSE}
 # Create a data.frame of marginal effects
 library(mfx)
-m3 <- logitmfx(formula = am ~ mpg + wt + disp + gear, data = mtcars) 
+m3 <- logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
 m3_margin <- data.frame(m3$mfxest) %>% 
   add_rownames("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
@@ -90,11 +90,15 @@ dwplot(m1_df)
 dwplot(m1_df, alpha = .01)  # using 99% CI
 ```
 
-To omit intercepts, rescale coefficients, etc., no change in the use of `dwplot` is required: one simply modifies the data frame, as described above, that is passed to the function. Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are able to add or change any `ggplot` layers after calling `dwplot`.
+To omit intercepts, rescale coefficients, etc., no change in the use of `dwplot` is required: one simply modifies the data frame, as described above, that is passed to the function. 
 
 ```{r fig.width= 7, warning= FALSE, message= FALSE}
 dwplot(m1_df_sel2)
+```
 
+Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are able to add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
+
+```{r fig.width= 7, warning= FALSE, message= FALSE}
 dwplot(m1_df_sel2) + 
     scale_y_discrete(breaks = 4:1, 
                       labels=c("Cylinders", "Displacement", "Gears", "Weight")) +
@@ -108,7 +112,6 @@ dwplot(m1_df_sel2) +
 
 ## Multi-Model Comparison 
 `dwplot` can also be used to create plots that present multiple models (e.g., across different samples) in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
-
 
 ```{r fig.width= 7, fig.height=5, warning=FALSE, message=FALSE}
 # Compare results across subsets of data
