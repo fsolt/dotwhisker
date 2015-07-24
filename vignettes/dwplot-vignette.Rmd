@@ -1,5 +1,5 @@
 ---
-title: "dwplot: Generating Dot-Whisker Plots of Estimates in Tidy Data Frames"
+title: "dwplot: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames"
 author: "Frederick Solt and Yue Hu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -10,17 +10,19 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-As @Kastellec2007 point out, graph has a salient advantage in presentation and communication of empirical results. The `dotwhisker` package provides a convenient way to create highly customizable plot for presenting and comparing statistics. Users can use it to plot coefficients or other estimates (e.g., predicted probabilities) within a model or compare them across different models. The estimates are presented as dots with confidential interval whiskers, and grouped based on variables.
+Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2002; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
 
-Users can easily custmize the number of models, the exact variables present, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dotwhisker` allows users to easily further manage their graphs.
+Users can easily customize the number of models, the exact variables presented, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dotwhisker` allows users to easily further modify their graphs.
 
-This vignette purposes to illustrate how users can customize the presenting data frame and produce decent plots with `dotwhisker` functions.
+This vignette illustrates how to prepare regression results for input; basic use of `dwplot`, the package's function for creating dot-and-whisker plots; and a few examples of more advanced uses.
 
 
 ## Prepare a Data Frame for Graphing
-The key for the high customizability of `dotwhisker` comes from its property to dispose data frames rather than the direct outputs from regressions. In the process of creating the estimate data frame, users can freely manipulate the input information for special interests. It should not be very difficult to split them from the orignial outputs, since most regression estimates can be extract by `coef()`. The `broom` package from Robinson et. al. makes this process even easier. 
+Although other packages (e.g., `coefplot`) have the ability to draw dot-and-whisker plots, their functions take as inputs model objects, with the consequence that many models are not supported and plotting more than one model at a time is rarely possible.  The `dotwhisker` package avoids this limitation by taking as its input a data frame of estimates drawn from a model object rather than the model object itself.  Moreover, in the process of preparing a data frame of estimates, users have maximum flexibility in determining what results are (and are not) included in the plot. 
 
-The valid input object for `dotwhisker` is a data frame including three columns: term (i.e., variable name), estimate (i.e., coefficients), and std.error. For regular regressions from `lm` or `glm`, one can use `broom::tidy` to produce a usable estimate data frame. 
+Extracting estimates from most model objects is straightforward, since many functions generate results that can be extract by `coef()`. Further, the `broom` package [@Robinson2015] automates the process of extracting estimates for many common model objects. 
+
+The valid input object for `dotwhisker` is a data frame including three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. Again, for many common models, one can use `broom::tidy` to produce such a data frame of estimates. 
 
 ```{r message = F, warning=FALSE}
 #Package preload
@@ -31,16 +33,16 @@ library(dotwhisker)
 
 data(mtcars)
 
-# regression compatble with tidy
-m1 <- lm(mpg ~ wt + cyl + disp + vs, data = mtcars)
+# regression compatible with tidy
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
 m1_df <- tidy(m1) # create data.frame of regression results
 m1_df # available for dwplot
 ```
 
-For those results uncompatble with `tidy`, one has to create the data frame by hand. 
+For model objects that are not compatible with `tidy`, one can simply extract the results and build the needed data frame. 
 
 ```{r}
-# regression uncompatble with tidy
+# the ordinal regression model is not supported by tidy
 m2 <- ordinal::clm(factor(gear) ~ wt + cyl + disp, data = mtcars)
 m2_df <- coef(summary(m2)) %>% 
   data.frame() %>% 
@@ -49,28 +51,28 @@ m2_df <- coef(summary(m2)) %>%
 m2_df
 ```
 
-
-During the process creating the data frame format, users are free to select, delete variables, or change the order of them based on their interests. Especially, in some cases, users may consider omit the intercept, since they are not theoretically interesting [@Kastellec2007, 765]. A special data transition is standarize the scales of variables. @Gelman2008 indicates that using standardized scaling can unify the measuring unit of variable, so that their coefficients are comparable. Carring on this idea and the method @Gelman2008 recommonds (dividing by two standard deviations), we offer a covenient function to standardize variable scaling in a tidy data frame.
+During the process creating the data frame format, users are free to select or delete variables or to change their order. In many cases, for example, users will wish to consider omitting model intercepts as they are rarely theoretically interesting [see @Kastellec2007, 765]. Another often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this of course can be done before model estimation, it can be convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
 
 ```{r}
 # Customize the input data frame
 m1_df  # the original tidy data.frame
 
-m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)   # Standardize the coefficients
-m1_df_sel <- filter(m1_df_sd, term != "(Intercept)" & term != "c.vs") # Select variables
+m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)   # rescale the coefficients
+m1_df_sel <- filter(m1_df_sd, term != "(Intercept)") # omit intercept
 m1_df_sel2 <- arrange(m1_df_sel, term) # reorder the variables
 
 
-m1_df_sd
-m1_df_sel
-m1_df_sel2
+m1_df_sd    # rescaled coefficients
+m1_df_sel   # rescaled and intercept omitted
+m1_df_sel2  # rescaled, intercept omitted, and variables reordered alphabetically
 ```
 
-They can also create a data frame of other qualities, such as margins and predicted probabilities, instead of coefficients. 
+The input data frame can also consist of estimates of other quantities of interest, such as margins and predicted probabilities, rather than coefficients. 
+
 ```{r message= FALSE}
 # Create a data.frame of marginal effects
 library(mfx)
-m3 <- logitmfx(formula= vs ~ mpg + wt + disp, data = mtcars) 
+m3 <- logitmfx(formula = am ~ mpg + wt + disp + gear, data = mtcars) 
 m3_margin <- data.frame(m3$mfxest) %>% 
   add_rownames("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
@@ -81,112 +83,113 @@ m3_margin
 
 ## Plot Estimates with `dwplot`
 
-The `dotwhisker::dwplot` function is very easy to use. It only has three components: `dwplot(df, interal, dodge_size)`. `df` is the object to plot, which is the data frame we create in the previous section. `interval` sets the criterion of the "whisker" (the confidence intervals). The default value is .05, i.e., a 95% CI. `dodge_size` is used to adjust the interspace between estimates under one variable, if results of multiple models are involved.
+The `dotwhisker::dwplot` function is very easy to use. It takes just three arguments: `df`, `alpha`, and `dodge_size`.  `df` is the data frame of estimates to be plotted (as described above). `alpha` is the significance level of the confidence intervals to be spanned by the whiskers: its default value is .05, implying a 95% confidence interval. `dodge_size` is used to adjust the space between the estimates of one variable when  multiple models are presented in a single plot.
 
 ```{r fig.width= 7, warning= FALSE, message= FALSE}
 dwplot(m1_df)
-dwplot(m1_df, interval = .01)  # using 99% CI
+dwplot(m1_df, alpha = .01)  # using 99% CI
 ```
 
 If the users intend to plot a customized data frame, they do exactly the same thing as above; no specific setting is required. Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are free to add or rewrite any `ggplot` layers after `dwplot`.
 
 ```{r fig.width= 7, warning= FALSE, message= FALSE}
-dwplot(m1_df_sel2) +
-     scale_y_discrete(breaks = 4:1, 
-                      labels=c("V/S", "Cylinders", "Displacement", "Weight")) +
-     theme_bw() + xlab("Standardized Coefficent") + ylab("") +
-     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-     ggtitle("Predicting Gas Mileage") +
-     theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1,0), legend.position=c(1,0),
-           legend.background = element_rect(colour="grey80"),
-           legend.title.align = .5) 
+dwplot(m1_df_sel2)
+
+dwplot(m1_df_sel2) + 
+    scale_y_discrete(breaks = 4:1, 
+                      labels=c("Cylinders", "Displacement", "Gears", "Weight")) +
+    theme_bw() + xlab("Standardized Coefficient") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage") +
+    theme(plot.title = element_text(face="bold"), legend.position="none") 
 ```
 
 
 
 ## Multi-Model Comparison 
-`dwplot` can also be used for cross-model comparisons. To do that, one needs to append the data frame of the new model to the results of the old model, and creates an identification column `model` labeling the two models.
+`dwplot` can also be used to create plots that present multiple models (e.g., across different samples) in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
 
 
-```{r fig.width= 7, warning=FALSE, message= FALSE}
-# Comparing the estimates of the unstandardized and standardized models
-m1_df <- mutate(m1_df, model = "unstandardized")
-m1_df_sd <- mutate(m1_df_sd, model = "standardized") 
-m1_df_sd$term <- m1_df$term
-  
-m1_comb <- rbind(m1_df, m1_df_sd)
+```{r fig.width= 7, fig.height=5, warning=FALSE, message=FALSE}
+# Compare results across subsets of data
+by_trans <- mtcars %>% group_by(am) %>%
+    do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% rename(model=am) %>%
+    filter(term != "(Intercept)")
 
-dwplot(m1_comb, dodge_size = .15) +
-     scale_y_discrete(breaks = 5:1, 
-                      labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
-     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-     ggtitle("Predicting Gas Mileage, OLS Estimates") +
-     scale_colour_discrete(name = "Model",
-                       labels = c("Unstandardized", "Standardized")) +
-     theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 0), legend.position=c(1,0),
-           legend.background = element_rect(colour="grey80"),
-           legend.title.align = .5) 
+by_trans
 
-```
-
-If comparing the constrained and unconstrained models or models with different variables, one needs to ensure the `term` are identical across the models, even if the comparing models does not include the certain variables. Note that it is important to make sure the order of variables of both models are identical. 
-
-```{r fig.width= 7, warning=FALSE, message=FALSE}
-# Comparing the estimates of the unstandardized and standardized models
-m1_df_sd <- tidy(m1) %>% by_2sd(mtcars)  
-m1_df_sd
-m1_df_sel
-
-diff <- setdiff(m1_df_sd$term, m1_df_sel$term) # extract the difference of variables in two lists.
-
-m1_df_sel <- rbind(m1_df_sel, 
-                   c(diff[1], rep(NA, times = ncol(m1_df_sel) - 1)),
-                   c(diff[2], rep(NA, times = ncol(m1_df_sel) - 1)))
-  
-m1_df_sel <- m1_df_sel[match(m1_df_sd$term, m1_df_sel$term),] #order matters
-
-m1_df_sd <- mutate(m1_df_sd, model = "unconstrained") 
-m1_df_sel <- mutate(m1_df_sel, model = "constrained")
-
-
-m1_comb <- rbind(m1_df_sd, m1_df_sel)
-m1_comb
-
-dwplot(m1_comb, dodge_size = .15) +
-     scale_y_discrete(breaks = 5:1, 
-                      labels=c("Intercept", "Weight", "Cylinders", "Displacement", "V/S")) +
-     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-     ggtitle("Predicting Gas Mileage, OLS Estimates") +
-     scale_colour_discrete(name = "Model",
-                       labels = c("Unstandardized", "Standardized")) +
-     theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 0), legend.position=c(1,0),
-           legend.background = element_rect(colour="grey80"),
-           legend.title.align = .5) 
+dwplot(by_trans, dodge_size = .05) +
+    scale_y_discrete(breaks = 4:1, labels=c("Weight", "Cylinders", "Displacement", "Gears")) +
+    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage by Transmission Type") +
+    theme(plot.title = element_text(face="bold"),
+          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.background = element_rect(colour="grey80"),
+          legend.title.align = .5) +
+    scale_colour_grey(start = .4, end = .8,
+                      name = "Transmission",
+                      breaks = c(0, 1),
+                      labels = c("Automatic", "Manual"))
 
 ```
 
-For comparisons of more than two models, users only need to continuely combine the data frame, as they do in two-model comparisions. Then, one can easily use `dwplot` to practic the so-called "[secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)" analysis by Andrew Gelman.
+To include models with different predictors, one must ensure the `term`s are identical across all of the models.  That is, the data frame for each model must include a row for every predictor included in any of the models, in the same order, regardless of whether the predictor is actually included in a particular model.  Quantities not estimated in a particular model should be assigned a value of `NA`.
 
-```{r fig.width= 7, warning=FALSE, message=FALSE}
-by_trans <- mtcars %>% group_by(gear) %>%
-  do(tidy(lm(mpg ~ wt + cyl, data = .))) %>% rename(model=gear)
+```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
+m4 <- lm(mpg ~ wt + cyl + disp + vs, data = mtcars)         # same as m1
+m5 <- lm(mpg ~ wt + cyl + disp + vs + hp, data = mtcars)    # add another predictor
+m6 <- lm(mpg ~ wt + cyl + disp + vs + hp + am, data = mtcars) # and another 
 
-dwplot(by_trans, dodge_size = .15) +
-     scale_y_discrete(breaks = 3:1, 
-                      labels=c("Intercept", "Weight", "Cylinders")) +
+# Tidy estimates, rescale, and omit intercepts
+m4_df <- tidy(m4) %>% by_2sd(mtcars) %>% filter(term != "(Intercept)") 
+m5_df <- tidy(m5) %>% by_2sd(mtcars) %>% filter(term != "(Intercept)") 
+m6_df <- tidy(m6) %>% by_2sd(mtcars) %>% filter(term != "(Intercept)") 
+
+
+# Ensure all data.frames include rows for all of the predictors, in the same order
+# Include NAs for any quantities not estimated in a particular model
+m4_df <- rbind(m4_df, c("hp", rep(NA, times = ncol(m4_df) - 1)),
+               c("am", rep(NA, times = ncol(m4_df) - 1)))
+m5_df <- rbind(m5_df, c("am", rep(NA, times = ncol(m5_df) - 1)))
+
+# Add model variable to all data frames
+m4_df <- mutate(m4_df, model = "Model 4")
+m5_df <- mutate(m5_df, model = "Model 5")
+m6_df <- mutate(m6_df, model = "Model 6")
+
+m456_df <- rbind(m4_df, m5_df, m6_df)
+
+dwplot(m456_df, dodge_size = .08) +
+     scale_y_discrete(breaks = 6:1, 
+                      labels=c("Weight", "Cylinders", "Displacement", 
+                               "Gear", "Horsepower", "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-     ggtitle("Predicting Gas Mileage, OLS Estimates") +
-     scale_colour_discrete(name = "Gear Number") +
+     ggtitle("Predicting Gas Mileage") +
      theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 0), legend.position=c(1,0),
+           legend.justification=c(1, 1), legend.position=c(1, 1),
            legend.background = element_rect(colour="grey80"),
-           legend.title.align = .5) 
+           legend.title = element_blank()) 
+
+```
+
+An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)" analysis by Andrew Gelman.  They are easy to make with `dwplot`.
+
+```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
+data(diamonds)
+
+by_clarity <- diamonds %>% group_by(clarity) %>%
+    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% rename(model=clarity)
+
+carat_results <- by_clarity %>% filter(term=="carat") %>% dplyr::select(-term) %>%
+    rename(term=model)
+
+dwplot(carat_results) +
+    xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
+    ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
+    theme(plot.title = element_text(face="bold"),
+          legend.position = "none")
 ```
 
 ## Conclusion
