@@ -137,15 +137,16 @@ dwplot(by_trans, dodge_size = .05) +
 To include models with different predictors, one must ensure the `term`s are identical across all of the models.  That is, the data frame for each model must include a row for every predictor included in any of the models, in the same order, regardless of whether the predictor is actually included in a particular model.  Quantities not estimated in a particular model should be assigned a value of `NA`.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
-m4 <- lm(mpg ~ wt + cyl + disp + vs, data = mtcars)         # same as m1
-m5 <- lm(mpg ~ wt + cyl + disp + vs + hp, data = mtcars)    # add another predictor
-m6 <- lm(mpg ~ wt + cyl + disp + vs + hp + am, data = mtcars) # and another 
+m4 <- lm(mpg ~ wt + cyl + disp + vs, data = mtcars) # same as m1
+m5 <- update(m4, . ~ . + hp) # add another predictor
+m6 <- update(m5, . ~ . + am) # and another 
 
 # Tidy estimates, rescale, and omit intercepts
-m4_df <- tidy(m4) %>% by_2sd(mtcars) %>% filter(term != "(Intercept)") 
-m5_df <- tidy(m5) %>% by_2sd(mtcars) %>% filter(term != "(Intercept)") 
-m6_df <- tidy(m6) %>% by_2sd(mtcars) %>% filter(term != "(Intercept)") 
+prep_456 <- . %>% tidy() %>% by_2sd(mtcars) %>% filter(term != "(Intercept)")
 
+m4_df <- prep_456(m4)
+m5_df <- prep_456(m5)
+m6_df <- prep_456(m6)
 
 # Ensure all data.frames include rows for all of the predictors, in the same order
 # Include NAs for any quantities not estimated in a particular model
@@ -194,9 +195,9 @@ dwplot(carat_results) +
 
 ## Conclusion
 
-The `downwhisker` package provides a flexible and convenient way to visualize and compare estimates across various models. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
+The `dotwhisker` package provides a flexible and convenient way to visualize and compare estimates across various models. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
 
-The development of the package is ongoing, and future research promises a compatible tool for more types of regressions and more functions. Please contact us with any questions, bug reports, and comments.
+The development of the package is ongoing. Please contact us with any questions, bug reports, and comments.
 
 ## Affiliation
 
