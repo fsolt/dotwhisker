@@ -29,9 +29,9 @@
 #'
 #' grid.draw(g)  # to display
 #'
-#' pdf("plot.pdf")  # to save
-#' grid.draw(g)
-#' dev.off()
+#' #pdf("plot.pdf")  # to save (not run)
+#' #grid.draw(g)
+#' #dev.off()
 #'
 #' @import grid gridExtra gtable
 #'
