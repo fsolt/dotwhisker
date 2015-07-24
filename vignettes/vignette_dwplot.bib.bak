@@ -31,10 +31,3 @@
   Timestamp                = {2015.07.15}
 }
 
-@Article{Robinson2014,
-  Title                    = {broom: An R Package for Converting Statistical Analysis Objects Into Tidy Data Frames},
-  Author                   = {Robinson, David},
-  Journal                  = {arXiv preprint arXiv:1412.3565},
-  Year                     = {2014}
-}
-

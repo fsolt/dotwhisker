@@ -57,6 +57,7 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
 
   n_vars <- length(unique(df$term))
   model <- NULL
+  dodge_size = dodge_size
 
   if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
     if (length(df$term) == n_vars) {

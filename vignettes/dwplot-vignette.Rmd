@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2002; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
+Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2008; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
 
 Users can easily customize the number of models, the exact variables presented, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dotwhisker` allows users to easily further modify their graphs.
 
@@ -20,7 +20,7 @@ This vignette illustrates how to prepare regression results for input; basic use
 ## Prepare a Data Frame for Graphing
 Although other packages (e.g., `coefplot`) have the ability to draw dot-and-whisker plots, their functions take as inputs model objects, with the consequence that many models are not supported and plotting more than one model at a time is rarely possible.  The `dotwhisker` package avoids this limitation by taking as its input a data frame of estimates drawn from a model object rather than the model object itself.  Moreover, in the process of preparing a data frame of estimates, users have maximum flexibility in determining what results are (and are not) included in the plot. 
 
-Extracting estimates from most model objects is straightforward, since many functions generate results that can be extract by `coef()`. Further, the `broom` package [@Robinson2015] automates the process of extracting estimates for many common model objects. 
+Extracting estimates from most model objects is straightforward, since many functions generate results that can be extract by `coef()`. Further, the `broom` package [@Robinson2014] automates the process of extracting estimates for many common model objects. 
 
 The valid input object for `dotwhisker` is a data frame including three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. Again, for many common models, one can use `broom::tidy` to produce such a data frame of estimates. 
 
@@ -227,6 +227,47 @@ dwplot(carat_results) +
     theme(plot.title = element_text(face="bold"),
           legend.position = "none")
 ```
+
+At last, we show how to create a "small multiple" with `dotwhisker` functions. "Small multiple" is a type of plots presenting estimates of each variable with different conditions (estimated with different data or models) in a separate panel. Each panel has its own scale. @Kastellec2007[766] believe the small multiple maximize the efficiency of presentation and the convenience for cross-model comparison. To create a small multiple with `dwplot`, we first needs to splite the orginial estimate dataset into pieces in which there are estimates based on mutliple conditions but only for one variable. We offer a function `smul` to convenitnely split a `tidy` data.frame to a list of single variable datasets. Then, with the loop funciton, one can create a list of `dwplot`s for each dataset. Users can freely extract several or all the plots into one page to be the small multiple plot. The `multiplot` function by [\emph{Cookbook for R}](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) provide an easy way to combine the plots, which we also include in the `dotwhisker` package. 
+
+```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
+data("diamonds")
+# combine the "Fair" into "Good" just for presenting convenince.
+diamonds$cut[diamonds$cut == "Fair"] <- "Good" 
+
+
+# run analyses for groups with different cutting quality
+by_cut <- diamonds %>% group_by(cut) %>%
+  do(tidy(lm(price ~ depth + table, data = .))) %>% rename(model=cut) 
+ 
+# create a binary variable identifying if a diamond is a high-level or low-level cutting one.
+by_cut$top <- 0
+by_cut$top[by_cut$model %in% c("Premium", "Ideal")] <- 1
+by_cut$model <- rep(c("low-level", "high-level"), each = 3, times = 2)
+
+
+# Creating the list of tidy data.frame.
+smul_list <- smul(by_cut, "term", "top")
+
+
+# Create the small multiple plot.
+smul_plots <- list()
+
+for(i in seq(length(smul_list))){
+  smul_plots[[i]] <- dwplot(smul_list[[i]]) + 
+    ylab("") + xlab(names(smul_list)[i]) + 
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) + 
+    theme_bw() +
+    theme(legend.position = "none") +
+    scale_y_discrete(limits = c("low-level", "high-level")) + coord_flip()
+}
+
+
+multiplot(plotlist = smul_plots, cols = 1)
+
+```
+
+
 
 ## Conclusion
 

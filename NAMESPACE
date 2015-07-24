@@ -3,6 +3,8 @@
 export(add_brackets)
 export(by_2sd)
 export(dwplot)
+export(multiplot)
+export(smul)
 import(dplyr)
 import(ggplot2)
 import(grid)
