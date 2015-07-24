@@ -90,7 +90,7 @@ dwplot(m1_df)
 dwplot(m1_df, alpha = .01)  # using 99% CI
 ```
 
-If the users intend to plot a customized data frame, they do exactly the same thing as above; no specific setting is required. Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are free to add or rewrite any `ggplot` layers after `dwplot`.
+To omit intercepts, rescale coefficients, etc., no change in the use of `dwplot` is required: one simply modifies the data frame, as described above, that is passed to the function. Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are able to add or change any `ggplot` layers after calling `dwplot`.
 
 ```{r fig.width= 7, warning= FALSE, message= FALSE}
 dwplot(m1_df_sel2)
@@ -175,7 +175,7 @@ dwplot(m456_df, dodge_size = .08) +
 
 ```
 
-An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)" analysis by Andrew Gelman.  They are easy to make with `dwplot`.
+An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 data(diamonds)
@@ -231,5 +231,5 @@ Email: <yue-hu-1@uiowa.edu>
 
 Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
 
-## Reference
+## References
 
