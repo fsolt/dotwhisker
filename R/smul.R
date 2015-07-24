@@ -2,7 +2,7 @@
 #'
 #' \code{smul} creates a list of datasets for ploting the "small multiple" plots (Kastellec and Leoni 2007, 768).
 #'
-#' @param df A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.
+#' @param df A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{tidy}}.
 #' @param by A character showing based on which variable the \code{df} is splited. For a typical "small multiple" plot, the spliting criterion is usually \code{df$term}. 
 #' @param compare A character indicating the new \code{model} in each splited group of estimates.
 #'
@@ -34,6 +34,9 @@
 
 
 smul <- function(df, by = "term", compare = NULL){
+  
+  term <- model <- NULL # not functional, just for CRAN check
+  
   eval(parse(text = paste0("split_list <- split(df, df$",by,")")))
   
   split_list <- lapply(split_list, rename, term_orig = term, term = model)

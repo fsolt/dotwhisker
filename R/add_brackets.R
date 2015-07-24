@@ -6,9 +6,9 @@
 #' @param brackets A list of brackets; each element of the list should be a character vector consisting of (1) a label for the bracket, (2) the name of the topmost variable to be enclosed by the bracket, and (3) the name of the bottommost variable to be enclosed by the bracket.
 #' @param face A typeface for the bracket labels; options are "plain", "bold", "italic", "oblique", and "bold.italic".
 #'
-#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[grid.draw]{grid::grid.draw}}.
+#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[grid]{grid.draw}}.
 #'
-#' To save, wrap the \code{grid.draw} command with \code{\link[pdf]{pdf}} or \code{\link[png]{png}}, etc., and \code{\link[dev.off]{dev.off}}.  Alternately, the next release of \code{ggplot2} (>1.0.1.9002) will enable \code{ggsave} for \code{gtable}s; one can install the development version using \code{devtools::install_github("hadley/ggplot2")}.
+#' To save, wrap the \code{grid.draw} command with \code{\link[grDevices]{pdf}} or \code{\link[grDevices]{png}}, etc., and \code{\link[grDevices]{dev.off}}.  Alternately, the next release of \code{ggplot2} (>1.0.1.9002) will enable \code{ggsave} for \code{gtable}s; one can install the development version using \code{devtools::install_github("hadley/ggplot2")}.
 #'
 #' @examples
 #' library(broom)
@@ -39,6 +39,7 @@
 
 add_brackets <- function(p, brackets, face="italic") {
     pd <- p$data
+    y_ind <- NULL # not functional, just for CRAN check
     overhang <- max(pd$y_ind)/40
     p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 

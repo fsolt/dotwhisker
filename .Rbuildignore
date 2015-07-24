@@ -3,3 +3,6 @@
 ^cran-comments.md$
 ^NEWS\.md$
 ^developing\.R$
+^Rplots\.pdf$
+^plot\.pdf$
+^examples\.R$

@@ -7,7 +7,7 @@
 smul(df, by = "term", compare = NULL)
 }
 \arguments{
-\item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.}
+\item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{tidy}}.}
 
 \item{by}{A character showing based on which variable the \code{df} is splited. For a typical "small multiple" plot, the spliting criterion is usually \code{df$term}.}
 
