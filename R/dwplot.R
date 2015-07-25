@@ -80,11 +80,11 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
 
   if(alpha < 0 | alpha > 1) stop("Value of alpha for the confidential intervals should be between 0 and 1.")
 
-  alpha <- 1 - alpha/2
+  ci <- 1 - alpha/2
 
 
-  lb <- c(df$estimate - qnorm(alpha) * df$std.error)
-  ub <- c(df$estimate + qnorm(alpha) * df$std.error)
+  lb <- c(df$estimate - qnorm(ci) * df$std.error)
+  ub <- c(df$estimate + qnorm(ci) * df$std.error)
 
 
   df <- cbind(df, lb, ub)
