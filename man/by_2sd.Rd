@@ -7,7 +7,7 @@
 by_2sd(df, dataset)
 }
 \arguments{
-\item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{broom::tidy}}.}
+\item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{tidy}}.}
 
 \item{dataset}{The data analyzed in the models whose results are recorded in df}
 }
@@ -15,12 +15,12 @@ by_2sd(df, dataset)
 A tidy data.frame
 }
 \description{
-\code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dwplot]{dotwhisker}}.
+\code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dotwhisker]{dwplot}}.
 }
 \details{
-\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dwplot]{dotwhisker}}.
+\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dotwhisker]{dwplot}}.
 
-An alternative available in some circumstances is to pass a model object to \code{\link[arm::standardize]{arm::standardize}} before passing the results to \code{\link[broom::tidy]{broom::tidy}} and then on to \code{\link[dwplot]{dotwhisker}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data.frame and so is not restricted to only those model objects that \code{standardize} accepts.
+An alternative available in some circumstances is to pass a model object to \code{\link[arm]{standardize}} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data.frame and so is not restricted to only those model objects that \code{standardize} accepts.
 }
 \examples{
 library(broom)
@@ -35,6 +35,6 @@ m1_df <- tidy(m1) \%>\% by_2sd(mtcars) # create data.frame of rescaled regressio
 Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865-2873.
 }
 \seealso{
-\code{\link[arm::standardize]{arm::standardize}}
+\code{\link[arm]{standardize}}
 }
 
