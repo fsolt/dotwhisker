@@ -99,13 +99,14 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
   df <- dplyr::left_join(df, shift_index)
 
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
-    geom_point(na.rm = TRUE) +
-    geom_segment(aes(x = lb,
-                     xend = ub,
-                     y = y_ind + shift, yend = y_ind + shift,
-                     colour=factor(model)), na.rm = TRUE) +
-    scale_y_discrete(breaks=y_ind, labels=v_names) +
-    coord_cartesian(ylim=c(.5, n_vars+.5))
+      geom_point(na.rm = TRUE) +
+      geom_segment(aes(x = lb,
+                       xend = ub,
+                       y = y_ind + shift, yend = y_ind + shift,
+                       colour=factor(model)), na.rm = TRUE) +
+      scale_y_discrete(breaks=y_ind, labels=v_names) +
+      coord_cartesian(ylim=c(.5, n_vars+.5)) +
+      ylab("")
 
   if (!"model" %in% names(df) | length(unique(df$model)) == 1) p <- p + theme(legend.position="none")
 
