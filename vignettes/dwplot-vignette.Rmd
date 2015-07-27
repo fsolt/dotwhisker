@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2008; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
+Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2002; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
 
 Users can easily customize the number of models, the exact variables presented, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dotwhisker` allows users to easily further modify their graphs.
 
@@ -20,7 +20,7 @@ This vignette illustrates how to prepare regression results for input; basic use
 ## Prepare a Data Frame for Graphing
 Although other packages (e.g., `coefplot`) have the ability to draw dot-and-whisker plots, their functions take as inputs model objects, with the consequence that many models are not supported and plotting more than one model at a time is rarely possible.  The `dotwhisker` package avoids this limitation by taking as its input a data frame of estimates drawn from a model object rather than the model object itself.  Moreover, in the process of preparing a data frame of estimates, users have maximum flexibility in determining what results are (and are not) included in the plot. 
 
-Extracting estimates from most model objects is straightforward, since many functions generate results that can be extracted by `coef()`. Further, the `broom` package [@Robinson2014] automates the process of extracting estimates for many common model objects. 
+Extracting estimates from most model objects is straightforward, since many functions generate results that can be extracted by `coef()`. Further, the `broom` package [@Robinson2015] automates the process of extracting estimates for many common model objects. 
 
 The valid input object for `dotwhisker` is a data frame including three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. Again, for many common models, one can use `broom::tidy` to produce such a data frame of estimates. 
 
@@ -229,24 +229,10 @@ dwplot(carat_results) +
     theme(plot.title = element_text(face="bold"))
 ```
 
-A final means of presenting many models' results at once is through a "small multiple" plot.  Small multiple plots present estimates in multiple panels, one for each variable: they are effectively a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor`.  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.) + coord_flip()` will generate a small multiple plot.
+A final means of presenting many models' results at once, in a particularly compact format, is the "small multiple" plot. Small multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor` and, in descending order, `term` (one may also wish the convert the variable names and model names to factors for labeling purposes).  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.) + coord_flip()` will generate a small multiple plot.
 
-```{r fig.width= 7, fig.height=8, warning=FALSE, message=FALSE}
-data(diamonds)
-
-by_clarity2 <- diamonds %>% group_by(clarity) %>%
-    do(tidy(lm(price ~ carat + cut, data = .))) %>% ungroup %>% rename(model=clarity)
-
-all_results <- by_clarity2 %>% rename(predictor = term, term = model) %>% 
-    mutate(model = 1) %>% arrange(predictor) 
-
-dwplot(all_results) + facet_grid(predictor~.) + coord_flip() + 
-    xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
-    ggtitle("Predicting Diamond Price Across Clarity Grades") +
-    theme(plot.title = element_text(face="bold"))
-
-m456_df <- rbind(m4_df, m5_df, m6_df)
-all_vars <- c("wt", "cyl", "disp", "gear", "hp", "am") # ordered as to be added to models
+```{r fig.width= 2.5, fig.height=6.5, warning=FALSE, message=FALSE}
+all_vars <- c("wt", "cyl", "disp", "gear", "hp", "am") 
 
 add_NAs <- function(m, all_vars) {
     not_in <- setdiff(all_vars, m$term)
@@ -255,35 +241,32 @@ add_NAs <- function(m, all_vars) {
     m
 }
 
-m1_df <- lm(mpg ~ wt, data = mtcars) %>% prep %>% add_NAs(all_vars)
+m <- list()
+m[[1]] <- lm(mpg ~ wt, data = mtcars)
+m123456_df <- m[[1]] %>% prep %>% add_NAs(all_vars) %>% 
+    mutate(model = "Model 1")
 
-for (i in 1:6) {
-    if (i == 1) m1_6[i] <- lm(mpg ~ wt, data = mtcars) %>% prep else 
-        m1_6[i] <- update(m1_6[i-1], . ~ . + ordered_vars[i])
-    for (j in i:5) {
-        if (i < 6) m1_6[i] <- rbind(m1_6[i], c(ordered_vars[j+1],
-                                               rep(NA, times = ncol(m1_6[i]) - 1)))
-    }
-    m1_6[i]$model <- paste("Model", i)
-    m_all <- rbind(m_all, m1_6[i])
+for (i in 2:6) {
+    m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
+    m123456_df <- rbind(m123456_df, m[[i]] %>% prep %>% add_NAs(all_vars) %>%
+                            mutate(model = paste("Model", i)))
 }
-m4 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars) # same as m1
-m5 <- update(m4, . ~ . + hp) # add another predictor
-m6 <- update(m5, . ~ . + am) # and another 
 
+m123456_df <- m123456_df %>% 
+    mutate(term = factor(term, levels = ordered_vars),
+           model = factor(model, levels = paste("Model", 1:6))) %>%
+    rename(predictor = term, term = model) %>% 
+    mutate(model = 1) %>% arrange(predictor, desc(term)) 
 
+levels(m123456_df$predictor) <- c("Weight", "Cylinders", "Displacement",
+                                  "Gears", "Horsepower", "Manual") # For facet labels
 
-m456_df <- m456_df %>% 
-    mutate(term = factor(term, levels = ordered_vars)) %>%
-    group_by(model) %>% arrange(term) 
-
-all_results456 <- m456_df %>% ungroup %>% rename(predictor = term, term = model) %>% 
-    mutate(model = 1) %>% arrange(predictor) 
-
-dwplot(all_results456) + facet_grid(predictor~.) + coord_flip() +
-    xlab("Estimated Coefficient") + ylab("") +
+dwplot(m123456_df) + facet_grid(predictor~.) + coord_flip() +
+    theme_bw() + xlab("Coefficient Estimate") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage") +
-    theme(plot.title = element_text(face="bold"))
+    theme(plot.title = element_text(face = "bold"), legend.position = "none",
+          axis.text.x  = element_text(angle = 60, hjust = 1)) 
 
 ```
 
