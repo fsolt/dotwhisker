@@ -73,7 +73,8 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
   y_ind <- rep(seq(n_vars, 1), n_models)
   df$y_ind  <- y_ind
 
-  df$estimate <- as.numeric(df$estimate)
+  estimate <- as.numeric(df$estimate)
+  df$estimate <- estimate
   df$std.error <- as.numeric(df$std.error)
 
   if(alpha < 0 | alpha > 1) stop("Value of alpha for the confidential intervals should be between 0 and 1.")

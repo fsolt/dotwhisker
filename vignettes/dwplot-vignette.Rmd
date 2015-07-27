@@ -42,6 +42,7 @@ For model objects that are not compatible with `tidy`, one can simply extract th
 
 ```{r}
 # the ordinal regression model is not supported by tidy
+library(ordinal)
 m2 <- ordinal::clm(factor(gear) ~ wt + cyl + disp, data = mtcars)
 m2_df <- coef(summary(m2)) %>% 
   data.frame() %>% 

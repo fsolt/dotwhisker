@@ -8,11 +8,11 @@ Maintainer: Frederick Solt <frederick-solt@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression models saved in tidy data frames.
 Depends: R (>= 3.2.1), ggplot2,dplyr, gridExtra, gtable
 Imports: 
+    broom,
     grid, 
     magrittr,
-    stats
+    stats 
 Suggests:
-    broom, 
     mfx,
     ordinal
 License: MIT + file LICENSE
