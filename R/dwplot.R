@@ -67,36 +67,30 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
     } else stop("Please add a variable named \'model\' to distinguish different models")
   }
 
-
   m_names <- unique(df$model)
   v_names <- df$term
-
 
   y_ind <- rep(seq(n_vars, 1), n_models)
   df$y_ind  <- y_ind
 
-  estimate <- as.numeric(df$estimate)
-  df$estimate <- estimate
+  df$estimate <- as.numeric(df$estimate)
   df$std.error <- as.numeric(df$std.error)
-
 
   if(alpha < 0 | alpha > 1) stop("Value of alpha for the confidential intervals should be between 0 and 1.")
 
   ci <- 1 - alpha/2
-
-
   lb <- c(df$estimate - qnorm(ci) * df$std.error)
   ub <- c(df$estimate + qnorm(ci) * df$std.error)
 
-
   df <- cbind(df, lb, ub)
-
 
   if(n_models == 1) shift <- 0 else
     shift <- seq(dodge_size, -dodge_size, length.out=n_models)
 
   shift_index <- data.frame(model = unique(df$model), shift, stringsAsFactors = FALSE)
   df <- dplyr::left_join(df, shift_index)
+
+  if (length(y_ind)!=length(v_names)) v_names <- unique(v_names)
 
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
       geom_point(na.rm = TRUE) +
