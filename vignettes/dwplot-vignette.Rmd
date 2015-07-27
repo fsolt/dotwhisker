@@ -145,11 +145,11 @@ m5 <- update(m4, . ~ . + hp) # add another predictor
 m6 <- update(m5, . ~ . + am) # and another 
 
 # Tidy estimates, rescale, and omit intercepts
-prep_456 <- . %>% tidy() %>% by_2sd(mtcars) %>% filter(term != "(Intercept)")
+prep <- . %>% tidy() %>% by_2sd(mtcars) %>% filter(term != "(Intercept)")
 
-m4_df <- prep_456(m4)
-m5_df <- prep_456(m5)
-m6_df <- prep_456(m6)
+m4_df <- prep(m4)
+m5_df <- prep(m5)
+m6_df <- prep(m6)
 
 # Ensure all data.frames include rows for all of the predictors, in the same order
 # Include NAs for any quantities not estimated in a particular model
@@ -182,8 +182,9 @@ It is frequently desirable to convey to an audience that the predictors in a mod
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 # Reorder predictors into groups
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
-m456_df <- m456_df %>% mutate(term =  factor(term, levels = ordered_vars)) %>%
-  group_by(model) %>% arrange(term) 
+m456_df <- m456_df %>% 
+    mutate(term =  factor(term, levels = ordered_vars)) %>%
+    group_by(model) %>% arrange(term) 
 
 # Save finalized plot to an object (note reordered labels to match reordered predictors)
 p456 <- dwplot(m456_df, dodge_size = .08) +
@@ -228,7 +229,7 @@ dwplot(carat_results) +
     theme(plot.title = element_text(face="bold"))
 ```
 
-A final means of presenting many models' results at once is through a "small multiple" plot.  Small multiple plots present estimates in multiple panels, one for each variable: they are effectively a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor`.  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.)` will generate a small multiple plot.
+A final means of presenting many models' results at once is through a "small multiple" plot.  Small multiple plots present estimates in multiple panels, one for each variable: they are effectively a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor`.  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.) + coord_flip()` will generate a small multiple plot.
 
 ```{r fig.width= 7, fig.height=8, warning=FALSE, message=FALSE}
 data(diamonds)
@@ -239,15 +240,50 @@ by_clarity2 <- diamonds %>% group_by(clarity) %>%
 all_results <- by_clarity2 %>% rename(predictor = term, term = model) %>% 
     mutate(model = 1) %>% arrange(predictor) 
 
-dwplot(all_results) + facet_grid(predictor~., scales = "free_x") + coord_flip() + 
+dwplot(all_results) + facet_grid(predictor~.) + coord_flip() + 
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Predicting Diamond Price Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))
 
-# all_results456 <- m456_df %>% ungroup %>% rename(predictor = term, term = model) %>% 
-#     mutate(model = 1) %>% arrange(predictor) 
-# 
-# dwplot(all_results) + coord_flip() + facet_grid(predictor~., scales = "free")
+m456_df <- rbind(m4_df, m5_df, m6_df)
+all_vars <- c("wt", "cyl", "disp", "gear", "hp", "am") # ordered as to be added to models
+
+add_NAs <- function(m, all_vars) {
+    not_in <- setdiff(all_vars, m$term)
+    for (i in seq(not_in))
+        m <- rbind(m, c(not_in[i], rep(NA, times = ncol(m) - 1)))
+    m
+}
+
+m1_df <- lm(mpg ~ wt, data = mtcars) %>% prep %>% add_NAs(all_vars)
+
+for (i in 1:6) {
+    if (i == 1) m1_6[i] <- lm(mpg ~ wt, data = mtcars) %>% prep else 
+        m1_6[i] <- update(m1_6[i-1], . ~ . + ordered_vars[i])
+    for (j in i:5) {
+        if (i < 6) m1_6[i] <- rbind(m1_6[i], c(ordered_vars[j+1],
+                                               rep(NA, times = ncol(m1_6[i]) - 1)))
+    }
+    m1_6[i]$model <- paste("Model", i)
+    m_all <- rbind(m_all, m1_6[i])
+}
+m4 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars) # same as m1
+m5 <- update(m4, . ~ . + hp) # add another predictor
+m6 <- update(m5, . ~ . + am) # and another 
+
+
+
+m456_df <- m456_df %>% 
+    mutate(term = factor(term, levels = ordered_vars)) %>%
+    group_by(model) %>% arrange(term) 
+
+all_results456 <- m456_df %>% ungroup %>% rename(predictor = term, term = model) %>% 
+    mutate(model = 1) %>% arrange(predictor) 
+
+dwplot(all_results456) + facet_grid(predictor~.) + coord_flip() +
+    xlab("Estimated Coefficient") + ylab("") +
+    ggtitle("Predicting Gas Mileage") +
+    theme(plot.title = element_text(face="bold"))
 
 ```
 

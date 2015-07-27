@@ -1,12 +1,17 @@
 ## Notes
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Frederick Solt <frederick-solt@uiowa.edu>'
+New submission
+
+* checking package dependencies ... NOTE
+  No repository set, so cyclic dependency check skipped
+  
+* checking dependencies in R code ... NOTE
+Namespaces in Imports field not imported from:
+  'mfx' 'ordinal'
+  
 * checking R code for possible problems ... NOTE
 by_2sd : <anonymous>: no visible binding for global variable '.'
 
-* checking for unstated dependencies in vignettes ... NOTE
-'::' or ':::' import not declared from: 'ordinal'
-'library' or 'require' calls not declared from:
-  'broom' 'mfx'
-
 ## Warnings
-* checking for unstated dependencies in examples ... WARNING
-'library' or 'require' call not declared from: 'broom'
+No warnings
