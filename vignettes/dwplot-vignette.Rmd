@@ -110,7 +110,7 @@ dwplot(m1_df_sel2) +
 
 
 ## Compare Across Models 
-An additional advantage of`dwplot` over alternative solutions is that it can be used to create plots that present multiple models---across different samples or specifications---in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
+An additional advantage of `dwplot` over alternative solutions is that it can be used to create plots that present multiple models---across different samples or specifications---in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
 
 ```{r fig.width= 7, fig.height=5, warning=FALSE, message=FALSE}
 # Run model on subsets of data, save results as tidy df, drop intercept, and make model variable
@@ -199,7 +199,7 @@ p456 <- dwplot(m456_df, dodge_size = .08) +
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
 
-# Create list of brackets (label, topmost incl. predictor, bottommost incl. predictor)
+# Create list of brackets (label, topmost included predictor, bottommost included predictor)
 three_brackets <- list(c("Overall", "wt", "wt"), c("Engine", "cyl", "hp"),
                        c("Transmission", "gear", "am"))
 
@@ -207,22 +207,25 @@ g456 <- p456 %>% add_brackets(three_brackets)
 
 grid.draw(g456)  # to display
 
-# pdf("plot.pdf")  # to save (not run)
+# pdf("plot.pdf")  # to save to file (not run)
 # grid.draw(g456)
 # dev.off()
 ```
 
-An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.  Starting with a tidy data frame that includes results from all of the models, one subsets only the results for the predictor of interest, drops the old `term` variable, and renames the existing `model` variable `term`.  Then one proceeds as usual.
+An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.  Starting with a tidy data frame that includes results from all of the models, one subsets only the results for the predictor of interest, drops the old `term` variable, and renames the existing `model` variable to `term`.  Then one proceeds as usual.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 data(diamonds)
 
+# Estimate models for many subsets of data
 by_clarity <- diamonds %>% group_by(clarity) %>%
     do(tidy(lm(price ~ carat + cut + color, data = .))) %>% ungroup %>% rename(model=clarity)
 
+# Extract the results for one variable
 carat_results <- by_clarity %>% filter(term=="carat") %>% dplyr::select(-term) %>%
     rename(term = model)
 
+# Deploy the secret weapon
 dwplot(carat_results) +
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
@@ -232,6 +235,9 @@ dwplot(carat_results) +
 A final means of presenting many models' results at once, in a particularly compact format, is the "small multiple" plot. Small multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor` and, in descending order, `term` (one may also wish the convert the variable names and model names to factors for labeling purposes).  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.) + coord_flip()` will generate a small multiple plot.
 
 ```{r fig.width= 2.5, fig.height=6.5, warning=FALSE, message=FALSE}
+# Estimate six models, putting the results in a list, and
+# transfer the list to a tidy data frame with NA rows for excluded variables
+
 all_vars <- c("wt", "cyl", "disp", "gear", "hp", "am") 
 
 add_NAs <- function(m, all_vars) {
@@ -252,6 +258,7 @@ for (i in 2:6) {
                             mutate(model = paste("Model", i)))
 }
 
+# Format the tidy data frame for a small multiple plot
 m123456_df <- m123456_df %>% 
     mutate(term = factor(term, levels = ordered_vars),
            model = factor(model, levels = paste("Model", 1:6))) %>%
@@ -261,6 +268,7 @@ m123456_df <- m123456_df %>%
 levels(m123456_df$predictor) <- c("Weight", "Cylinders", "Displacement",
                                   "Gears", "Horsepower", "Manual") # For facet labels
 
+# Plot using small multiples
 dwplot(m123456_df) + facet_grid(predictor~.) + coord_flip() +
     theme_bw() + xlab("Coefficient Estimate") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
@@ -270,52 +278,11 @@ dwplot(m123456_df) + facet_grid(predictor~.) + coord_flip() +
 
 ```
 
-
-
-```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
-data("diamonds")
-# combine the "Fair" into "Good" just for presenting convenince.
-diamonds$cut[diamonds$cut == "Fair"] <- "Good" 
-
-
-# run analyses for groups with different cutting quality
-by_cut <- diamonds %>% group_by(cut) %>%
-  do(tidy(lm(price ~ depth + table, data = .))) %>% rename(model=cut) 
- 
-# create a binary variable identifying if a diamond is a high-level or low-level cutting one.
-by_cut$top <- 0
-by_cut$top[by_cut$model %in% c("Premium", "Ideal")] <- 1
-by_cut$model <- rep(c("low-level", "high-level"), each = 3, times = 2)
-
-
-# Creating the list of tidy data.frame.
-smul_list <- smul(by_cut, "term", "top")
-
-
-# Create the small multiple plot.
-smul_plots <- list()
-
-for(i in seq(length(smul_list))){
-  smul_plots[[i]] <- dwplot(smul_list[[i]]) + 
-    ylab("") + xlab(names(smul_list)[i]) + 
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) + 
-    theme_bw() +
-    theme(legend.position = "none") +
-    scale_y_discrete(limits = c("low-level", "high-level")) + coord_flip()
-}
-
-
-multiplot(plotlist = smul_plots, cols = 1)
-
-```
-
-
-
 ## Conclusion
 
 The `dotwhisker` package provides a flexible and convenient way to visualize and compare estimates across various models. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
 
-The development of the package is ongoing. Please contact us with any questions, bug reports, and comments.
+The development of the package is ongoing (among other things, we are working to enable small multiples plots to have separate y-axes for each predictor).  Please contact us with any questions, bug reports, and comments.
 
 ## Affiliation
 
