@@ -211,16 +211,16 @@ grid.draw(g456)  # to display
 # dev.off()
 ```
 
-An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.
+An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.  Starting with a tidy data frame that includes results from all of the models, one subsets only the results for the predictor of interest, drops the old `term` variable, and renames the existing `model` variable `term`.  Then one proceeds as usual.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 data(diamonds)
 
 by_clarity <- diamonds %>% group_by(clarity) %>%
-    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% rename(model=clarity)
+    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% ungroup %>% rename(model=clarity)
 
 carat_results <- by_clarity %>% filter(term=="carat") %>% dplyr::select(-term) %>%
-    rename(term=model)
+    rename(term = model)
 
 dwplot(carat_results) +
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
@@ -228,7 +228,30 @@ dwplot(carat_results) +
     theme(plot.title = element_text(face="bold"))
 ```
 
-A final means of comparing many model results is through a "small multiple" plot.  Small multiple plots present estimates in multiple panels, one for each variable: they are effectively a stack of "secret weapon" plots [see @Kastellec2007, 766].  To create a small multiple with `dwplot`, we first need to split the orginal estimate dataset into pieces in which there are estimates based on mutliple conditions but only for one variable. The `dotwhisker` package includes the function `sm_mult_setup` to conveniently split a tidy data frame into a list of single variable datasets. Then, with the loop funciton, one can create a list of `dwplot`s for each dataset. Users can freely extract several or all the plots into one page to be the small multiple plot. The `multiplot` function by [\emph{Cookbook for R}](http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/) provide an easy way to combine the plots, which we also include in the `dotwhisker` package. 
+A final means of presenting many models' results at once is through a "small multiple" plot.  Small multiple plots present estimates in multiple panels, one for each variable: they are effectively a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor`.  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.)` will generate a small multiple plot.
+
+```{r fig.width= 7, fig.height=8, warning=FALSE, message=FALSE}
+data(diamonds)
+
+by_clarity2 <- diamonds %>% group_by(clarity) %>%
+    do(tidy(lm(price ~ carat + cut, data = .))) %>% ungroup %>% rename(model=clarity)
+
+all_results <- by_clarity2 %>% rename(predictor = term, term = model) %>% 
+    mutate(model = 1) %>% arrange(predictor) 
+
+dwplot(all_results) + facet_grid(predictor~., scales = "free_x") + coord_flip() + 
+    xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
+    ggtitle("Predicting Diamond Price Across Clarity Grades") +
+    theme(plot.title = element_text(face="bold"))
+
+# all_results456 <- m456_df %>% ungroup %>% rename(predictor = term, term = model) %>% 
+#     mutate(model = 1) %>% arrange(predictor) 
+# 
+# dwplot(all_results) + coord_flip() + facet_grid(predictor~., scales = "free")
+
+```
+
+
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 data("diamonds")
