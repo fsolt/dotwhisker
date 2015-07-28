@@ -26,7 +26,6 @@ Because the function takes a data.frame as input, it is easily employed for a wi
 }
 \examples{
 library(broom)
-library(dotwhisker)
 
 # Plot regression coefficients from a single model
 data(mtcars)

@@ -19,9 +19,7 @@
 #' @importFrom stats qnorm
 #'
 #' @examples
-#'
 #' library(broom)
-#' library(dotwhisker)
 #'
 #' # Plot regression coefficients from a single model
 #' data(mtcars)
@@ -52,6 +50,7 @@
 #'                       name = "Transmission",
 #'                       breaks = c(0, 1),
 #'                       labels = c("Automatic", "Manual"))
+#'
 #' @export
 
 dwplot <- function(df, alpha = .05, dodge_size = .15) {

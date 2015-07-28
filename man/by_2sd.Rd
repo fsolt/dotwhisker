@@ -24,8 +24,6 @@ An alternative available in some circumstances is to pass a model object to \cod
 }
 \examples{
 library(broom)
-library(dotwhisker)
-
 
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)

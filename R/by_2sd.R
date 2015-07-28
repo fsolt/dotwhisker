@@ -13,8 +13,6 @@
 #' @return A tidy data.frame
 #' @examples
 #' library(broom)
-#' library(dotwhisker)
-#'
 #'
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
