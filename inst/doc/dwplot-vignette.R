@@ -88,11 +88,11 @@ m5 <- update(m4, . ~ . + hp) # add another predictor
 m6 <- update(m5, . ~ . + am) # and another 
 
 # Tidy estimates, rescale, and omit intercepts
-prep_456 <- . %>% tidy() %>% by_2sd(mtcars) %>% filter(term != "(Intercept)")
+prep <- . %>% tidy() %>% by_2sd(mtcars) %>% filter(term != "(Intercept)")
 
-m4_df <- prep_456(m4)
-m5_df <- prep_456(m5)
-m6_df <- prep_456(m6)
+m4_df <- prep(m4)
+m5_df <- prep(m5)
+m6_df <- prep(m6)
 
 # Ensure all data.frames include rows for all of the predictors, in the same order
 # Include NAs for any quantities not estimated in a particular model
@@ -110,7 +110,7 @@ m456_df <- rbind(m4_df, m5_df, m6_df)
 dwplot(m456_df, dodge_size = .08) +
      scale_y_discrete(breaks = 6:1, 
                       labels=c("Weight", "Cylinders", "Displacement", 
-                               "Gear", "Horsepower", "Manual")) +
+                               "Gears", "Horsepower", "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
@@ -122,14 +122,15 @@ dwplot(m456_df, dodge_size = .08) +
 ## ----fig.width= 7, fig.height=7, warning=FALSE, message=FALSE------------
 # Reorder predictors into groups
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
-m456_df <- m456_df %>% mutate(term =  factor(term, levels = ordered_vars)) %>%
-  group_by(model) %>% arrange(term) 
+m456_df <- m456_df %>% 
+    mutate(term =  factor(term, levels = ordered_vars)) %>%
+    group_by(model) %>% arrange(term) 
 
 # Save finalized plot to an object (note reordered labels to match reordered predictors)
 p456 <- dwplot(m456_df, dodge_size = .08) +
      scale_y_discrete(breaks = 6:1, 
                       labels=c("Weight", "Cylinders", "Displacement", 
-                               "Horsepower", "Gear", "Manual")) +
+                               "Horsepower", "Gears", "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
@@ -138,65 +139,75 @@ p456 <- dwplot(m456_df, dodge_size = .08) +
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
 
-# Create list of brackets (label, topmost incl. predictor, bottommost incl. predictor)
-three_brackets <- list(c("Overall", "wt", "wt"), c("Engine", "cyl", "hp"), c("Transmission", "gear", "am"))
+# Create list of brackets (label, topmost included predictor, bottommost included predictor)
+three_brackets <- list(c("Overall", "wt", "wt"), c("Engine", "cyl", "hp"),
+                       c("Transmission", "gear", "am"))
 
 g456 <- p456 %>% add_brackets(three_brackets)
 
 grid.draw(g456)  # to display
 
-# pdf("plot.pdf")  # to save (not run)
+# pdf("plot.pdf")  # to save to file (not run)
 # grid.draw(g456)
 # dev.off()
 
 ## ----fig.width= 7, fig.height=7, warning=FALSE, message=FALSE------------
 data(diamonds)
 
+# Estimate models for many subsets of data
 by_clarity <- diamonds %>% group_by(clarity) %>%
-    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% rename(model=clarity)
+    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% ungroup %>% rename(model=clarity)
 
+# Extract the results for one variable
 carat_results <- by_clarity %>% filter(term=="carat") %>% dplyr::select(-term) %>%
-    rename(term=model)
+    rename(term = model)
 
+# Deploy the secret weapon
 dwplot(carat_results) +
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
-    theme(plot.title = element_text(face="bold"),
-          legend.position = "none")
+    theme(plot.title = element_text(face="bold"))
 
-## ----fig.width= 7, fig.height=7, warning=FALSE, message=FALSE------------
-data("diamonds")
-# combine the "Fair" into "Good" just for presenting convenince.
-diamonds$cut[diamonds$cut == "Fair"] <- "Good" 
+## ----fig.width= 2.5, fig.height=6.5, warning=FALSE, message=FALSE--------
+# Estimate six models, putting the results in a list, and
+# transfer the list to a tidy data frame with NA rows for excluded variables
 
+all_vars <- c("wt", "cyl", "disp", "gear", "hp", "am") 
 
-# run analyses for groups with different cutting quality
-by_cut <- diamonds %>% group_by(cut) %>%
-  do(tidy(lm(price ~ depth + table, data = .))) %>% rename(model=cut) 
- 
-# create a binary variable identifying if a diamond is a high-level or low-level cutting one.
-by_cut$top <- 0
-by_cut$top[by_cut$model %in% c("Premium", "Ideal")] <- 1
-by_cut$model <- rep(c("low-level", "high-level"), each = 3, times = 2)
-
-
-# Creating the list of tidy data.frame.
-smul_list <- smul(by_cut, "term", "top")
-
-
-# Create the small multiple plot.
-smul_plots <- list()
-
-for(i in seq(length(smul_list))){
-  smul_plots[[i]] <- dwplot(smul_list[[i]]) + 
-    ylab("") + xlab(names(smul_list)[i]) + 
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) + 
-    theme_bw() +
-    theme(legend.position = "none") +
-    scale_y_discrete(limits = c("low-level", "high-level")) + coord_flip()
+add_NAs <- function(m, all_vars) {
+    not_in <- setdiff(all_vars, m$term)
+    for (i in seq(not_in))
+        m <- rbind(m, c(not_in[i], rep(NA, times = ncol(m) - 1)))
+    m
 }
 
+m <- list()
+m[[1]] <- lm(mpg ~ wt, data = mtcars)
+m123456_df <- m[[1]] %>% prep %>% add_NAs(all_vars) %>% 
+    mutate(model = "Model 1")
 
-multiplot(plotlist = smul_plots, cols = 1)
+for (i in 2:6) {
+    m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
+    m123456_df <- rbind(m123456_df, m[[i]] %>% prep %>% add_NAs(all_vars) %>%
+                            mutate(model = paste("Model", i)))
+}
+
+# Format the tidy data frame for a small multiple plot
+m123456_df <- m123456_df %>% 
+    mutate(term = factor(term, levels = ordered_vars),
+           model = factor(model, levels = paste("Model", 1:6))) %>%
+    rename(predictor = term, term = model) %>% 
+    mutate(model = 1) %>% arrange(predictor, desc(term)) 
+
+levels(m123456_df$predictor) <- c("Weight", "Cylinders", "Displacement",
+                                  "Gears", "Horsepower", "Manual") # For facet labels
+
+# Plot using small multiples
+dwplot(m123456_df) + facet_grid(predictor~.) + coord_flip() +
+    theme_bw() + xlab("Coefficient Estimate") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage") +
+    theme(plot.title = element_text(face = "bold"), legend.position = "none",
+          axis.text.x  = element_text(angle = 60, hjust = 1)) 
 
 
