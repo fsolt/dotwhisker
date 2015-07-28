@@ -14,7 +14,7 @@
 #' @examples
 #' library(broom)
 #' library(dotwhisker)
-#' 
+#'
 #'
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
@@ -25,7 +25,7 @@
 #'
 #' @seealso \code{\link[arm]{standardize}}
 #'
-#' @import dplyr 
+#' @import dplyr
 #' @importFrom stats sd
 #' @importFrom magrittr extract
 #'
@@ -35,8 +35,9 @@ by_2sd <- function(df, dataset) {
     sdX2 <- df$term %>% as.list %>%
         lapply(function(x) {
             unmatched <- !x %in% names(dataset)
-            dich <- ifelse(unmatched, TRUE, unique(dataset[[x]]) %>%
-                               extract(!is.na(.)) %>% sort %>% identical(c(0,1)))
+            dich <- ifelse(unmatched, TRUE,
+                           unique(dataset[[x]])[!is.na(unique(dataset[[x]]))] %>%
+                               sort %>% identical(c(0,1)))
             ifelse(any(dich, unmatched), 1, 2*stats::sd(dataset[[x]], na.rm=T))
         }) %>% unlist
     df$estimate <- df$estimate * sdX2
