@@ -27,7 +27,6 @@
 #'
 #' @import dplyr
 #' @importFrom stats sd
-#' @importFrom magrittr extract
 #'
 #' @export
 
