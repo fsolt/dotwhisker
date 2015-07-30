@@ -12,7 +12,7 @@ vignette: >
 
 Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2002; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
 
-Users can easily customize the number of models, the exact variables presented, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects, `dotwhisker` allows users to easily further modify their graphs.
+Users can easily customize the number of models, the exact variables presented, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects [@Wickham2009], `dotwhisker` allows users to easily further modify their graphs.
 
 This vignette illustrates how to prepare regression results for input; basic use of `dwplot`, the package's function for creating dot-and-whisker plots; and a few examples of more advanced uses.
 
