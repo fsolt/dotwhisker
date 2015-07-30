@@ -1,7 +1,7 @@
 dotwhisker
 =========
 
-`dwplot` is a function for quickly and easily generating dot-and-whisker plots of regression models saved in tidy data frames. It provides a convenient way to create highly customizable plot for presenting and comparing statistics. Users can use it to plot coefficients or other estimates (e.g., predicted probabilities) within a model or compare them across different models. The estimates are presented as dots with confidential interval whiskers, and grouped based on variables.
+`dotwhisker` is an R package for quickly and easily generating dot-and-whisker plots of regression results saved in tidy data frames. It provides a convenient way to create highly customizable plots for presenting and comparing statistics. It can be used to plot coefficients or other estimates (e.g., predicted probabilities) within a model or compare them across different models. The estimates are presented as dots with confidential interval whiskers, and predictors can be grouped in brackets.
 
 To install:
 
