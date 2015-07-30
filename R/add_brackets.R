@@ -41,6 +41,7 @@ add_brackets <- function(p, brackets, face="italic") {
     pd <- p$data
     y_ind <- NULL # not functional, just for CRAN check
     overhang <- max(pd$y_ind)/40
+    overhang <- ifelse(overhang>.4, .4, overhang)
     p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 
     if (!is.list(brackets)) stop('Error: argument "brackets" is not a list')
