@@ -1,0 +1,187 @@
+---
+title: "dotwhisker: Redoing the Examples from Kastellec and Leoni (2007)"
+author: "Frederick Solt"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: vignette_dwplot.bib
+vignette: >
+  %\VignetteIndexEntry{dwplot: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{ASCII}
+---
+
+I have been a big fan of @Kastellec2007 since it came out, and by putting their code online, the authors allowed me and many others to use it for our own needs (add cites to examples).  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, likely contributing to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" [@Kastellec2007, 757].  Now (just eight or more years later!), the `dotwhisker` package makes it *much* easier to produce effective plots of regression results.  
+Below, I present their original code, along with similar plots redone using `dotwhisker`.
+
+### Figure 6: Presenting a Single Regression Model Using a Dot Plot with Error Bars.
+
+### Figure 7: Using Parallel Dot Plots with Error Bars to Present Two Regression Models.
+
+Original, via Kastellec and Leoni's http://svn.tables2graphs.com/tables2graphs/Rcode/Final%20Code%20for%20Website/figure_7_pekkanen_table_1.R
+
+```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
+
+# Original code
+
+coef.matrix <- matrix(c(-.039, NA, .048, -.133, .071, -.795, 1.47, 
+                        -.036, NA, .036, -.142, .07, -.834, 1.70, 
+                        -.051, NA, .017, .05, .011, -.532, .775, 
+                        -.037, -.02, .047, -.131,.072, -.783, 1.45,
+                        -.034, -.018, -.035, -.139, .071, -.822, 1.68,
+                        -.05, -.023, .016,-.049, .013, -.521, .819),nr=7)
+## R2 of the models
+R2<-  c(0.910,  0.910,  0.940,  0.910,  0.910,  0.940)
+
+##standard error matrix, n.variables x n.models
+se.matrix <- matrix(c(.003, NA, .011, .013, .028, .056, .152, .003, NA, .012, .014, .029, .059, .171, .003, NA,
+                      .01, .013, .024, .044, .124, .003, .005, .011, .013, .028, .055, .152, .003, .005, .021, .014,
+                      .029, .059, .17, .003,.006, .01, .013, .024, .044, .127),nr=7)
+
+##variable names
+coef.vec.1<- c(0.18, -0.19,-0.39,-0.09, NA, 0.04,-0.86, 0.39,-3.76, -1.61,
+    -0.34, -1.17, -1.15,-1.52, -1.66, -1.34,-2.89,-1.88,-1.08, 0.20)
+se.vec.1 <-  c(0.22, 0.22, 0.18,.29, NA, 0.08,0.26,0.29,0.36,.19,0.19, 0.22,
+    0.22,0.25,0.28,0.32,0.48, 0.43,0.41, 0.20)
+coef.vec.2 <-  c(0.27,-0.19, NA, NA, 0.005, 0.04,-0.98,-.36,-3.66, -1.59,
+     -0.45, -1.24, -1.04, -1.83, -1.82, -1.21, -2.77, -1.34, -0.94, 0.13)
+se.vec.2 <- c(0.22,0.24, NA, NA, 0.004, 0.09 , .31 , .30 , .37 , .21 , .21 , .24 , .24,
+     .29 , .32 , .33 , .49 , .46 , .49 , .26)
+var.names <- c("Zombie" , "SMD Only", "PR Only", "Costa Rican in PR", 
+    "Vote Share Margin", "Urban-Rural Index","No Factional\nMembership",
+    "Legal Professional", "1st Term", "2nd Term", "4th Term",
+    "5th Term","6th Term","7th Term","8th Term","9th Term","10th Term",
+    "11th Term","12th Term", "Constant")
+
+y.axis <- length(var.names):1#create indicator for y.axis, descending so that R orders vars from top to bottom on y-axis
+adjust <- .15 #create object that we will use to adjust points and lines up and down to distinguish between models
+    
+#pdf("pekkanen_fig.pdf", height = 8, width = 7) #open pdf device
+#png("pekkanen_fig.png", height = 700, width = 600)
+layout(matrix(c(2,1),1,2), #in order to add variable categories and braces to left side of plot, 
+    widths = c(1.5, 5))#we use layout command, create a small second panel on left side.
+                #using c(2,1) in matrix command tells R to create right panel 1st
+#layout.show(2) #can use this command to check results of layout command (but it must be commented out when creating PDF).
+
+par(mar=c(2,8,.5,1), lheight = .8)#set margins for regression plot
+plot(coef.vec.1, y.axis+adjust, type = "p", axes = F, xlab = "", ylab = "", pch = 19, cex = 1.2, #plot model 1 coefs using black points (pch = 19, default = black), adding the "adjust amount" to the y.axis indicator to move points up
+    xlim = c(min((coef.vec.1-qnorm(.975)*se.vec.1 -.1), (coef.vec.2-qnorm(.975)*se.vec.2 -.1), na.rm = T), #set xlims at mins and maximums (from both models) of confidence intervals, plus .1 to leave room at ends of plots
+    max((coef.vec.1+qnorm(.975)*se.vec.1 -.1), (coef.vec.2+qnorm(.975)*se.vec.2 -.1), na.rm = T)),  #use na.rm=T since vectors have missing values
+    ylim = c(min(y.axis), max(y.axis)), main = "")
+axis(1,at = seq(-4,1, by = 1), label = seq(-4,1, by = 1), mgp = c(2,.8,1), cex.axis = 1.3)#add x-axis and labels; "pretty" creates a sequence of  equally spaced nice values that cover the range of the values in 'x'-- in this case, integers
+axis(2, at = y.axis, label = var.names, las = 1, tick = T, cex.axis =1.3)#add y-axis and labels; las = 1 makes labels perpendicular to y-axis
+#axis(3,pretty(coef.vec.1, 3))#same as x-axis, but on top axis 
+abline(h = y.axis, lty = 2, lwd = .5, col = "light grey")#draw light dotted line at each variable for dotplot effect
+#box(bty="l")#draw box around plot
+segments(coef.vec.1-qnorm(.975)*se.vec.1, y.axis+adjust, coef.vec.1+qnorm(.975)*se.vec.1, y.axis+adjust, lwd =  1.3)#draw lines connecting 95% confidence intervals
+#for tick marks indicating 90% ci's use following 2 lines:
+#segments(coef.vec.1-qnorm(.95)*se.vec.1, y.axis+adjust -.035, coef.vec.1-qnorm(.95)*se.vec.1, y.axis+adjust +.035, lwd = 1.1)#draw vertical tick marks at 90% 
+#segments(coef.vec.1+qnorm(.95)*se.vec.1, y.axis+adjust -.035, coef.vec.1+qnorm(.95)*se.vec.1, y.axis+adjust +.035, lwd = 1.1)   #confidence intervals
+abline(v=0, lty = 2) # draw dotted line through 0 for reference line for null significance hypothesis testing
+
+#add 2nd model
+    #because we are using white points and do want the lines to go "through" points rather than over them
+        #we draw lines first and the overlay points
+segments(coef.vec.2-qnorm(.975)*se.vec.2, y.axis-adjust, coef.vec.2+qnorm(.975)*se.vec.2, y.axis-adjust, lwd =  1.3)#draw lines connecting 95% confidence intervals
+#for tick marks indicating 90% ci's use following 2 lines:
+#segments(coef.vec.2-qnorm(.95)*se.vec.2, y.axis-adjust -.035, coef.vec.2-qnorm(.95)*se.vec.2, y.axis-adjust +.035, lwd = 1.1)#draw vertical tick marks at 90% 
+#segments(coef.vec.2+qnorm(.95)*se.vec.2, y.axis-adjust -.035, coef.vec.2+qnorm(.95)*se.vec.2, y.axis-adjust +.035, lwd = 1.1)  #confidence intervals
+points(coef.vec.2, y.axis-adjust, pch = 21, cex = 1.2, bg = "white" ) #add point estimates for 2nd model; pch = 21 uses for overlay points, and "white" for white color
+
+#add legend (manually) to identify which dots denote model 1 and which denote model 2
+#legend(-4.5, 20, c("Model 1", "Model 2"), pch = c(19,21),bty = "n")
+points(-4, 19.5, pch = 19, cex  = 1.2)
+text(-3.7, 19.5, "Model 1", adj = 0,cex  = 1.2)#left-justify text using adj  = 0
+points(-4, 18.5, pch = 21,cex  = 1.2)
+text(-3.7, 18.5, "Model 2", adj = 0,cex  = 1.2)#left-justify text using adj  = 0
+
+
+############################################################################
+
+#Create Variable Categories and Braces to go in 2nd plot
+
+par(mar=c(2,0,.5,0)) #set margins--- bottom (1st number) and top (3rd number) must be the same as in 1st plot
+plot(seq(0,1,length=length(var.names)), y.axis, type = "n", axes = F,  xlab = "", ylab = "")#call empty plot using type="n"
+    #use a sequence of length 20 so that x and y have same length
+
+left.side <- .55#use this to manipulate how far segments are from y-axis
+    #note:  getting braces and text in proper place requires much trial and error
+segments(left.side,20.2,left.side,16.5) #add brackets around MP Type vars
+segments(left.side,20.2,left.side+.15,20.2) #1 segment at a time
+segments(left.side,16.5,left.side+.15,16.5)
+text(.4, 18.5, "MP Type", srt = 90, font = 3, cex  = 1.5)#Add text; "srt" rotates to 90 degrees, font = 3 == italics
+
+#don't add "Electoral Strength" since it's only 1 variable
+
+segments(left.side,15.5,left.side,12.3) #add brackets around "Misc Controls"
+segments(left.side,15.5,left.side+.15,15.5) #one segment at a time
+segments(left.side,12.3,left.side+.15,12.3)
+text(.3, 14, "Misc\nControls", srt = 90, font = 3, cex  = 1.5)#Add text; "srt" rotates to 90 degrees, font = 3 == italics
+
+segments(left.side,12.15,left.side,1.8) #add brackets around "Seniority"
+segments(left.side,12.15,left.side+.15,12.15)   #one segment at a time
+segments(left.side,1.8,left.side+.15,1.8)
+text(.4, 7, "Seniority", srt = 90, font = 3, cex  = 1.5)#Add text; "srt" rotates to 90 degrees, font = 3 == italics
+
+```
+
+Redone using `dotwhisker`: 
+
+```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
+#install.packages("dotwhisker") # uncomment to install from CRAN
+library(dotwhisker)
+
+# Format data as tidy dataframe
+results_df <- rbind(data.frame(term=var.names, estimate=coef.vec.1,
+                               std.error=se.vec.1, model="Model 1"),
+                    data.frame(term=var.names, estimate=coef.vec.2,
+                               std.error=se.vec.2, model="Model 2"))
+
+# Draw dot-and-whisker plot
+p <- results_df %>% dwplot + theme_bw() +
+    theme(legend.justification=c(0, 1), legend.position=c(0, 1),
+           legend.title = element_blank()) + xlab("Logit Coefficients") +
+    ggtitle("Electoral Incentives and LDP Post Allocation\nPekkanen, Nyblade, and Krause (2006)\nvia Kastellec and Leoni (2007)")
+
+# Add brackets
+grid.draw(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"), 
+                 c("Misc Controls", "Urban-Rural Index", "Legal Professional"),
+                 c("Seniority", "1st Term", "12th Term"))))
+```
+
+### Figure 8: Using "Small Multiple" Plots to Present Regression Results from Several Models.
+
+
+
+## Affiliation
+
+Frederick Solt
+
+Department of Political Science,
+
+University of Iowa, 
+
+324 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <frederick-solt@uiowa.edu>
+
+Website: <http://myweb.uiowa.edu/fsolt>
+
+<br></br>
+
+Yue Hu
+
+Department of Political Science,
+
+University of Iowa, 
+
+313 Schaeffer Hall,
+
+20 E Washington St, Iowa City, IA, 52242
+
+Email: <yue-hu-1@uiowa.edu>
+
+Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
+
+## References
