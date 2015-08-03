@@ -7,7 +7,7 @@ Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression models saved in tidy data frames.
 BugReports: https://github.com/fsolt/dotwhisker/issues
-Depends: R (>= 3.2.1), ggplot2,dplyr, gridExtra, gtable
+Depends: R (>= 3.2.0), ggplot2,dplyr, gridExtra, gtable
 Imports:
     grid,
     stats

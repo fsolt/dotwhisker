@@ -15,7 +15,8 @@
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
-#' @import ggplot2 dplyr
+#' @import ggplot2
+#' @importFrom dplyr left_join
 #' @importFrom stats qnorm
 #'
 #' @examples
@@ -57,16 +58,20 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
 
   n_vars <- length(unique(df$term))
   model <- NULL
-  dodge_size = dodge_size
+  dodge_size <- dodge_size
 
-  if ("model" %in% names(df)) n_models <- length(unique(df$model)) else {
+  if ("model" %in% names(df)){
+    n_models <- length(unique(df$model))
+  } else {
     if (length(df$term) == n_vars) {
       df$model <- 1
       n_models <- 1
-    } else stop("Please add a variable named \'model\' to distinguish different models")
+    } else {
+      stop("Please add a variable named 'model' to distinguish different models")
+    }
   }
 
-  m_names <- unique(df$model)
+  m_names <- unique(df$model) # You know this is never called, right?
   v_names <- df$term
 
   y_ind <- rep(seq(n_vars, 1), n_models)
@@ -76,7 +81,9 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
   df$estimate <- estimate
   df$std.error <- as.numeric(df$std.error)
 
-  if(alpha < 0 | alpha > 1) stop("Value of alpha for the confidential intervals should be between 0 and 1.")
+  if(alpha < 0 | alpha > 1){
+    stop("Value of alpha for the confidential intervals should be between 0 and 1.")
+  }
 
   ci <- 1 - alpha/2
   lb <- c(df$estimate - qnorm(ci) * df$std.error)
@@ -84,13 +91,18 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
 
   df <- cbind(df, lb, ub)
 
-  if(n_models == 1) shift <- 0 else
-    shift <- seq(dodge_size, -dodge_size, length.out=n_models)
+  if(n_models == 1){
+    shift <- 0
+  } else {
+    shift <- seq(dodge_size, -dodge_size, length.out = n_models)
+  }
 
   shift_index <- data.frame(model = unique(df$model), shift, stringsAsFactors = FALSE)
   df <- dplyr::left_join(df, shift_index)
 
-  if (length(y_ind)!=length(v_names)) v_names <- unique(v_names)
+  if(length(y_ind) != length(v_names)) {
+    v_names <- unique(v_names)
+  }
 
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
       geom_point(na.rm = TRUE) +
@@ -102,7 +114,9 @@ dwplot <- function(df, alpha = .05, dodge_size = .15) {
       coord_cartesian(ylim=c(.5, n_vars+.5)) +
       ylab("")
 
-  if (!"model" %in% names(df) | length(unique(df$model)) == 1) p <- p + theme(legend.position="none")
-
+  if (!"model" %in% names(df) | length(unique(df$model)) == 1){
+    p <- p + theme(legend.position="none")
+  }
+  
   return(p)
 }
