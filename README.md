@@ -1,3 +1,6 @@
+[![CRAN version](http://www.r-pkg.org/badges/version/dotwhisker)](https://cran.r-project.org/web/packages/interplot/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker)
+
+------------------------------------------------------------------------
 dotwhisker
 =========
 
