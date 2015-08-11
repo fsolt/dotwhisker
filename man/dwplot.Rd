@@ -11,7 +11,7 @@ dwplot(x, alpha = 0.05, dodge_size = 0.15)
 
 \item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
 
-\item{dodge_size}{A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small.}
+\item{dodge_size}{A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot.}
 }
 \value{
 The function returns a \code{ggplot} object.
