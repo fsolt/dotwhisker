@@ -7,7 +7,7 @@
 relabel_y_axis(x)
 }
 \arguments{
-\item{x}{A vector of labels for predictors in a dot-whisker plot, listed from top to bottom}
+\item{x}{A vector of labels for predictors, listed from top to bottom}
 }
 \description{
 \code{relabel_y_axis} is a convenience function for relabeling the predictors of a dot-whisker plot
@@ -15,6 +15,6 @@ relabel_y_axis(x)
 \examples{
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-p <- dwplot(m1) + relabel_y_axis(c("Weight", "Cylinders", "Displacement"))
+p <- dwplot(m1) + relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement"))
 }
 
