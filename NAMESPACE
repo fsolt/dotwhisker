@@ -3,6 +3,7 @@
 export(add_brackets)
 export(by_2sd)
 export(dwplot)
+export(relabel_y_axis)
 import(ggplot2)
 import(grid)
 import(gridExtra)
