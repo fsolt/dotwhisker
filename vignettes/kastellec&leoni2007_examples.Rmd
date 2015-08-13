@@ -199,6 +199,7 @@ results_df <- rbind(data.frame(term=var.names, estimate=coef.vec.1,
 p <- results_df %>% dwplot + theme_bw() +
     theme(legend.justification=c(0, 1), legend.position=c(0, 1),
            legend.title = element_blank()) + xlab("Logit Coefficients") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Electoral Incentives and LDP Post Allocation\nPekkanen, Nyblade, and Krause (2006)\nvia Kastellec and Leoni (2007)")
 
 # Add brackets
