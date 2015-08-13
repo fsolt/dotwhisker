@@ -112,7 +112,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   df$estimate <- as.numeric(df$estimate)
   df$std.error <- as.numeric(df$std.error)
 
-  if(alpha < 0 | alpha > 1){
+  if (alpha < 0 | alpha > 1) {
     stop("Value of alpha for the confidential intervals should be between 0 and 1.")
   }
 
@@ -124,7 +124,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
       df <- cbind(df, lb, ub)
   }
 
-  if(n_models == 1){
+  if (n_models == 1) {
     shift <- 0
   } else {
     shift <- seq(dodge_size, -dodge_size, length.out = n_models)
@@ -133,7 +133,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   shift_index <- data.frame(model = mod_names, shift, stringsAsFactors = FALSE)
   df <- dplyr::left_join(df, shift_index)
 
-  if(length(y_ind) != length(var_names)) {
+  if (length(y_ind) != length(var_names)) {
     var_names <- unique(var_names)
   }
 
