@@ -219,7 +219,8 @@ data(diamonds)
 
 # Estimate models for many subsets of data
 by_clarity <- diamonds %>% group_by(clarity) %>%
-    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% ungroup %>% rename(model=clarity)
+    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% ungroup %>%
+    rename(model=clarity)
 
 # Extract the results for one variable
 carat_results <- by_clarity %>% filter(term=="carat") %>% dplyr::select(-term) %>%
