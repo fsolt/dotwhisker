@@ -61,7 +61,7 @@
 #' @export
 
 dwplot <- function(x, alpha = .05, dodge_size = .15) {
-
+  # If x is model object(s), convert to a tidy data.frame
   if (!is.data.frame(x)) {
     if (is.list(x)) {
       for (i in seq(length(x))) {
@@ -80,6 +80,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   model <- NULL
   dodge_size <- dodge_size
 
+  # Confirm number of models, get model names
   if ("model" %in% names(df)) {
     n_models <- length(unique(df$model))
   } else {
@@ -90,7 +91,6 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
       stop("Please add a variable named 'model' to distinguish different models")
     }
   }
-
   mod_names <- unique(df$model)
 
   # Add rows of NAs for variables not included in a particular model
@@ -104,18 +104,21 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   }
   df <- dft
 
+  # Prep arguments to ggplot
   var_names <- df$term
 
   y_ind <- rep(seq(n_vars, 1), n_models)
-  df$y_ind  <- y_ind
+  df$y_ind <- y_ind
 
   df$estimate <- as.numeric(df$estimate)
   df$std.error <- as.numeric(df$std.error)
 
+  # Confirm alpha within bounds
   if (alpha < 0 | alpha > 1) {
     stop("Value of alpha for the confidential intervals should be between 0 and 1.")
   }
 
+  # Generate lower and upper bound if not included in results
   if ((!"lb" %in% names(df)) | (!"ub" %in% names(df))) {
       ci <- 1 - alpha/2
       lb <- c(df$estimate - qnorm(ci) * df$std.error)
@@ -124,19 +127,21 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
       df <- cbind(df, lb, ub)
   }
 
+  # Calculate y-axis shift for plotting multiple models
   if (n_models == 1) {
     shift <- 0
   } else {
     shift <- seq(dodge_size, -dodge_size, length.out = n_models)
   }
-
   shift_index <- data.frame(model = mod_names, shift, stringsAsFactors = FALSE)
   df <- dplyr::left_join(df, shift_index)
 
+  # Catch difference between single and multiple models
   if (length(y_ind) != length(var_names)) {
     var_names <- unique(var_names)
   }
 
+  # Make the plot
   p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
       geom_point(na.rm = TRUE) +
       geom_segment(aes(x = lb,
@@ -147,6 +152,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
       coord_cartesian(ylim=c(.5, n_vars+.5)) +
       ylab("")
 
+  # Omit the legend if there is only one model
   if (!"model" %in% names(df) | length(mod_names) == 1){
     p <- p + theme(legend.position="none")
   }
