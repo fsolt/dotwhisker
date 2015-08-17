@@ -62,19 +62,7 @@
 
 dwplot <- function(x, alpha = .05, dodge_size = .15) {
   # If x is model object(s), convert to a tidy data.frame
-  if (!is.data.frame(x)) {
-    if (is.list(x)) {
-      for (i in seq(length(x))) {
-        dft <- broom::tidy(x[[i]])
-        dft$model <- paste("Model", i)
-        if (i==1) df <- dft else df <- rbind(df, dft)
-      }
-    } else {
-      df <- broom::tidy(x)
-    }
-  } else {
-      df <- x
-  }
+  df <- dw_tidy(x)
 
   n_vars <- length(unique(df$term))
   model <- NULL
@@ -158,4 +146,21 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   }
 
   return(p)
+}
+
+dw_tidy <- function(x) {
+    if (!is.data.frame(x)) {
+        if (is.list(x)) {
+            for (i in seq(length(x))) {
+                dft <- broom::tidy(x[[i]])
+                dft$model <- paste("Model", i)
+                if (i==1) df <- dft else df <- rbind(df, dft)
+            }
+        } else {
+            df <- broom::tidy(x)
+        }
+    } else {
+        df <- x
+    }
+    return(df)
 }
