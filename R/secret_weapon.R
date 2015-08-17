@@ -33,7 +33,7 @@
 #' @export
 
 secret_weapon <- function(x, var=NULL, alpha=.05) {
-    # If x is model object(s), convert to a tidy data.frame
+    # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
     n_vars <- length(unique(df$term))
