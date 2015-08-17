@@ -5,6 +5,8 @@
 #' @param df A tidy data.frame to be passed to \code{\link[dotwhisker]{dwplot}}
 #' @param replace A named character vector, with new values as values, and old values as names
 #'
+#' @return The function returns a tidy data.frame.
+#'
 #' @examples
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
