@@ -1,13 +1,21 @@
-#' Format Regression Results for a 'Secret Weapon' Plot
+#' Generate a 'Secret Weapon' Plot
 #'
-#' \code{secret_weapon} is a function for formatting regression results to be passed to \code{\link[dotwhisker]{dwplot}} to generate a 'secret weapon' plot
+#' \code{secret_weapon} is a function for plotting the results of multiple regression models as a 'secret weapon' plot
 #'
 #' @param x Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
+#' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #'
 #' @details
 #' Andrew Gelman has coined the term \href{http://andrewgelman.com/2005/03/07/the_secret_weap/}{"the secret weapon"} for dot-and-whisker plots that compare the estimated coefficients for a single predictor across many models or datasets.
-#' \code{secret_weapon} takes a tidy data.frame of regression results suitable for passing to \code{\link[dotwhisker]{dwplot}} or a list of model objects and reformats these results so that, when passed to \code{\link[dotwhisker]{dwplot}}, the result will be a dot-and-whisker plot of the results of a single variable across the multiple models.
+#' \code{secret_weapon} takes a tidy data.frame of regression results or a list of model objects and generates a dot-and-whisker plot of the results of a single variable across the multiple models.
+#'
+#' Tidy data.frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
+#' In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
+#'
+#' Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
+#'
+#' @return The function returns a \code{ggplot} object.
 #'
 #' @examples
 #' # Estimate models across many samples, put results in a tidy data.frame
@@ -24,21 +32,9 @@
 #'
 #' @export
 
-secret_weapon <- function(x, var) {
+secret_weapon <- function(x, var=NULL, alpha=.05) {
     # If x is model object(s), convert to a tidy data.frame
-    if (!is.data.frame(x)) {
-        if (is.list(x)) {
-            for (i in seq(length(x))) {
-                dft <- broom::tidy(x[[i]])
-                dft$model <- paste("Model", i)
-                if (i==1) df <- dft else df <- rbind(df, dft)
-            }
-        } else {
-            df <- broom::tidy(x)
-        }
-    } else {
-        df <- x
-    }
+    df <- dw_tidy(x)
 
     n_vars <- length(unique(df$term))
 
@@ -55,7 +51,8 @@ secret_weapon <- function(x, var) {
     mod_names <- unique(df$model)
 
     df <- df %>% filter(term == var) %>% select(-term) %>% rename(term = model)
-    return(df)
+    p <- df %>% dwplot(alpha = alpha)
+    return(p)
 }
 
 
