@@ -11,6 +11,9 @@ relabel_predictors(df, replace = NULL)
 
 \item{replace}{A named character vector, with new values as values, and old values as names}
 }
+\value{
+The function returns a tidy data.frame.
+}
 \description{
 \code{relabel_predictors} is a convenience function for relabeling the predictors in a tidy data.frame to be passed to \code{\link[dotwhisker]{dwplot}}
 }
