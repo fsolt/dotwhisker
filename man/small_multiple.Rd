@@ -4,7 +4,7 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, var = NULL, alpha = 0.05)
+small_multiple(x, alpha = 0.05)
 }
 \arguments{
 \item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
@@ -26,13 +26,24 @@ In place of \code{std.error} one may substitute \code{lb} (the lower bounds of t
 
 Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
 }
+\note{
+Ideally, the y-axes of small multiple plots would vary by predictor, but small_multiple does not currently support this behavior.
+}
 \examples{
-# Estimate models across many samples, put results in a tidy data.frame
-by_clarity <- diamonds \%>\% group_by(clarity) \%>\%
- do(tidy(lm(price ~ carat + cut + color, data = .))) \%>\%
- ungroup \%>\% rename(model=clarity)
+# Generate a tidy data.frame of regression results from six models
+m <- list()
+ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
+m[[1]] <- lm(mpg ~ wt, data = mtcars)
+m123456_df <- m[[1]] \%>\% tidy \%>\% by_2sd(mtcars) \%>\%
+ filter(term != "(Intercept)") \%>\% mutate(model = "Model 1")
 
-# Format for a 'secret weapon' plot of the results of diamond size, make the plot
-secret_weapon(by_clarity, "carat") \%>\% dwplot
+for (i in 2:6) {
+ m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
+ m123456_df <- rbind(m123456_df, m[[i]] \%>\% tidy \%>\% by_2sd(mtcars) \%>\%
+   filter(term != "(Intercept)") \%>\% mutate(model = paste("Model", i)))
+}
+
+# Generate a 'small multiple' plot
+small_multiple(m123456_df)
 }
 

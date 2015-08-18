@@ -16,21 +16,31 @@
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
-#' @examples
-#' # Estimate models across many samples, put results in a tidy data.frame
-#' by_clarity <- diamonds %>% group_by(clarity) %>%
-#'  do(tidy(lm(price ~ carat + cut + color, data = .))) %>%
-#'  ungroup %>% rename(model=clarity)
+#' @note Ideally, the y-axes of small multiple plots would vary by predictor, but small_multiple does not currently support this behavior.
 #'
-#' # Format for a 'secret weapon' plot of the results of diamond size, make the plot
-#' secret_weapon(by_clarity, "carat") %>% dwplot
+#' @examples
+#' # Generate a tidy data.frame of regression results from six models
+#' m <- list()
+#' ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
+#' m[[1]] <- lm(mpg ~ wt, data = mtcars)
+#' m123456_df <- m[[1]] %>% tidy %>% by_2sd(mtcars) %>%
+#'  filter(term != "(Intercept)") %>% mutate(model = "Model 1")
+#'
+#' for (i in 2:6) {
+#'  m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
+#'  m123456_df <- rbind(m123456_df, m[[i]] %>% tidy %>% by_2sd(mtcars) %>%
+#'    filter(term != "(Intercept)") %>% mutate(model = paste("Model", i)))
+#' }
+#'
+#' # Generate a 'small multiple' plot
+#' small_multiple(m123456_df)
 #'
 #'
 #' @importFrom dplyr mutate rename arrange
 #'
 #' @export
 
-small_multiple <- function(x, var=NULL, alpha=.05) {
+small_multiple <- function(x, alpha=.05) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
@@ -48,12 +58,13 @@ small_multiple <- function(x, var=NULL, alpha=.05) {
     }
     mod_names <- unique(df$model)
 
-    p <- df %>% add_NAs(n_models) %>%
+    df <- df %>% add_NAs(n_models, mod_names) %>%
         mutate(term = factor(term, levels = unique(term)),
                model = factor(model, levels = unique(model))) %>%
         rename(predictor = term, term = model) %>%
-        mutate(model = 1) %>% arrange(predictor, desc(term)) %>%
-        dwplot(alpha = alpha) + facet_grid(predictor~.) + coord_flip()
+        mutate(model = 1) %>% arrange(predictor, desc(term))
+
+    p <- dwplot(df, alpha = alpha) + facet_grid(predictor~.) + coord_flip()
     return(p)
 }
 
