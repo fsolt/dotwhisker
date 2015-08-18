@@ -2,7 +2,7 @@
 % Please edit documentation in R/secret_weapon.R
 \name{secret_weapon}
 \alias{secret_weapon}
-\title{Format Regression Results for a 'Secret Weapon' Plot}
+\title{Generate a 'Secret Weapon' Plot of Regression Results from Multiple Models}
 \usage{
 secret_weapon(x, var = NULL, alpha = 0.05)
 }
@@ -13,12 +13,20 @@ secret_weapon(x, var = NULL, alpha = 0.05)
 
 \item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
 }
+\value{
+The function returns a \code{ggplot} object.
+}
 \description{
-\code{secret_weapon} is a function for formatting regression results to be passed to \code{\link[dotwhisker]{dwplot}} to generate a 'secret weapon' plot
+\code{secret_weapon} is a function for plotting regression results of multiple models as a 'secret weapon' plot
 }
 \details{
 Andrew Gelman has coined the term \href{http://andrewgelman.com/2005/03/07/the_secret_weap/}{"the secret weapon"} for dot-and-whisker plots that compare the estimated coefficients for a single predictor across many models or datasets.
-\code{secret_weapon} takes a tidy data.frame of regression results suitable for passing to \code{\link[dotwhisker]{dwplot}} or a list of model objects and reformats these results so that, when passed to \code{\link[dotwhisker]{dwplot}}, the result will be a dot-and-whisker plot of the results of a single variable across the multiple models.
+\code{secret_weapon} takes a tidy data.frame of regression results or a list of model objects and generates a dot-and-whisker plot of the results of a single variable across the multiple models.
+
+Tidy data.frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
+In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
+
+Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
 }
 \examples{
 # Estimate models across many samples, put results in a tidy data.frame
@@ -26,7 +34,7 @@ by_clarity <- diamonds \%>\% group_by(clarity) \%>\%
  do(tidy(lm(price ~ carat + cut + color, data = .))) \%>\%
  ungroup \%>\% rename(model=clarity)
 
-# Format for a 'secret weapon' plot of the results of diamond size, make the plot
-secret_weapon(by_clarity, "carat") \%>\% dwplot
+# Generate a 'secret weapon' plot of the results of diamond size
+secret_weapon(by_clarity, "carat")
 }
 

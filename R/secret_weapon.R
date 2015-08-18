@@ -23,8 +23,8 @@
 #'  do(tidy(lm(price ~ carat + cut + color, data = .))) %>%
 #'  ungroup %>% rename(model=clarity)
 #'
-#' # Format for a 'secret weapon' plot of the results of diamond size, make the plot
-#' secret_weapon(by_clarity, "carat") %>% dwplot
+#' # Generate a 'secret weapon' plot of the results of diamond size
+#' secret_weapon(by_clarity, "carat")
 #'
 #'
 #' @importFrom broom tidy
