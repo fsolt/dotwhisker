@@ -82,7 +82,9 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   mod_names <- unique(df$model)
 
   # Add rows of NAs for variables not included in a particular model
-  df <- add_NAs(df, x)
+  if (n_models > 1) {
+    df <- add_NAs(df, n_models)
+  }
 
   # Prep arguments to ggplot
   var_names <- df$term
