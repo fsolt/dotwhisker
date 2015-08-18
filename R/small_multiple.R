@@ -48,30 +48,12 @@ small_multiple <- function(x, var=NULL, alpha=.05) {
     }
     mod_names <- unique(df$model)
 
-    df <- df %>%
+    p <- df %>% add_NAs(n_models) %>%
         mutate(term = factor(term, levels = unique(term)),
                model = factor(model, levels = unique(model))) %>%
         rename(predictor = term, term = model) %>%
-        mutate(model = 1) %>% arrange(predictor, desc(term))
-    p <- df %>% dwplot(alpha = alpha)
+        mutate(model = 1) %>% arrange(predictor, desc(term)) %>%
+        dwplot(alpha = alpha) + facet_grid(predictor~.) + coord_flip()
     return(p)
 }
-
-#
-# m123456_df <- m123456_df %>%
-#     mutate(term = factor(term, levels = ordered_vars),
-#            model = factor(model, levels = paste("Model", 1:6))) %>%
-#     rename(predictor = term, term = model) %>%
-#     mutate(model = 1) %>% arrange(predictor, desc(term))
-#
-# levels(m123456_df$predictor) <- c("Weight", "Cylinders", "Displacement",
-#                                   "Gears", "Horsepower", "Manual") # For facet labels
-#
-# # Plot using small multiples
-# dwplot(m123456_df) + facet_grid(predictor~.) + coord_flip() +
-#     theme_bw() + xlab("Coefficient Estimate") +
-#     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-#     ggtitle("Predicting Gas Mileage") +
-#     theme(plot.title = element_text(face = "bold"), legend.position = "none",
-#           axis.text.x  = element_text(angle = 60, hjust = 1))
 
