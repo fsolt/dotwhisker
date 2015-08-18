@@ -67,4 +67,3 @@ small_multiple <- function(x, alpha=.05) {
     p <- dwplot(df, alpha = alpha) + facet_grid(predictor~.) + coord_flip()
     return(p)
 }
-

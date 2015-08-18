@@ -212,70 +212,54 @@ grid.draw(g456)  # to display
 # dev.off()
 ```
 
-An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with `dwplot`.  Starting with a tidy data frame that includes results from all of the models, one subsets only the results for the predictor of interest, drops the old `term` variable, and renames the existing `model` variable to `term`.  Then one proceeds as usual.
+An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with the `secret_weapon` function.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 data(diamonds)
 
-# Estimate models for many subsets of data
+# Estimate models for many subsets of data, put results in a tidy data.frame
 by_clarity <- diamonds %>% group_by(clarity) %>%
-    do(tidy(lm(price ~ carat + cut + color, data = .))) %>% ungroup %>%
-    rename(model=clarity)
-
-# Extract the results for one variable
-carat_results <- by_clarity %>% filter(term=="carat") %>% dplyr::select(-term) %>%
-    rename(term = model)
+ do(tidy(lm(price ~ carat + cut + color, data = .))) %>%
+ ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
-dwplot(carat_results) +
+secret_weapon(by_clarity, "carat") +
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))
 ```
 
-A final means of presenting many models' results at once, in a particularly compact format, is the "small multiple" plot. Small multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots [see @Kastellec2007, 766].  Again starting with a tidy data frame that includes results from all of the models, to prepare to create a small multiple plot with `dwplot`, one must first rename the `term` variable (we will use the new name `predictor`), then rename the `model` variable `term`, create a new `model` variable equal to 1, and finally sort the data by `predictor` and, in descending order, `term` (one may also wish the convert the variable names and model names to factors for labeling purposes).  Passing this data frame to `dwplot` and then adding `facet_grid(predictor~.) + coord_flip()` will generate a small multiple plot.
+A final means of presenting many models' results at once, in a particularly compact format, is the "small multiple" plot. Small multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots [see @Kastellec2007, 766].  The `small_multiple` function makes such plots simple.  Here, we pass a tidy data.frame of six models to the function so as to be able to rescale the coefficients and to exclude the intercept, but the function can accept a list of model objects as well.
 
 ```{r fig.width= 2.5, fig.height=6.5, warning=FALSE, message=FALSE}
-# Estimate six models, putting the results in a list, and
-# transfer the list to a tidy data frame with NA rows for excluded variables
-
-all_vars <- c("wt", "cyl", "disp", "gear", "hp", "am") 
-
-add_NAs <- function(m, all_vars) {
-    not_in <- setdiff(all_vars, m$term)
-    for (i in seq(not_in))
-        m <- rbind(m, c(not_in[i], rep(NA, times = ncol(m) - 1)))
-    m
-}
-
+# Generate a tidy data.frame of regression results from six models
 m <- list()
-m[[1]] <- lm(mpg ~ wt, data = mtcars)
-m123456_df <- m[[1]] %>% prep %>% add_NAs(all_vars) %>% 
-    mutate(model = "Model 1")
-
+ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
+m[[1]] <- lm(mpg ~ wt, data = mtcars) 
+m123456_df <- m[[1]] %>% tidy %>% by_2sd(mtcars) %>%
+  filter(term != "(Intercept)") %>% mutate(model = "Model 1")
 for (i in 2:6) {
-    m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
-    m123456_df <- rbind(m123456_df, m[[i]] %>% prep %>% add_NAs(all_vars) %>%
-                            mutate(model = paste("Model", i)))
+  m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
+  m123456_df <- rbind(m123456_df, m[[i]] %>% tidy %>% by_2sd(mtcars) %>%
+    filter(term != "(Intercept)") %>% mutate(model = paste("Model", i)))
 }
 
-# Format the tidy data frame for a small multiple plot
+# Relabel predictors (will appear as facet labels)
 m123456_df <- m123456_df %>% 
-    mutate(term = factor(term, levels = ordered_vars),
-           model = factor(model, levels = paste("Model", 1:6))) %>%
-    rename(predictor = term, term = model) %>% 
-    mutate(model = 1) %>% arrange(predictor, desc(term)) 
-
-levels(m123456_df$predictor) <- c("Weight", "Cylinders", "Displacement",
-                                  "Gears", "Horsepower", "Manual") # For facet labels
-
-# Plot using small multiples
-dwplot(m123456_df) + facet_grid(predictor~.) + coord_flip() +
-    theme_bw() + xlab("Coefficient Estimate") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-    ggtitle("Predicting Gas Mileage") +
-    theme(plot.title = element_text(face = "bold"), legend.position = "none",
-          axis.text.x  = element_text(angle = 60, hjust = 1)) 
+  relabel_predictors(c(wt = "Weight",
+                     cyl = "Cylinder",
+                     disp = "Displacement",
+                     hp = "Horsepower",
+                     gear = "Gears",
+                     am = "Manual"))
+ 
+# Generate a 'small multiple' plot
+small_multiple(m123456_df) +
+  theme_bw() + xlab("Coefficient Estimate") +
+  geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+  ggtitle("Predicting Gas Mileage") +
+  theme(plot.title = element_text(face = "bold"), legend.position = "none",
+    axis.text.x  = element_text(angle = 60, hjust = 1)) 
 
 ```
 
