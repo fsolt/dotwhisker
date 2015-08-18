@@ -1,6 +1,6 @@
-#' Generate a 'Secret Weapon' Plot
+#' Generate a 'Secret Weapon' Plot of Regression Results from Multiple Models
 #'
-#' \code{secret_weapon} is a function for plotting the results of multiple regression models as a 'secret weapon' plot
+#' \code{secret_weapon} is a function for plotting regression results of multiple models as a 'secret weapon' plot
 #'
 #' @param x Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
