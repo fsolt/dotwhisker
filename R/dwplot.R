@@ -83,7 +83,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
 
   # Add rows of NAs for variables not included in a particular model
   if (n_models > 1) {
-    df <- add_NAs(df, n_models)
+    df <- add_NAs(df, n_models, mod_names)
   }
 
   # Prep arguments to ggplot
@@ -159,7 +159,7 @@ dw_tidy <- function(x) {
     return(df)
 }
 
-add_NAs <- function(df = df, n_models = n_models) {
+add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
     for (i in seq(n_models)) {
         m <- df[df$model==mod_names[[i]], ]
         not_in <- setdiff(unique(df$term), m$term)
