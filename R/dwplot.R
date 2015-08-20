@@ -144,7 +144,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
 
 dw_tidy <- function(x) {
     if (!is.data.frame(x)) {
-        if (is.list(x)) {
+        if (class(x)=="list") {
             for (i in seq(length(x))) {
                 dft <- broom::tidy(x[[i]])
                 dft$model <- paste("Model", i)
