@@ -10,9 +10,9 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2002; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a convenient way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
+Graphs have long been known to be a more compact and effective means of conveying the results of regression models than tables [@Gelman2002; @Kastellec2007], but many researchers continue to list these results in tables. The reason, @Kastellec2007 surmised, is "simply put, it takes much greater effort to produce a quality graph than a table." The `dotwhisker` package provides a quick and easy way to create highly customizable dot-and-whisker plots for presenting and comparing the output of regression models. It can be used to plot estimates of coefficients or other quantities of interest (e.g., predicted probabilities) within a single model or across different models: the estimates are presented as dots and their confidence intervals as whiskers [see @Kastellec2007, 765-767].
 
-Users can easily customize the number of models, the exact variables presented, and the inverval between the compared estimates based on their interests and presenting demands. Moreover, by outputting `ggplot` objects [@Wickham2009], `dotwhisker` allows users to easily further modify their graphs.
+Users can easily customize the content of their plots: presenting multiple models or results for a subset of variables is easy. Moreover, by outputting `ggplot` objects [@Wickham2009], `dotwhisker` allows users to further modify the format of their plots in nearly infinite ways.
 
 This vignette illustrates basic use of `dwplot` for creating dot-and-whisker plots from model objects, more advanced uses of `dwplot` that employ tidy data.frames as input, and finally some popular variations of dot-and-whisker plots that are made easily using other functions in the `dotwhisker` package.
 
@@ -37,40 +37,37 @@ By default, the whiskers span the 95\% confidence interval.  To change the width
 dwplot(m1, alpha = .01)  # using 99% CI
 ```
 
-Plotting the results of more than one regression model is just as easy.  Just pass the model objects to `dwplot` as a list:
+Plotting the results of more than one regression model is just as easy.  Just pass the model objects to `dwplot` as a list.  The `dodge_size` argument is used to adjust the space between the estimates of one variable when multiple models are presented in a single plot.  Its default value will work fine, but more pleasing results can sometimes by achieved by setting it to lower values when the plotted results include a smaller number of predictors or to higher values when many models appear on the same plot.
 
 ```{r fig.width= 7, warning= FALSE, message= FALSE}
 m2 <- update(m1, . ~ . + hp) # add another predictor
 m3 <- update(m2, . ~ . + am) # and another 
 
-dwplot(list(m1, m2, m3))
+dwplot(list(m1, m2, m3), dodge_size = .08)
 ```
 
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
 
 ```{r fig.width= 7, warning= FALSE, message= FALSE}
-dwplot(list(m1, m2, m3)) + 
-    relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Gears",
+dwplot(list(m1, m2, m3),  dodge_size = .08) +
+     relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Gears",
                      "Displacement", "Horsepower", "Manual")) +
-    theme_bw() + xlab("Standardized Coefficient") + ylab("") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-    ggtitle("Predicting Gas Mileage") +
-    theme(plot.title = element_text(face="bold"), legend.position="none") 
+     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+     ggtitle("Predicting Gas Mileage") +
+     theme(plot.title = element_text(face="bold"),
+           legend.justification=c(1, 0), legend.position=c(1, 0),
+           legend.background = element_rect(colour="grey80"),
+           legend.title = element_blank()) 
 ```
 
 Note that providing a character vector to `relabel_y_axis`, a `dotwhisker` function, conveniently renames the predictors from top to bottom.
 
-## Prepare a Data Frame for Graphing
-To omit intercepts, rescale coefficients, etc., no change in the use of `dwplot` is required: one simply modifies the data frame, as described above, that is passed to the function. 
 
-```{r fig.width= 7, warning= FALSE, message= FALSE}
-dwplot(m1_df_sel2)
-```
+## Advanced Use: Plotting Results Stored in a Tidy Data Frame 
+There are many other packages (e.g., `coefplot`) that have the ability to draw dot-and-whisker plots of at least a single set of regression results taking model objects as input. While this is very convenient, it also comes with some severe limitations.  First, many less common model objects are not supported.  Second, rescaling coefficients, reordering them, or just plotting a subset of results is typically impossible.  And third, quantities of interest beyond coefficient estimates cannot be plotted.  The `dotwhisker` package avoids all of these limitations by optionally taking as its input a tidy data frame of estimates drawn from a model object rather than the model object itself.  
 
-
-There are many other packages (e.g., `coefplot`) that have the ability to draw dot-and-whisker plots of at least a single set of regression results taking model objects as input. While this is very convenient, it also comes with some severe limitations.  First, many uncommon model objects are not supported.  Second, rescaling coefficients or plotting a subset of results is typically impossible.  And third, quantities of interest beyond coefficient estimates cannot be plotted.  The `dotwhisker` package avoids all of these limitations by optionally taking as its input a data frame of estimates drawn from a model object rather than the model object itself.  
-
-The valid input object for `dotwhisker` is a data frame including three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. In place of `std.error` one may substitute `lb`, the lower bounds of the confidence intervals of the estimates, and `ub`, the corresponding upper bounds. For many common models, one can use `broom::tidy` [@Robinson2015] to produce such a data frame of estimates (`dwplot` expects a data.frame with the columns `term`, `estimate`, and `std.error` because this is the format of the output produced by `tidy`).  
+That is, the input for `dwplot` may be a data frame that includes three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. In place of `std.error` one may substitute `lb`, the lower bounds of the confidence intervals of the estimates, and `ub`, the corresponding upper bounds. As noted above in passing, `broom::tidy` [@Robinson2015] produces such a data frame of estimates for many common classes of model objects (indeed, `dwplot` was written to expect a data.frame with the columns `term`, `estimate`, and `std.error` because this is the format of the output produced by `tidy`).  
 
 ```{r fig.width=7, message=FALSE, warning=FALSE}
 # regression compatible with tidy
@@ -79,7 +76,37 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 ```
 
-It is easy to plot classes of model objects that are not compatible with `tidy`: one simply extracts the results and builds the data frame to pass to `dwplot` oneself. Many functions generate results that can be extracted by `coef()`.
+It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
+
+```{r fig.width= 7, fig.height=5, warning=FALSE, message=FALSE}
+# Run model on subsets of data, save results as tidy df, drop intercept, make a model variable, and relabel predictors
+by_trans <- mtcars %>% group_by(am) %>%
+    do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>%
+    filter(term != "(Intercept)") %>% rename(model=am) %>% 
+    relabel_predictors(c(wt = "Weight",
+                     cyl = "Cylinder",
+                     disp = "Displacement",
+                     gear = "Gear"))
+
+by_trans
+
+dwplot(by_trans, dodge_size = .05) +
+    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage by Transmission Type") +
+    theme(plot.title = element_text(face="bold"),
+          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.background = element_rect(colour="grey80"),
+          legend.title.align = .5) +
+    scale_colour_grey(start = .4, end = .8,
+                      name = "Transmission",
+                      breaks = c(0, 1),
+                      labels = c("Automatic", "Manual"))
+```
+
+Also note in the above example the use of an additional `dotwhisker` function for quickly relabeling predictors in a tidy data frame before passing the data frame to `dwplot`, the aptly named `relabel_predictors` function.  Whether using `relabel_predictors` on a tidy data frame before calling `dwplot` or using `relabel_y_axis` after calling `dwplot` is more convenient is a choice left to the user. 
+
+It is also easy to plot classes of model objects that are not compatible with `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
 
 ```{r fig.width=7, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -94,7 +121,7 @@ m4_df
 dwplot(m4_df)
 ```
 
-It is similarly straightforward to rescale or reorder coefficients or to plot just a subset of results. After creating a tidy data frame, users are free to select or delete variables or to change their order. In many cases, for example, users will wish to consider omitting model intercepts as they are rarely theoretically interesting [see @Kastellec2007, 765]. Another often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this of course can be done before model estimation, it can be convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
+Working with a tidy data frame, it is similarly straightforward to plot just a subset of results or to rescale or reorder coefficients.  In many cases, for example, users will wish to consider omitting model intercepts as they are rarely theoretically interesting [see @Kastellec2007, 765]. Another often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this of course can be done before model estimation, it can be convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
 
 ```{r fig.width=7, message=FALSE, warning=FALSE}
 # Customize the input data frame
@@ -121,114 +148,8 @@ m5_margin
 dwplot(m5_margin)
 ```
 
-```{r fig.width=7, message=FALSE, warning=FALSE}
-m6 <- glm(formula = am ~ wt + cyl + disp, data = mtcars, family = "binomial")
 
-# make a tidy data.frame of odds ratios
-m6_se <- sqrt(diag(vcov(m1)))
-m6_or_df <- data.frame(exp(cbind(estimate = coef(m1), std.error = coef(m1) * sqrt(diag(vcov(m1))))))
-m6_or_df$term <- row.names(m1_or_df)
-
-dwplot(m6_or_df)
-```
-
-## Plot Estimates with `dwplot`
-
-The `dotwhisker::dwplot` function is very easy to use. It takes just three arguments: `df`, `alpha`, and `dodge_size`.  The `df` argument is the data frame of estimates to be plotted (as described above). The `alpha` argument is the significance level of the confidence intervals to be spanned by the whiskers: its default value is .05, implying a 95% confidence interval. The `dodge_size` argument is used to adjust the space between the estimates of one variable when  multiple models are presented in a single plot.  Its default value will work fine, but more pleasing results can sometimes by achieved by it to lower values when the plotted results include a smaller number of predictors.
-
-```{r fig.width= 7, warning= FALSE, message= FALSE}
-dwplot(m1_df)
-dwplot(m1_df, alpha = .01)  # using 99% CI
-```
-
-To omit intercepts, rescale coefficients, etc., no change in the use of `dwplot` is required: one simply modifies the data frame, as described above, that is passed to the function. 
-
-```{r fig.width= 7, warning= FALSE, message= FALSE}
-dwplot(m1_df_sel2)
-```
-
-Moreover, the output of `dwplot` is a `ggplot` object. Therefore, users are able to add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
-
-```{r fig.width= 7, warning= FALSE, message= FALSE}
-dwplot(m1_df_sel2) + 
-    scale_y_discrete(breaks = 4:1, 
-                      labels=c("Cylinders", "Displacement", "Gears", "Weight")) +
-    theme_bw() + xlab("Standardized Coefficient") + ylab("") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-    ggtitle("Predicting Gas Mileage") +
-    theme(plot.title = element_text(face="bold"), legend.position="none") 
-```
-
-
-
-## Compare Across Models 
-An additional advantage of `dwplot` over alternative solutions is that it can be used to create plots that present multiple models---across different samples or specifications---in little space while also facilitating cross-model comparisons. To do this, one first needs to append the data frame of estimates from the new model to that of the old model and create an additional column `model` that identifies the two models.
-
-```{r fig.width= 7, fig.height=5, warning=FALSE, message=FALSE}
-# Run model on subsets of data, save results as tidy df, drop intercept, and make model variable
-by_trans <- mtcars %>% group_by(am) %>%
-    do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>%
-    filter(term != "(Intercept)") %>% rename(model=am)
-
-by_trans
-
-dwplot(by_trans, dodge_size = .05) +
-    scale_y_discrete(breaks = 4:1, labels=c("Weight", "Cylinders", "Displacement", "Gears")) +
-    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-    ggtitle("Predicting Gas Mileage by Transmission Type") +
-    theme(plot.title = element_text(face="bold"),
-          legend.justification=c(0, 0), legend.position=c(0, 0),
-          legend.background = element_rect(colour="grey80"),
-          legend.title.align = .5) +
-    scale_colour_grey(start = .4, end = .8,
-                      name = "Transmission",
-                      breaks = c(0, 1),
-                      labels = c("Automatic", "Manual"))
-
-```
-
-To include models with different predictors, one must ensure the `term`s are identical across all of the models.  That is, the data frame for each model must include a row for every predictor included in any of the models, in the same order, regardless of whether the predictor is actually included in a particular model.  Quantities not estimated in a particular model should be assigned a value of `NA`.
-
-```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
-# Estimate three models
-m4 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars) # same as m1
-m5 <- update(m4, . ~ . + hp) # add another predictor
-m6 <- update(m5, . ~ . + am) # and another 
-
-# Tidy estimates, rescale, and omit intercepts
-prep <- . %>% tidy() %>% by_2sd(mtcars) %>% filter(term != "(Intercept)")
-
-m4_df <- prep(m4)
-m5_df <- prep(m5)
-m6_df <- prep(m6)
-
-# Ensure all data.frames include rows for all of the predictors, in the same order
-# Include NAs for any quantities not estimated in a particular model
-m4_df <- rbind(m4_df, c("hp", rep(NA, times = ncol(m4_df) - 1)),
-               c("am", rep(NA, times = ncol(m4_df) - 1)))
-m5_df <- rbind(m5_df, c("am", rep(NA, times = ncol(m5_df) - 1)))
-
-# Add model variable to all data frames
-m4_df <- mutate(m4_df, model = "Model 4")
-m5_df <- mutate(m5_df, model = "Model 5")
-m6_df <- mutate(m6_df, model = "Model 6")
-
-m456_df <- rbind(m4_df, m5_df, m6_df)
-
-dwplot(m456_df, dodge_size = .08) +
-     scale_y_discrete(breaks = 6:1, 
-                      labels=c("Weight", "Cylinders", "Displacement", 
-                               "Gears", "Horsepower", "Manual")) +
-     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-     ggtitle("Predicting Gas Mileage") +
-     theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 1), legend.position=c(1, 1),
-           legend.background = element_rect(colour="grey80"),
-           legend.title = element_blank()) 
-```
-
+## Advanced Use: The 'Secret Weapon' and 'Small Multiple' Plots 
 It is frequently desirable to convey to an audience that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.draw` and saved, at present, by calling a device.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
@@ -264,7 +185,8 @@ grid.draw(g456)  # to display
 # dev.off()
 ```
 
-An alternate use of dot-and-whisker plots is to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with the `secret_weapon` function.
+## Advanced Use: The 'Secret Weapon' and 'Small Multiple' Plots 
+A variant of dot-and-whisker plots is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots "[the secret weapon](http://andrewgelman.com/2005/03/07/the_secret_weap/)."  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input, and the size of the confidence intervals can be adjusted with the `alpha` argument.  The `var` argument is used to specify the variable whose results are to be plotted.
 
 ```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
 data(diamonds)
@@ -275,7 +197,7 @@ by_clarity <- diamonds %>% group_by(clarity) %>%
  ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
-secret_weapon(by_clarity, "carat") +
+secret_weapon(by_clarity, var="carat", alpha=.01) +
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))
@@ -312,7 +234,6 @@ small_multiple(m123456_df) +
   ggtitle("Predicting Gas Mileage") +
   theme(plot.title = element_text(face = "bold"), legend.position = "none",
     axis.text.x  = element_text(angle = 60, hjust = 1)) 
-
 ```
 
 ## Conclusion
