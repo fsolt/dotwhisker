@@ -1,13 +1,13 @@
 Package: dotwhisker
 Type: Package
-Title: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames
+Title: Dot-and-Whisker Plots of Regression Results
 Version: 0.1.0.9999
 Date: 2015-07-13
 Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
-Description: Quick and easy dot-and-whisker plots of regression models saved in tidy data frames.
+Description: Quick and easy dot-and-whisker plots of regression results.
 BugReports: https://github.com/fsolt/dotwhisker/issues
-Depends: R (>= 3.2.0), ggplot2,dplyr, gridExtra, gtable
+Depends: R (>= 3.2.0), ggplot2, dplyr, gridExtra, gtable
 Imports:
     grid,
     stats
