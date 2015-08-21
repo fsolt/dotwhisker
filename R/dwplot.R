@@ -160,6 +160,9 @@ dw_tidy <- function(x) {
 }
 
 add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
+    if (!is.factor(df$term)) {
+        df$term <- factor(df$term, levels = unique(df$term))
+    }
     for (i in seq(n_models)) {
         m <- df[df$model==mod_names[[i]], ]
         not_in <- setdiff(unique(df$term), m$term)
@@ -168,6 +171,6 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
     }
-    df <- dft
+    df <- dft %>% group_by(model) %>% arrange(term)
     return(df)
 }
