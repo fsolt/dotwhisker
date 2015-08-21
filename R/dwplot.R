@@ -171,6 +171,6 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
     }
-    df <- dft %>% group_by(model) %>% arrange(term)
+    df <- dft %>% group_by(model) %>% arrange(term) %>% ungroup
     return(df)
 }
