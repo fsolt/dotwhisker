@@ -60,7 +60,7 @@
 #'
 #' @export
 
-dwplot <- function(x, alpha = .05, dodge_size = .15) {
+dwplot <- function(x, alpha = .05, dodge_size = .15, small_multiple = FALSE) {
   # If x is model object(s), convert to a tidy data.frame
   df <- dw_tidy(x)
 
@@ -124,20 +124,33 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
   }
 
   # Make the plot
-  p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
-      geom_point(na.rm = TRUE) +
-      geom_segment(aes(x = lb,
-                       xend = ub,
-                       y = y_ind + shift, yend = y_ind + shift,
-                       colour=factor(model)), na.rm = TRUE) +
-      scale_y_discrete(breaks=y_ind, labels=var_names) +
-      coord_cartesian(ylim=c(.5, n_vars+.5)) +
-      ylab("")
+  if (small_multiple = FALSE) {
+    p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
+        geom_point(na.rm = TRUE) +
+        geom_segment(aes(x = lb,
+                        xend = ub,
+                        y = y_ind + shift, yend = y_ind + shift,
+                        colour=factor(model)), na.rm = TRUE) +
+        scale_y_discrete(breaks=y_ind, labels=var_names) +
+        coord_cartesian(ylim=c(.5, n_vars+.5)) +
+        ylab("")
 
-  # Omit the legend if there is only one model
-  if (!"model" %in% names(df) | length(mod_names) == 1){
-    p <- p + theme(legend.position="none")
+    # Omit the legend if there is only one model
+    if (!"model" %in% names(df) | length(mod_names) == 1){
+        p <- p + theme(legend.position="none")
+    }
+  } else {
+      p <- ggplot(df, aes(x = y_ind+shift, y = estimate, colour=factor(model))) +
+          geom_point(na.rm = TRUE) +
+          geom_segment(aes(x = y_ind + shift,
+                           xend = y_ind + shift,
+                           y = ub, yend = lb,
+                           colour=factor(model)), na.rm = TRUE) +
+          scale_x_discrete(breaks=y_ind, labels=var_names) +
+          coord_cartesian(xlim=c(.5, n_vars+.5)) +
+          xlab("") + facet_grid(predictor~., scales = "free_y")
   }
+
 
   return(p)
 }
