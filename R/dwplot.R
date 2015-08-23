@@ -60,7 +60,7 @@
 #'
 #' @export
 
-dwplot <- function(x, alpha = .05, dodge_size = .15, small_multiple = FALSE) {
+dwplot <- function(x, alpha = .05, dodge_size = .15) {
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x)
 
