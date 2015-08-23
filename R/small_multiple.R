@@ -58,12 +58,30 @@ small_multiple <- function(x, alpha=.05) {
     }
     mod_names <- unique(df$model)
 
-    df <- df %>% add_NAs(n_models, mod_names) %>%
-        mutate(term = factor(term, levels = unique(term)),
-               model = factor(model, levels = unique(model))) %>%
-        rename(predictor = term, term = model) %>%
-        mutate(model = 1) %>% arrange(predictor, desc(term))
+    # Add rows of NAs for variables not included in a particular model
+    df <- add_NAs(df, n_models, mod_names)
 
-    p <- dwplot(df, alpha = alpha) + facet_grid(predictor~.) + coord_flip()
+    # Confirm alpha within bounds
+    if (alpha < 0 | alpha > 1) {
+        stop("Value of alpha for the confidential intervals should be between 0 and 1.")
+    }
+
+    # Generate lower and upper bound if not included in results
+    if ((!"lb" %in% names(df)) | (!"ub" %in% names(df))) {
+        ci <- 1 - alpha/2
+        lb <- c(df$estimate - qnorm(ci) * df$std.error)
+        ub <- c(df$estimate + qnorm(ci) * df$std.error)
+
+        df <- cbind(df, lb, ub)
+    }
+
+    p <- ggplot(df, aes(x = model, y = estimate)) +
+        geom_point(na.rm = TRUE) +
+        geom_segment(aes(x = model,
+                         xend = model,
+                         y = ub, yend = lb), na.rm = TRUE) +
+        xlab("") +
+        facet_grid(term ~ ., scales = "free_y")
+
     return(p)
 }
