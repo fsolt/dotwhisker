@@ -235,7 +235,7 @@ for (i in 2:6) {
 # Relabel predictors (will appear as facet labels)
 m123456_df <- m123456_df %>% 
   relabel_predictors(c(wt = "Weight",
-                     cyl = "Cylinder",
+                     cyl = "Cylinders",
                      disp = "Displacement",
                      hp = "Horsepower",
                      gear = "Gears",
@@ -243,8 +243,8 @@ m123456_df <- m123456_df %>%
  
 # Generate a 'small multiple' plot
 small_multiple(m123456_df) +
-  theme_bw() + xlab("Coefficient Estimate") +
-  geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+  theme_bw() + ylab("Coefficient Estimate") +
+  geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
   ggtitle("Predicting Gas Mileage") +
   theme(plot.title = element_text(face = "bold"), legend.position = "none",
     axis.text.x  = element_text(angle = 60, hjust = 1)) 
