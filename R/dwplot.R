@@ -61,76 +61,72 @@
 #' @export
 
 dwplot <- function(x, alpha = .05, dodge_size = .15, small_multiple = FALSE) {
-  # If x is model object(s), convert to a tidy data.frame
-  df <- dw_tidy(x)
+    # If x is model object(s), convert to a tidy data.frame
+    df <- dw_tidy(x)
 
-  n_vars <- length(unique(df$term))
-  model <- NULL
-  dodge_size <- dodge_size
+    n_vars <- length(unique(df$term))
+    model <- NULL
+    dodge_size <- dodge_size
 
-  # Confirm number of models, get model names
-  if ("model" %in% names(df)) {
-    n_models <- length(unique(df$model))
-  } else {
-    if (length(df$term) == n_vars) {
-      df$model <- 1
-      n_models <- 1
+    # Confirm number of models, get model names
+    if ("model" %in% names(df)) {
+        n_models <- length(unique(df$model))
     } else {
-      stop("Please add a variable named 'model' to distinguish different models")
+        if (length(df$term) == n_vars) {
+            df$model <- 1
+            n_models <- 1
+        } else {
+            stop("Please add a variable named 'model' to distinguish different models")
+        }
     }
-  }
-  mod_names <- unique(df$model)
+    mod_names <- unique(df$model)
 
-  # Add rows of NAs for variables not included in a particular model
-  if (n_models > 1) {
-    df <- add_NAs(df, n_models, mod_names)
-  }
+    # Add rows of NAs for variables not included in a particular model
+    if (n_models > 1) {
+        df <- add_NAs(df, n_models, mod_names)
+    }
 
-  # Prep arguments to ggplot
-  var_names <- df$term
+    # Prep arguments to ggplot
+    var_names <- df$term
 
-  y_ind <- rep(seq(n_vars, 1), n_models)
-  df$y_ind <- y_ind
+    y_ind <- rep(seq(n_vars, 1), n_models)
+    df$y_ind <- y_ind
 
-  df$estimate <- as.numeric(df$estimate)
-  df$std.error <- as.numeric(df$std.error)
+    # Confirm alpha within bounds
+    if (alpha < 0 | alpha > 1) {
+        stop("Value of alpha for the confidential intervals should be between 0 and 1.")
+    }
 
-  # Confirm alpha within bounds
-  if (alpha < 0 | alpha > 1) {
-    stop("Value of alpha for the confidential intervals should be between 0 and 1.")
-  }
+    # Generate lower and upper bound if not included in results
+    if ((!"lb" %in% names(df)) | (!"ub" %in% names(df))) {
+        ci <- 1 - alpha/2
+        lb <- c(df$estimate - qnorm(ci) * df$std.error)
+        ub <- c(df$estimate + qnorm(ci) * df$std.error)
 
-  # Generate lower and upper bound if not included in results
-  if ((!"lb" %in% names(df)) | (!"ub" %in% names(df))) {
-      ci <- 1 - alpha/2
-      lb <- c(df$estimate - qnorm(ci) * df$std.error)
-      ub <- c(df$estimate + qnorm(ci) * df$std.error)
+        df <- cbind(df, lb, ub)
+    }
 
-      df <- cbind(df, lb, ub)
-  }
+    # Calculate y-axis shift for plotting multiple models
+    if (n_models == 1) {
+        shift <- 0
+    } else {
+        shift <- seq(dodge_size, -dodge_size, length.out = n_models)
+    }
+    shift_index <- data.frame(model = mod_names, shift, stringsAsFactors = FALSE)
+    df <- dplyr::left_join(df, shift_index)
 
-  # Calculate y-axis shift for plotting multiple models
-  if (n_models == 1) {
-    shift <- 0
-  } else {
-    shift <- seq(dodge_size, -dodge_size, length.out = n_models)
-  }
-  shift_index <- data.frame(model = mod_names, shift, stringsAsFactors = FALSE)
-  df <- dplyr::left_join(df, shift_index)
+    # Catch difference between single and multiple models
+    if (length(y_ind) != length(var_names)) {
+        var_names <- unique(var_names)
+    }
 
-  # Catch difference between single and multiple models
-  if (length(y_ind) != length(var_names)) {
-    var_names <- unique(var_names)
-  }
-
-  # Make the plot
-  if (small_multiple = FALSE) {
+    # Make the plot
     p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
         geom_point(na.rm = TRUE) +
         geom_segment(aes(x = lb,
-                        xend = ub,
-                        y = y_ind + shift, yend = y_ind + shift,
-                        colour=factor(model)), na.rm = TRUE) +
+                         xend = ub,
+                         y = y_ind + shift, yend = y_ind + shift,
+                         colour=factor(model)), na.rm = TRUE) +
         scale_y_discrete(breaks=y_ind, labels=var_names) +
         coord_cartesian(ylim=c(.5, n_vars+.5)) +
         ylab("")
@@ -139,20 +135,8 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, small_multiple = FALSE) {
     if (!"model" %in% names(df) | length(mod_names) == 1){
         p <- p + theme(legend.position="none")
     }
-  } else {
-      p <- ggplot(df, aes(x = y_ind+shift, y = estimate, colour=factor(model))) +
-          geom_point(na.rm = TRUE) +
-          geom_segment(aes(x = y_ind + shift,
-                           xend = y_ind + shift,
-                           y = ub, yend = lb,
-                           colour=factor(model)), na.rm = TRUE) +
-          scale_x_discrete(breaks=y_ind, labels=var_names) +
-          coord_cartesian(xlim=c(.5, n_vars+.5)) +
-          xlab("") + facet_grid(predictor~., scales = "free_y")
-  }
 
-
-  return(p)
+    return(p)
 }
 
 dw_tidy <- function(x) {
@@ -185,5 +169,15 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
         if (i==1) dft <- m else dft <- rbind(dft, m)
     }
     df <- dft %>% group_by(model) %>% arrange(term) %>% ungroup
+    df$estimate <- as.numeric(df$estimate)
+    if ("std.error" %in% names(df)) {
+        df$std.error <- as.numeric(df$std.error)
+    }
+    if ("ub" %in% names(df)) {
+        df$ub <- as.numeric(df$std.error)
+    }
+    if ("lb" %in% names(df)) {
+        df$ub <- as.numeric(df$std.error)
+    }
     return(df)
 }
