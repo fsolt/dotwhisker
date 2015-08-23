@@ -217,24 +217,25 @@ secret_weapon(by_clarity, var="carat", alpha=.01) +
     theme(plot.title = element_text(face="bold"))
 ```
 
-A final means of presenting many models' results at once in a particularly compact format is the "small multiple" plot [see @Kastellec2007, 766]. Small multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots.  The `small_multiple` function makes such plots simple.  Here, we pass a tidy data.frame of six models to the function so as to be able to rescale the coefficients and to exclude the intercept, but the function can accept a list of model objects as well.
+A final means of presenting many models' results at once in a particularly compact format is the "small multiple" plot of regression results [see @Kastellec2007, 766]. Small-multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots.  The `small_multiple` function makes generating these plots simple.  Here, we pass a tidy data frame of six models to the function so we can to rescale the coefficients first, but the function can accept a list of model objects as well.
 
-```{r fig.width= 2.5, fig.height=6.5, warning=FALSE, message=FALSE}
+```{r fig.width= 2.5, fig.height=7.5, warning=FALSE, message=FALSE}
 # Generate a tidy data.frame of regression results from six models
 m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m[[1]] <- lm(mpg ~ wt, data = mtcars) 
 m123456_df <- m[[1]] %>% tidy %>% by_2sd(mtcars) %>%
-  filter(term != "(Intercept)") %>% mutate(model = "Model 1")
+  mutate(model = "Model 1")
 for (i in 2:6) {
   m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
   m123456_df <- rbind(m123456_df, m[[i]] %>% tidy %>% by_2sd(mtcars) %>%
-    filter(term != "(Intercept)") %>% mutate(model = paste("Model", i)))
+    mutate(model = paste("Model", i)))
 }
 
-# Relabel predictors (will appear as facet labels)
+# Relabel predictors (they will appear as facet labels)
 m123456_df <- m123456_df %>% 
-  relabel_predictors(c(wt = "Weight",
+  relabel_predictors(c("(Intercept)" = "Intercept",
+                     wt = "Weight",
                      cyl = "Cylinders",
                      disp = "Displacement",
                      hp = "Horsepower",
