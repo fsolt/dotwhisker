@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-I have been a big fan of @Kastellec2007 since it came out, and by putting their code online, the authors allowed me and many others to use it for our own needs (add cites to examples).  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight or more years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
+I have been a big fan of @Kastellec2007 since it came out, and by putting online their code for creating graphs from actually-published tables, the authors allowed me and many others to adapt it for our own needs (add cites to examples).  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight or more years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
 
 Below, I present their original code for their three examples of plotting regression results, along with similar plots done using `dotwhisker`.  I hope you'll agree that the latter plots are not only much easier to make, but also---thanks to Hadley Wickham's [-@Wickham2009] `ggplot`---better looking (and more easily further customizable).
 
@@ -68,7 +68,6 @@ Redone using `dotwhisker`:
 ```{r fig.width=7, fig.height=7, warning=FALSE, message=FALSE}
 #install.packages("dotwhisker") # uncomment to install from CRAN
 library(dotwhisker)
-library(latex2exp)
 
 # Format data as tidy dataframe
 results_df <- data.frame(term=var.names, estimate=coef.vec,
@@ -79,11 +78,12 @@ results_df %>% dwplot + theme_bw() + theme(legend.position="none") +
     ggtitle("Determinants of Authoritarian Aggression\nStevens, Bishin, and Barr (2006)\nvia Kastellec and Leoni (2007)") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     annotate("text", x = 1.05, y = 10, size = 4, hjust = 0,
-             label = "R^2 == .15", parse = T) +
+             label = "R^2 == .15", parse = TRUE) +
     annotate("text", x = 1.05, y = 9, size = 4, hjust = 0,
-             label = "Adjusted~R^2 == .12", parse = T) +
+             label = "Adjusted~R^2 == .12", parse = TRUE) +
     annotate("text", x = 1.05, y = 8, size = 4, hjust = 0,
-              label = "n = 500")
+              label = "n = 500") +
+    xlab("")
 
 ```
 
@@ -190,15 +190,18 @@ Redone using `dotwhisker`:
 
 ```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
 # Format data as tidy dataframe
-results_df <- rbind(data.frame(term=var.names, estimate=coef.vec.1,
-                               std.error=se.vec.1, model="Model 1"),
-                    data.frame(term=var.names, estimate=coef.vec.2,
-                               std.error=se.vec.2, model="Model 2"))
+results_df <- data.frame(term = rep(var.names, times = 2),
+                         estimate = c(coef.vec.1, coef.vec.2),
+                         std.error = c(se.vec.1, se.vec.2),
+                         model = c(rep("Model 1", 20), rep("Model 2", 20)),
+                         stringsAsFactors = FALSE)
 
 # Draw dot-and-whisker plot
 p <- results_df %>% dwplot + theme_bw() +
     theme(legend.justification=c(0, 1), legend.position=c(0, 1),
-           legend.title = element_blank()) + xlab("Logit Coefficients") +
+           legend.title = element_blank(), legend.background =
+              element_rect(color="gray90")) + 
+    xlab("Logit Coefficients") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Electoral Incentives and LDP Post Allocation\nPekkanen, Nyblade, and Krause (2006)\nvia Kastellec and Leoni (2007)")
 
@@ -212,11 +215,10 @@ grid.draw(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"),
 
 ### Figure 8: Using "Small Multiple" Plots to Present Regression Results from Several Models.
 
-```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
-###################################################
-###  Ansolabehere
-###################################################
+Original, with light edits, via Kastellec and Leoni's http://svn.tables2graphs.com/tables2graphs/Rcode/Final%20Code%20for%20Website/figure_8_ansolabehere_table_4.R
 
+
+```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
 library(grid)
 
 ##point estimates, in a n.variables, n.variables x n.models
@@ -325,6 +327,32 @@ grid.draw(tmp) ## print the graph
 #graphics.off() ## close the graphics windows
 
 ```
+
+Redone using `dotwhisker`: 
+
+```{r fig.width = 5, fig.height = 9, warning=FALSE, message=FALSE}
+# Format data as tidy dataframe
+model_names <- paste0(rep(c("Full Sample\n",
+                       "Excluding counties\nw/ partial registration\n",
+                       "Full sample w/\nstate year dummies\n"),
+                       each = 2),
+                     c("(w/ law change dummy)","(w/o law change dummy)"))
+
+model_order <- c(4, 1, 5, 2, 6, 3)
+
+results_df <- data.frame(term = rep(varnames[1:6], times = 6),
+                         estimate = as.vector(coef.matrix[, model_order]),
+                         std.error = as.vector(se.matrix[, model_order]),
+                         model = rep(model_names, each = 6),
+                         stringsAsFactors = FALSE)
+
+small_multiple(results_df) + 
+    theme_bw() + ylab("Coefficient Estimate") +
+    geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
+    theme(axis.text.x  = element_text(angle = 60, hjust = 1)) 
+```
+
+
 
 
 ## Affiliation
