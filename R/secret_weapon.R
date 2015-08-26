@@ -27,14 +27,18 @@
 #' secret_weapon(by_clarity, "carat")
 #'
 #'
+#' @import dplyr
 #' @importFrom broom tidy
-#' @importFrom dplyr filter select rename
+#' @importFrom utils globalVariables
 #'
 #' @export
 
 secret_weapon <- function(x, var=NULL, alpha=.05) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
+
+    # declare variables in df that will appear in pipelines
+#    utils::globalVariables(c("term", "model"))
 
     n_vars <- length(unique(df$term))
 
