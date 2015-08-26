@@ -20,7 +20,7 @@ The function returns a tidy data.frame.
 \examples{
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-m1_df <- tidy(m1) \%>\%
+m1_df <- broom::tidy(m1) \%>\%
          relabel_predictors(c("(Intercept)" = "Intercept",
                               wt = "Weight",
                               cyl = "Cylinder",
