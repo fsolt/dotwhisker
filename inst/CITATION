@@ -1,7 +1,7 @@
 citHeader("To cite interplot in publications use:")
 
 citEntry(entry = "misc",
-  title        = "{dotwhisker}: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames",
+  title        = "{dotwhisker}: Dot-and-Whisker Plots of Regression Results",
   author       = personList(as.person("Frederick Solt"),
                    as.person("Yue Hu")),
   howpublished = "Available at The Comprehensive R Archive Network (CRAN)",
@@ -10,7 +10,7 @@ citEntry(entry = "misc",
 
   textVersion  =
   paste("Frederick Solt and Yue Hu (2015).",
-        "dotwhisker: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames.",
+        "dotwhisker: Dot-and-Whisker Plots of Regression Results.",
         "available at The Comprehensive R Archive Network (CRAN).",
         "URL http://CRAN.R-project.org/package=dotwhisker.")
 )
