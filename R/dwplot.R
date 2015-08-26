@@ -25,6 +25,7 @@
 #' @import ggplot2
 #' @importFrom dplyr left_join
 #' @importFrom stats qnorm
+#' @importFrom broom tidy
 #'
 #' @examples
 #' library(broom)
@@ -101,8 +102,8 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
     # Generate lower and upper bound if not included in results
     if ((!"lb" %in% names(df)) | (!"ub" %in% names(df))) {
         ci <- 1 - alpha/2
-        lb <- c(df$estimate - qnorm(ci) * df$std.error)
-        ub <- c(df$estimate + qnorm(ci) * df$std.error)
+        lb <- c(df$estimate - stats::qnorm(ci) * df$std.error)
+        ub <- c(df$estimate + stats::qnorm(ci) * df$std.error)
 
         df <- cbind(df, lb, ub)
     }
