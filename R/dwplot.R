@@ -130,7 +130,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
                          colour=factor(model)), na.rm = TRUE) +
         scale_y_discrete(breaks=y_ind, labels=var_names) +
         coord_cartesian(ylim=c(.5, n_vars+.5)) +
-        ylab("")
+        ylab("") + xlab("")
 
     # Omit the legend if there is only one model
     if (!"model" %in% names(df) | length(mod_names) == 1){
