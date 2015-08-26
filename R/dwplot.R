@@ -71,9 +71,10 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
     # Confirm number of models, get model names
     if ("model" %in% names(df)) {
         n_models <- length(unique(df$model))
+        df$model <- factor(df$model, levels = unique(df$model))
     } else {
         if (length(df$term) == n_vars) {
-            df$model <- 1
+            df$model <- factor("one")
             n_models <- 1
         } else {
             stop("Please add a variable named 'model' to distinguish different models")
@@ -112,7 +113,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
     } else {
         shift <- seq(dodge_size, -dodge_size, length.out = n_models)
     }
-    shift_index <- data.frame(model = mod_names, shift, stringsAsFactors = FALSE)
+    shift_index <- data.frame(model = mod_names, shift)
     df <- dplyr::left_join(df, shift_index)
 
     # Catch difference between single and multiple models
@@ -167,7 +168,13 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
         m <- df[df$model==mod_names[[i]], ]
         not_in <- setdiff(unique(df$term), m$term)
         for (j in seq(not_in)) {
-            m <- rbind(m, c(not_in[j], rep(NA, times = ncol(m) - 2), mod_names[[i]]))
+            t <- data.frame(term = not_in[j],
+                            model = mod_names[[i]],
+                            stringsAsFactors = FALSE)
+            if ("submodel" %in% names(m)) {
+                t$submodel <- m$submodel[1]
+            }
+            m <- merge(m, t, all = TRUE)
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
     }
