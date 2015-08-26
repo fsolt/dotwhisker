@@ -3,14 +3,14 @@ title: "dotwhisker: Remaking the Examples from Kastellec and Leoni (2007)"
 author: "Frederick Solt"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-bibliography: vignette_dwplot.bib
+bibliography: vignette.bib
 vignette: >
   %\VignetteIndexEntry{dotwhisker: Remaking the Examples from Kastellec and Leoni (2007)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{ASCII}
 ---
 
-I have been a big fan of @Kastellec2007 since it came out, and by putting online their code for creating graphs from actually-published tables, the authors allowed me and many others to adapt it for our own needs (add cites to examples).  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight-plus years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
+I have been a big fan of @Kastellec2007 since it came out, and [by putting their code for creating graphs from actually-published tables online](http://tables2graphs.com/doku.php?id=04_regression_coefficients), the authors allowed me and many others to adapt it for our own needs.  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight-plus years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
 
 Below, I present their original code for their three examples of plotting regression results, along with similar plots done using `dotwhisker`.  I hope you'll agree that the latter plots are not only much easier to make, but also---thanks to Hadley Wickham's [-@Wickham2009] `ggplot`---better looking (and more easily further customizable).
 
@@ -360,7 +360,8 @@ small_multiple(results_df) +
           legend.background = element_rect(color="gray90"),
           legend.margin = unit(-3, "pt"),
           legend.key.size = unit(10, "pt")) +
-    scale_colour_hue(name = "Law Change\nDummy")
+    scale_colour_hue(name = "Law Change\nDummy") +
+    ggtitle("Registration Effects on Turnout\nAnsolabehere and Konisky (2006)\nvia Kastellec and Leoni (2007)")
 ```
 
 
