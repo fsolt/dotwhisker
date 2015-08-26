@@ -70,7 +70,7 @@
 #'     breaks = c(0, 1),
 #'     labels = c("Automatic", "Manual"))
 #'
-#' @importFrom dplyr mutate rename arrange
+#' @import dplyr
 #' @importFrom stringr str_replace
 #'
 #' @export

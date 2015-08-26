@@ -23,7 +23,7 @@
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @import ggplot2
-#' @importFrom dplyr left_join
+#' @import dplyr
 #' @importFrom stats qnorm
 #' @importFrom broom tidy
 #'
