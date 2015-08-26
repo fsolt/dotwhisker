@@ -29,9 +29,12 @@ In place of \code{std.error} one may substitute \code{lb} (the lower bounds of t
 Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
 }
 \examples{
+library(broom)
+library(dplyr)
+
 # Estimate models across many samples, put results in a tidy data.frame
 by_clarity <- diamonds \%>\% group_by(clarity) \%>\%
- do(tidy(lm(price ~ carat + cut + color, data = .))) \%>\%
+ do(broom::tidy(lm(price ~ carat + cut + color, data = .))) \%>\%
  ungroup \%>\% rename(model=clarity)
 
 # Generate a 'secret weapon' plot of the results of diamond size

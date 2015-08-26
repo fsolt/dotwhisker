@@ -8,6 +8,9 @@
 #' @return The function returns a tidy data.frame.
 #'
 #' @examples
+#' library(broom)
+#' library(dplyr)
+#'
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 #' m1_df <- broom::tidy(m1) %>%

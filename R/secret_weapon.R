@@ -18,9 +18,12 @@
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @examples
+#' library(broom)
+#' library(dplyr)
+#'
 #' # Estimate models across many samples, put results in a tidy data.frame
 #' by_clarity <- diamonds %>% group_by(clarity) %>%
-#'  do(tidy(lm(price ~ carat + cut + color, data = .))) %>%
+#'  do(broom::tidy(lm(price ~ carat + cut + color, data = .))) %>%
 #'  ungroup %>% rename(model=clarity)
 #'
 #' # Generate a 'secret weapon' plot of the results of diamond size

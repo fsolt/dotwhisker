@@ -12,6 +12,7 @@
 #'
 #' @examples
 #' library(broom)
+#' library(dplyr)
 #'
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)

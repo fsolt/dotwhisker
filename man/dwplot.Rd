@@ -33,6 +33,7 @@ Together, these two features make \code{dwplot} extremely flexible.
 }
 \examples{
 library(broom)
+library(dplyr)
 
 # Plot regression coefficients from a single model object
 data(mtcars)

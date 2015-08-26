@@ -23,6 +23,7 @@ To save, wrap the \code{grid.draw} command with \code{\link[grDevices]{pdf}} or 
 }
 \examples{
 library(broom)
+library(dplyr)
 
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)

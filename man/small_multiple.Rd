@@ -34,7 +34,11 @@ Optionally, more than one set of results can be clustered to facilitate comparis
 Ideally, the y-axes of small multiple plots would vary by predictor, but small_multiple does not currently support this behavior.
 }
 \examples{
+library(broom)
+library(dplyr)
+
 # Generate a tidy data.frame of regression results from six models
+
 m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m[[1]] <- lm(mpg ~ wt, data = mtcars)

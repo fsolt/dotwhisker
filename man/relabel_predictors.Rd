@@ -18,6 +18,9 @@ The function returns a tidy data.frame.
 \code{relabel_predictors} is a convenience function for relabeling the predictors in a tidy data.frame to be passed to \code{\link[dotwhisker]{dwplot}}
 }
 \examples{
+library(broom)
+library(dplyr)
+
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 m1_df <- broom::tidy(m1) \%>\%
