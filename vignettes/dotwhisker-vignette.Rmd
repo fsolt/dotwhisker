@@ -3,7 +3,7 @@ title: "dotwhisker: Dot-and-Whisker Plots of Regression Results"
 author: "Frederick Solt and Yue Hu"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-bibliography: vignette_dwplot.bib
+bibliography: vignette.bib
 vignette: >
   %\VignetteIndexEntry{dwplot: Dot-and-Whisker Plots of Regression Coefficients from Tidy Data Frames}
   %\VignetteEngine{knitr::rmarkdown}
@@ -79,7 +79,7 @@ dwplot(m1_df) #same as dwplot(m1)
 
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
 
-```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
+```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 # Run model on subsets of data, save results as tidy df, drop intercept, make a model variable, and relabel predictors
 by_trans <- mtcars %>% group_by(am) %>%                      # group data by trans
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
@@ -100,7 +100,7 @@ dwplot(by_trans, dodge_size = .05) +
           legend.justification=c(0, 0), legend.position=c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
-    scale_colour_grey(start = .4, end = .8,
+    scale_colour_grey(start = .3, end = .7,
                       name = "Transmission",
                       breaks = c(0, 1),
                       labels = c("Automatic", "Manual"))
@@ -110,7 +110,7 @@ Also note in the above example the use of an additional `dotwhisker` function fo
 
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
 
-```{r fig.width=7, message=FALSE, warning=FALSE}
+```{r fig.width = 7, message = FALSE, warning = FALSE}
 library(dplyr)
 
 # the ordinal regression model is not supported by tidy
@@ -125,7 +125,7 @@ dwplot(m4_df)
 
 Working with a tidy data frame, it is similarly straightforward to plot just a subset of results or to rescale or reorder coefficients.  For example, many users will wish to consider omitting model intercepts as they are rarely theoretically interesting [see @Kastellec2007, 765]. Another often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this can of course be done before model estimation, it can be more convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
 
-```{r fig.width=7, message=FALSE, warning=FALSE}
+```{r fig.width = 7, message = FALSE, warning = FALSE}
 # Customize the input data frame
 m1_df_mod <- m1_df %>%                 # the original tidy data.frame
     by_2sd(mtcars) %>%                 # rescale the coefficients
@@ -138,7 +138,7 @@ dwplot(m1_df_mod)
 
 An input data frame can also be constructed from estimates of other quantities of interest, such as margins, odds ratios, or predicted probabilities, rather than coefficients. 
 
-```{r fig.width=7, message=FALSE, warning=FALSE}
+```{r fig.width = 7, message = FALSE, warning = FALSE}
 # Create a data.frame of marginal effects
 library(mfx)
 m5 <- logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
@@ -153,7 +153,7 @@ dwplot(m5_margin)
 ## Advanced Use: Grouping Predictors 
 It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.draw` and saved, at present, by calling a device.
 
-```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
+```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
 # Define order for predictors that can be grouped
 reordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 
@@ -202,7 +202,7 @@ grid.draw(g123)    # to display
 ## Advanced Use: The 'Secret Weapon' and 'Small Multiple' Plots 
 A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](http://andrewgelman.com/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input, and the size of the confidence intervals can be adjusted with the `alpha` argument.  The `var` argument is used to specify the predictor for which results are to be plotted.
 
-```{r fig.width= 7, fig.height=7, warning=FALSE, message=FALSE}
+```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
 data(diamonds)
 
 # Estimate models for many subsets of data, put results in a tidy data.frame
@@ -211,7 +211,7 @@ by_clarity <- diamonds %>% group_by(clarity) %>%
  ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
-secret_weapon(by_clarity, var="carat", alpha=.01) +
+secret_weapon(by_clarity, var="carat", alpha=.01) + 
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))
@@ -219,7 +219,7 @@ secret_weapon(by_clarity, var="carat", alpha=.01) +
 
 A final means of presenting many models' results at once in a particularly compact format is the "small multiple" plot of regression results [see @Kastellec2007, 766]. Small-multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots.  The `small_multiple` function makes generating these plots simple.  Here, we pass a tidy data frame of six models to the function so we can to rescale the coefficients first, but the function can accept a list of model objects as well.
 
-```{r fig.width= 2.5, fig.height=7.5, warning=FALSE, message=FALSE}
+```{r fig.width = 2.5, fig.height = 7.5, warning = FALSE, message = FALSE}
 # Generate a tidy data.frame of regression results from six models
 m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
@@ -251,11 +251,58 @@ small_multiple(m123456_df) +
     axis.text.x  = element_text(angle = 60, hjust = 1)) 
 ```
 
+To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`
+
+```{r fig.width = 3.5, fig.height = 8, warning = FALSE, message = FALSE}
+# Generate a tidy data.frame of regression results from five models on
+# the mtcars data subset by transmission type
+ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
+mod <- "mpg ~ wt"
+
+by_trans <- mtcars %>% group_by(am) %>%  # group data by transmission
+  do(tidy(lm(mod, data = .))) %>%        # run model on each group
+  rename(submodel = am) %>%              # make submodel variable
+  mutate(model = "Model 1")              # make model variable
+
+for (i in 2:5) {
+  mod <- paste(mod, "+", ordered_vars[i])
+  by_trans <- rbind(by_trans, mtcars %>% group_by(am) %>%
+                   do(tidy(lm(mod, data = .))) %>%
+                   rename(submodel = am) %>%
+                   mutate(model = paste("Model", i)))
+}
+
+# Relabel predictors (they will appear as facet labels)
+by_trans <- by_trans %>% dplyr::select(-submodel, everything(), submodel) %>% 
+  relabel_predictors(c("(Intercept)" = "Intercept",
+                     wt = "Weight",
+                     cyl = "Cylinders",
+                     disp = "Displacement",
+                     hp = "Horsepower",
+                     gear = "Gears"))
+
+by_trans
+
+small_multiple(by_trans, dodge_size = .06) +
+    theme_bw() + ylab("Coefficient Estimate") +
+    geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
+    theme(axis.text.x  = element_text(angle = 45, hjust = 1),
+          legend.position=c(0, 0), legend.justification=c(0, 0),
+          legend.title = element_text(size=8),
+          legend.background = element_rect(color="gray90"),
+          legend.margin = unit(-4, "pt"),
+          legend.key.size = unit(10, "pt")) +
+    scale_colour_hue(name = "Transmission",
+                     breaks = c(0, 1),
+                     labels = c("Automatic", "Manual")) +
+    ggtitle("Predicting Gas Mileage\nby Transmission Type")
+```
+
 ## Conclusion
 
 The `dotwhisker` package provides a flexible and convenient way to visualize regression results and to compare them across models. This vignette offers an overview of its use and features. We encourage users to consult the help files for more details. 
 
-The development of the package is ongoing (among other things, we are working to enable small multiples plots to have separate y-axes for each predictor).  Please contact us with any questions, bug reports, and comments.
+The development of the package is ongoing.  Please contact us with any questions, bug reports, and comments.
 
 ## Affiliation
 
