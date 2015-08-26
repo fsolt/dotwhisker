@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-I have been a big fan of @Kastellec2007 since it came out, and by putting online their code for creating graphs from actually-published tables, the authors allowed me and many others to adapt it for our own needs (add cites to examples).  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight or more years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
+I have been a big fan of @Kastellec2007 since it came out, and by putting online their code for creating graphs from actually-published tables, the authors allowed me and many others to adapt it for our own needs (add cites to examples).  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight-plus years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
 
 Below, I present their original code for their three examples of plotting regression results, along with similar plots done using `dotwhisker`.  I hope you'll agree that the latter plots are not only much easier to make, but also---thanks to Hadley Wickham's [-@Wickham2009] `ggplot`---better looking (and more easily further customizable).
 
@@ -82,9 +82,7 @@ results_df %>% dwplot + theme_bw() + theme(legend.position="none") +
     annotate("text", x = 1.05, y = 9, size = 4, hjust = 0,
              label = "Adjusted~R^2 == .12", parse = TRUE) +
     annotate("text", x = 1.05, y = 8, size = 4, hjust = 0,
-              label = "n = 500") +
-    xlab("")
-
+              label = "n = 500") 
 ```
 
 ### Figure 7: Using Parallel Dot Plots with Error Bars to Present Two Regression Models.
@@ -218,7 +216,7 @@ grid.draw(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"),
 Original, with light edits, via Kastellec and Leoni's http://svn.tables2graphs.com/tables2graphs/Rcode/Final%20Code%20for%20Website/figure_8_ansolabehere_table_4.R
 
 
-```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
+```{r fig.width=5, fig.height=9, warning=FALSE, message=FALSE}
 library(grid)
 
 ##point estimates, in a n.variables, n.variables x n.models
@@ -273,9 +271,17 @@ Y2$hi1 <- coef.matrix[,1:3]+qnorm(.95)*se.matrix[,1:3]
 rownames(Y2$estimate) <- varnames[-7]
 
 
-##Plot estimates in a single columns
-source("http://svn.tables2graphs.com/tables2graphs/Rcode/plotReg.R")
-#pdf(file="ansolabehere_fig.pdf",width=4,height=9)
+##Plot estimates in a single columns 
+source2 <- function(file, start, end) {
+    file.lines <- scan(file, what=character(), 
+                       skip=start - 1, 
+                       nlines=end - start + 1, sep='\n')
+    file.lines.collapsed <- paste(file.lines, collapse='\n')
+    source(textConnection(file.lines.collapsed))
+}
+
+source2("http://svn.tables2graphs.com/tables2graphs/Rcode/plotReg.R", 15, 372)
+
 ## create the graph (do not print it yet)
 tmp <- plot.reg(Y1,Y2,#the lists
                 #the model labels
@@ -324,32 +330,37 @@ tmp <- editGrob(tmp,gPath("xaxis","labels"),rot=45,just="right",gp=gpar(lineheig
 ##elements, and "labels" is the actual object in xaxis that we want to rotate
 ##just is the justification of the text
 grid.draw(tmp) ## print the graph
-#graphics.off() ## close the graphics windows
 
 ```
 
 Redone using `dotwhisker`: 
 
-```{r fig.width = 5, fig.height = 9, warning=FALSE, message=FALSE}
+```{r fig.width = 4, fig.height = 9, warning=FALSE, message=FALSE}
 # Format data as tidy dataframe
-model_names <- paste0(rep(c("Full Sample\n",
+model_names <- c("Full Sample\n",
                        "Excluding counties\nw/ partial registration\n",
-                       "Full sample w/\nstate year dummies\n"),
-                       each = 2),
-                     c("(w/ law change dummy)","(w/o law change dummy)"))
+                       "Full sample w/\nstate year dummies\n")
+submodel_names <- c("With","Without")
 
 model_order <- c(4, 1, 5, 2, 6, 3)
 
 results_df <- data.frame(term = rep(varnames[1:6], times = 6),
                          estimate = as.vector(coef.matrix[, model_order]),
                          std.error = as.vector(se.matrix[, model_order]),
-                         model = rep(model_names, each = 6),
+                         model = rep(model_names, each = 12),
+                         submodel = rep(rep(submodel_names, each = 6), times = 3),
                          stringsAsFactors = FALSE)
 
 small_multiple(results_df) + 
     theme_bw() + ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
-    theme(axis.text.x  = element_text(angle = 60, hjust = 1)) 
+    theme(axis.text.x  = element_text(angle = 45, hjust = 1),
+          legend.position=c(1, 1), legend.justification=c(1, 1), 
+          legend.title = element_text(size=9),
+          legend.background = element_rect(color="gray90"),
+          legend.margin = unit(-3, "pt"),
+          legend.key.size = unit(10, "pt")) +
+    scale_colour_hue(name = "Law Change\nDummy")
 ```
 
 
@@ -371,20 +382,5 @@ Email: <frederick-solt@uiowa.edu>
 
 Website: <http://myweb.uiowa.edu/fsolt>
 
-<br></br>
-
-Yue Hu
-
-Department of Political Science,
-
-University of Iowa, 
-
-313 Schaeffer Hall,
-
-20 E Washington St, Iowa City, IA, 52242
-
-Email: <yue-hu-1@uiowa.edu>
-
-Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
 
 ## References
