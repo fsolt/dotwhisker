@@ -4,10 +4,12 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, alpha = 0.05)
+small_multiple(x, dodge_size = 0.06, alpha = 0.05)
 }
 \arguments{
 \item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
+
+\item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
 \item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
 }
@@ -25,6 +27,8 @@ Tidy data.frames to be plotted should include the variables \code{term} (names o
 In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
 
 Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
+
+Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desireable is to compare results across samples.  In that case, the data.frame should also include a variable \code{submodel} identifying the submodel of the results.
 }
 \note{
 Ideally, the y-axes of small multiple plots would vary by predictor, but small_multiple does not currently support this behavior.
@@ -35,15 +39,47 @@ m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m[[1]] <- lm(mpg ~ wt, data = mtcars)
 m123456_df <- m[[1]] \%>\% tidy \%>\% by_2sd(mtcars) \%>\%
- filter(term != "(Intercept)") \%>\% mutate(model = "Model 1")
+  mutate(model = "Model 1")
 
 for (i in 2:6) {
  m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
  m123456_df <- rbind(m123456_df, m[[i]] \%>\% tidy \%>\% by_2sd(mtcars) \%>\%
-   filter(term != "(Intercept)") \%>\% mutate(model = paste("Model", i)))
+   mutate(model = paste("Model", i)))
 }
 
 # Generate a 'small multiple' plot
 small_multiple(m123456_df)
+
+
+## Using submodels to compare results across different samples
+# Generate a tidy data.frame of regression results from five models on
+# the mtcars data subset by transmission type (am)
+ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
+mod <- "mpg ~ wt"
+by_trans <- mtcars \%>\% group_by(am) \%>\%  # group data by transmission
+  do(tidy(lm(mod, data = .))) \%>\%        # run model on each group
+  rename(submodel = am) \%>\%              # make submodel variable
+  mutate(model = "Model 1")              # make model variable
+
+for (i in 2:5) {
+  mod <- paste(mod, "+", ordered_vars[i])
+  by_trans <- rbind(by_trans, mtcars \%>\% group_by(am) \%>\%
+                   do(tidy(lm(mod, data = .))) \%>\%
+                   rename(submodel = am) \%>\%
+                   mutate(model = paste("Model", i)))
+}
+
+small_multiple(by_trans) +
+theme_bw() + ylab("Coefficient Estimate") +
+    geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
+    theme(axis.text.x  = element_text(angle = 45, hjust = 1),
+          legend.position=c(0, 0), legend.justification=c(0, 0),
+          legend.title = element_text(size=9),
+          legend.background = element_rect(color="gray90"),
+          legend.margin = unit(-3, "pt"),
+          legend.key.size = unit(10, "pt")) +
+    scale_colour_hue(name = "Transmission",
+    breaks = c(0, 1),
+    labels = c("Automatic", "Manual"))
 }
 
