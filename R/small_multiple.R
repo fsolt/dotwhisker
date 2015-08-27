@@ -83,6 +83,9 @@ small_multiple <- function(x, dodge_size = .06, alpha=.05) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
+    # set variables that will appear in pipelines to NULL to make R CMD check happy
+    estimate <- submodel <- NULL
+
     n_vars <- length(unique(df$term))
 
     # Confirm number of models and submodels, get model names

@@ -40,8 +40,8 @@ secret_weapon <- function(x, var=NULL, alpha=.05) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
-    # declare variables in df that will appear in pipelines
-#    utils::globalVariables(c("term", "model"))
+    # set variables that will appear in pipelines to NULL to make R CMD check happy
+    term <- model <- NULL
 
     n_vars <- length(unique(df$term))
 

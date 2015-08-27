@@ -66,8 +66,10 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x)
 
+    # set variables that will appear in pipelines to NULL to make R CMD check happy
+    estimate <- model <- NULL
+
     n_vars <- length(unique(df$term))
-    model <- NULL
     dodge_size <- dodge_size
 
     # Confirm number of models, get model names
@@ -160,6 +162,9 @@ dw_tidy <- function(x) {
 }
 
 add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
+    # set variables that will appear in pipelines to NULL to make R CMD check happy
+    term <- model <- NULL
+
     if (!is.factor(df$term)) {
         df$term <- factor(df$term, levels = unique(df$term))
     }
@@ -186,10 +191,10 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
         df$std.error <- as.numeric(df$std.error)
     }
     if ("ub" %in% names(df)) {
-        df$ub <- as.numeric(df$std.error)
+        df$ub <- as.numeric(df$ub)
     }
     if ("lb" %in% names(df)) {
-        df$ub <- as.numeric(df$std.error)
+        df$ub <- as.numeric(df$lb)
     }
     return(df)
 }
