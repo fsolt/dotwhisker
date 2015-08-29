@@ -68,6 +68,7 @@ Redone using `dotwhisker`:
 ```{r fig.width=7, fig.height=7, warning=FALSE, message=FALSE}
 #install.packages("dotwhisker") # uncomment to install from CRAN
 library(dotwhisker)
+library(dplyr)
 
 # Format data as tidy dataframe
 results_df <- data.frame(term=var.names, estimate=coef.vec,
