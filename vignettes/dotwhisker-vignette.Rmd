@@ -251,7 +251,7 @@ small_multiple(m123456_df) +
     axis.text.x  = element_text(angle = 60, hjust = 1)) 
 ```
 
-To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`
+To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`. (We also replicate three examples in @Kastellec2007 with `dotwhisker` in a separate package document, "kl2007_examples".)
 
 ```{r fig.width = 3.5, fig.height = 8, warning = FALSE, message = FALSE}
 # Generate a tidy data.frame of regression results from five models on

@@ -67,6 +67,7 @@ Redone using `dotwhisker`:
 
 ```{r fig.width=7, fig.height=7, warning=FALSE, message=FALSE}
 #install.packages("dotwhisker") # uncomment to install from CRAN
+library(dplyr)
 library(dotwhisker)
 
 # Format data as tidy dataframe
