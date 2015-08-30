@@ -7,12 +7,7 @@ License components with restrictions and base license permitting such:
 File 'LICENSE':
   YEAR: 2015
   COPYRIGHT HOLDER: Frederick Solt, Yue HU
-Found the following (possibly) invalid URLs:
-  URL: https://cran.r-project.org/web/packages/broom/index.html
-    From: inst/doc/dotwhisker-vignette.html
-    Status: 200
-    Message: OK
-    CRAN URL not in canonical form
+
 
 
 ## Warnings
