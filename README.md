@@ -16,4 +16,4 @@ To install:
 
 More details are available at:
 
-http://cran.r-project.org/web/packages/dotwhisker/vignettes/dwplot-vignette.html
+https://cran.r-project.org/web/packages/dotwhisker/vignettes/dotwhisker-vignette.html
