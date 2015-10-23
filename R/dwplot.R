@@ -194,7 +194,7 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names) {
         df$ub <- as.numeric(df$ub)
     }
     if ("lb" %in% names(df)) {
-        df$ub <- as.numeric(df$lb)
+        df$lb <- as.numeric(df$lb)
     }
     return(df)
 }
