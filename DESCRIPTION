@@ -2,7 +2,7 @@ Package: dotwhisker
 Type: Package
 Title: Dot-and-Whisker Plots of Regression Results
 Version: 0.2.0.9999
-Date: 2015-08-29
+Date: 2015-10-06
 Author: Frederick Solt <frederick-solt@uiowa.edu>, Yue Hu <yue-hu-1@uiowa.edu>
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression results.
