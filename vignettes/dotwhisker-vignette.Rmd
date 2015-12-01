@@ -77,6 +77,17 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 ```
 
+Using `tidy` first can be helpful when one wishes to omit certain model estimates---for example, the intercept---from the plot:
+
+```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
+m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
+m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2")
+
+two_models <- rbind(m1_df, m2_df)
+
+dwplot(two_models)
+```
+
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
