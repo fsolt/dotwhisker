@@ -6,3 +6,4 @@
 ^Rplots\.pdf$
 ^plot\.pdf$
 ^examples\.R$
+^R\add_headers.R$
