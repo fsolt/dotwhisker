@@ -28,5 +28,5 @@
 
 relabel_predictors <- function(df, replace = NULL) {
     df$term <- plyr::revalue(df$term, replace = replace)
-    df
+    return(df)
 }
