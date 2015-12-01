@@ -34,7 +34,8 @@
 #' #grid.draw(g)
 #' #dev.off()
 #'
-#' @import grid gridExtra gtable dplyr
+#' @import gridExtra gtable dplyr
+#' @importFrom grid grid.draw
 #'
 #' @export
 
