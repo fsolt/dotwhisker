@@ -40,6 +40,11 @@
 #'     theme_bw() + xlab("Coefficient") + ylab("") +
 #'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
 #'     theme(legend.position="none")
+#' 
+#' # Plot regression coefficients from multiple models on the fly
+#'
+#' m2 <- update(m1, . ~ . - disp)
+#' dwplot(list(full=m1,nodisp=m2))
 #'
 #' # Plot regression coefficients from multiple models in a tidy data.frame
 #' library(dplyr)
@@ -147,9 +152,16 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
 dw_tidy <- function(x) {
     if (!is.data.frame(x)) {
         if (class(x)=="list") {
+            ind <- seq(length(x))
+            nm <- paste("Model", ind)
+            if (!is.null(nm_orig <- names(x))) {
+                setNm <- nchar(nm)>0
+                nm[setNm] <- nm_orig[setNm]
+            }
+            
             for (i in seq(length(x))) {
                 dft <- broom::tidy(x[[i]])
-                dft$model <- paste("Model", i)
+                dft$model <- nm[i]
                 if (i==1) df <- dft else df <- rbind(df, dft)
             }
         } else {
