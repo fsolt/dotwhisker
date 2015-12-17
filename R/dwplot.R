@@ -40,6 +40,11 @@
 #'     theme_bw() + xlab("Coefficient") + ylab("") +
 #'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
 #'     theme(legend.position="none")
+#' 
+#' # Plot regression coefficients from multiple models on the fly
+#'
+#' m2 <- update(m1, . ~ . - disp)
+#' dwplot(list(full=m1,nodisp=m2))
 #'
 #' # Plot regression coefficients from multiple models in a tidy data.frame
 #' library(dplyr)
@@ -118,7 +123,9 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
         shift <- seq(dodge_size, -dodge_size, length.out = n_models)
     }
     shift_index <- data.frame(model = mod_names, shift)
-    df <- dplyr::left_join(df, shift_index)
+    ## use explicit 'by' to suppress "Joining by:" message
+    ## presumably we will never *want* to join by other columns?
+    df <- dplyr::left_join(df, shift_index, by="model")
 
     # Catch difference between single and multiple models
     if (length(y_ind) != length(var_names)) {
@@ -126,12 +133,13 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
     }
 
     # Make the plot
-    p <- ggplot(df, aes(x = estimate, y = y_ind+shift, colour=factor(model))) +
+    p <- ggplot(transform(df, model=factor(model)),
+                          aes(x = estimate, y = y_ind+shift, colour=model)) +
         geom_point(na.rm = TRUE) +
         geom_segment(aes(x = lb,
                          xend = ub,
-                         y = y_ind + shift, yend = y_ind + shift,
-                         colour=factor(model)), na.rm = TRUE) +
+                         y = y_ind + shift, yend = y_ind + shift),
+                     na.rm = TRUE) +
         scale_y_discrete(breaks=y_ind, labels=var_names) +
         coord_cartesian(ylim=c(.5, n_vars+.5)) +
         ylab("") + xlab("")
@@ -147,9 +155,16 @@ dwplot <- function(x, alpha = .05, dodge_size = .15) {
 dw_tidy <- function(x) {
     if (!is.data.frame(x)) {
         if (class(x)=="list") {
+            ind <- seq(length(x))
+            nm <- paste("Model", ind)
+            if (!is.null(nm_orig <- names(x))) {
+                setNm <- nchar(nm)>0
+                nm[setNm] <- nm_orig[setNm]
+            }
+            
             for (i in seq(length(x))) {
                 dft <- broom::tidy(x[[i]])
-                dft$model <- paste("Model", i)
+                dft$model <- nm[i]
                 if (i==1) df <- dft else df <- rbind(df, dft)
             }
         } else {
