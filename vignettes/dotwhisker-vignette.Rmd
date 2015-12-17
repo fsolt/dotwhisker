@@ -298,7 +298,7 @@ small_multiple(by_trans, dodge_size = .06) +
     theme_bw() + ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
     theme(axis.text.x  = element_text(angle = 45, hjust = 1),
-          legend.position=c(0, 0), legend.justification=c(0, 0),
+          legend.position=c(0.06, 0.02), legend.justification=c(0, 0),
           legend.title = element_text(size=8),
           legend.background = element_rect(color="gray90"),
           legend.margin = unit(-4, "pt"),
