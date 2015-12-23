@@ -1,9 +1,22 @@
-## Notes
-No note.
+## Test environments
+* OS X, R 3.2.1
+* Win 8.1, R 3.2.1
 
 
+## R CMD check results
 
-## Warnings
-No warning
+### V 0.1.0.1
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded
 
+### v 0.2.0.0
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded
 
+### v 0.2.0.1
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded
+
+### v 0.2.0.2
+There were no ERRORs or WARNINGs. 
+R CMD check succeeded

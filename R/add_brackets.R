@@ -35,7 +35,7 @@
 #' #dev.off()
 #'
 #' @import gridExtra gtable dplyr
-#' @importFrom grid grid.draw
+#' @importFrom grid grid.draw textGrob linesGrob gpar
 #'
 #' @export
 

@@ -45,6 +45,11 @@ dwplot(m1) +
     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
     theme(legend.position="none")
 
+# Plot regression coefficients from multiple models on the fly
+
+m2 <- update(m1, . ~ . - disp)
+dwplot(list(full=m1,nodisp=m2))
+
 # Plot regression coefficients from multiple models in a tidy data.frame
 library(dplyr)
 by_trans <- mtcars \%>\% group_by(am) \%>\%
