@@ -1,3 +1,6 @@
+## Version 0.2.0.3
+1. Fixed the link error in `kl2007_example.Rmd`.
+
 ## Version 0.2.0.2
 1. Improving the vignette.
 2. The function works for `ggplot2` 2.0.0.
