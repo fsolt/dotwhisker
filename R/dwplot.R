@@ -27,6 +27,7 @@
 #' @import dplyr
 #' @importFrom stats qnorm
 #' @importFrom broom tidy
+#' @importFrom plyr ldply
 #'
 #' @examples
 #' library(broom)
@@ -167,12 +168,12 @@ dw_tidy <- function(x) {
                 setNm <- nchar(nm)>0
                 nm[setNm] <- nm_orig[setNm]
             }
+            names(x) <- nm
 
-            for (i in seq(length(x))) {
-                dft <- broom::tidy(x[[i]])
-                dft$model <- nm[i]
-                if (i==1) df <- dft else df <- rbind(df, dft)
-            }
+            ## ldply calls plyr::rbind.fill, so all tidied models
+            ##  need not have same columns ...
+            df <- plyr::ldply(x,broom::tidy,.id="model")
+
         } else {
             df <- broom::tidy(x)
         }
