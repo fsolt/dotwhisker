@@ -1,7 +1,7 @@
 #' Dot-and-Whisker Plots of Regression Results
 #'
-' \code{dwplot} is a function for quickly and easily generating dot-and-whisker plots of regression models saved in tidy data frames.
-'
+#' \code{dwplot} is a function for quickly and easily generating dot-and-whisker plots of regression models saved in tidy data frames.
+#'
 #' @param x Either a tidy data.frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.
 #' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #' @param dodge_size A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot.
