@@ -174,6 +174,8 @@ dw_tidy <- function(x) {
             ##  need not have same columns ...
             df <- plyr::ldply(x,broom::tidy,.id="model")
 
+        } else if (class(x) == "lmerMod"){
+            df <- broom::tidy(x) %>% filter(group == "fixed")
         } else {
             df <- broom::tidy(x)
         }
