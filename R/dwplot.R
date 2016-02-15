@@ -175,6 +175,7 @@ dw_tidy <- function(x) {
             df <- plyr::ldply(x,broom::tidy,.id="model")
 
         } else if (class(x) == "lmerMod"){
+            group <- vector() # only for avoiding the NOTE in check.
             df <- broom::tidy(x) %>% filter(group == "fixed")
         } else {
             df <- broom::tidy(x)
