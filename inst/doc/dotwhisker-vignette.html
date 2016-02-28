@@ -233,7 +233,7 @@ m5_margin</code></pre></div>
 </div>
 <div id="advanced-use-grouping-predictors" class="section level2">
 <h2>Advanced Use: Grouping Predictors</h2>
-<p>It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort. This can be achieved by passing the finalized plot to the <code>add_brackets</code> function. Note that <code>add_brackets</code> outputs a <code>gtable</code> rather than a <code>ggplot</code> object. Therefore, the output is displayed using <code>grid.draw</code> and saved, at present, by calling a device.</p>
+<p>It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort. This can be achieved by passing the finalized plot to the <code>add_brackets</code> function. Note that <code>add_brackets</code> outputs a <code>gtable</code> rather than a <code>ggplot</code> object. Therefore, the output is displayed using <code>grid.arrange</code> and saved, at present, by calling a device.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Define order for predictors that can be grouped</span>
 reordered_vars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;wt&quot;</span>, <span class="st">&quot;cyl&quot;</span>, <span class="st">&quot;disp&quot;</span>, <span class="st">&quot;hp&quot;</span>, <span class="st">&quot;gear&quot;</span>, <span class="st">&quot;am&quot;</span>)
 

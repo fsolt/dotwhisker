@@ -40,11 +40,11 @@ two_brackets <- list(c("Engine", "cyl", "disp"), c("Not Engine", "(Intercept)", 
 
 g <- p1 %>% add_brackets(two_brackets)
 
-grid.draw(g)  # to display
+grid.arrange(g)  # to display
 
-pdf("plot.pdf")  # to save
-grid.draw(g)
-dev.off()
+# to save
+g <- grid.arrange(g)
+ggsave(file = "gridplot.pdf", g)
 
 # The "Secret Weapon" (plot one coefficient for many models)
 data(diamonds)
