@@ -6,7 +6,7 @@
 #' @param brackets A list of brackets; each element of the list should be a character vector consisting of (1) a label for the bracket, (2) the name of the topmost variable to be enclosed by the bracket, and (3) the name of the bottommost variable to be enclosed by the bracket.
 #' @param face A typeface for the bracket labels; options are "plain", "bold", "italic", "oblique", and "bold.italic".
 #'
-#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[grid]{grid.arrange}}.
+#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[gridExtra]{grid.arrange}}.
 #'
 #' To save, wrap the \code{grid.arrange} command with \code{\link[ggplot2]{ggsave}}.
 #'
