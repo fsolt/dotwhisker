@@ -147,7 +147,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL) {
                          xend = ub,
                          y = y_ind + shift, yend = y_ind + shift),
                      na.rm = TRUE) +
-        scale_y_discrete(breaks=y_ind, labels=var_names) +
+        scale_y_continuous(breaks=y_ind, labels=var_names) +
         coord_cartesian(ylim=c(.5, n_vars+.5)) +
         ylab("") + xlab("")
 
