@@ -14,5 +14,5 @@
 #' @export
 
 relabel_y_axis <- function(x) {
-    scale_y_discrete(breaks = length(x):1, labels = x)
+    scale_y_continuous(breaks = length(x):1, labels = x)
 }

@@ -1,3 +1,10 @@
+## Version 0.2.0.4
+1. Fixed the error due to the update of `gridExtra`
+2. Fixed the error due to the update of `ggplot2`
+
+## Version 0.2.0.4
+1. Fixed presenting error in multilevel models (#44)
+
 ## Version 0.2.0.3
 1. Fixed the link error in `kl2007_example.Rmd`.
 

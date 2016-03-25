@@ -38,6 +38,14 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 
 ## ----fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE-----
+m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
+m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2")
+
+two_models <- rbind(m1_df, m2_df)
+
+dwplot(two_models)
+
+## ----fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE-----
 # Run model on subsets of data, save results as tidy df, drop intercept, make a model variable, and relabel predictors
 by_trans <- mtcars %>% group_by(am) %>%                      # group data by trans
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
@@ -133,11 +141,12 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 
 g123 <- p123 %>% add_brackets(three_brackets)
 
-# pdf("plot.pdf")  # to save to file (not run)
-# grid.draw(g456)
-# dev.off()
+# to save to file (not run)
+# g <- grid.draw(g456)
+# ggsave(file = "gridplot.pdf", g)
 
-grid.draw(g123)    # to display
+
+grid.arrange(g123)    # to display
 
 ## ----fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE-----
 data(diamonds)
@@ -218,7 +227,7 @@ small_multiple(by_trans, dodge_size = .06) +
     theme_bw() + ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
     theme(axis.text.x  = element_text(angle = 45, hjust = 1),
-          legend.position=c(0, 0), legend.justification=c(0, 0),
+          legend.position=c(0.06, 0.02), legend.justification=c(0, 0),
           legend.title = element_text(size=8),
           legend.background = element_rect(color="gray90"),
           legend.margin = unit(-4, "pt"),

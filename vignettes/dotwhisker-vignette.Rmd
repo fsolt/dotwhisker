@@ -162,7 +162,7 @@ dwplot(m5_margin)
 
 
 ## Advanced Use: Grouping Predictors 
-It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.draw` and saved, at present, by calling a device.
+It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.arrange` and saved, at present, by calling a device.
 
 ```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
 # Define order for predictors that can be grouped
@@ -202,11 +202,12 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 
 g123 <- p123 %>% add_brackets(three_brackets)
 
-# pdf("plot.pdf")  # to save to file (not run)
-# grid.draw(g456)
-# dev.off()
+# to save to file (not run)
+# g <- grid.draw(g456)
+# ggsave(file = "gridplot.pdf", g)
 
-grid.draw(g123)    # to display
+
+grid.arrange(g123)    # to display
 ```
 
 

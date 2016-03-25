@@ -6,9 +6,9 @@
 #' @param brackets A list of brackets; each element of the list should be a character vector consisting of (1) a label for the bracket, (2) the name of the topmost variable to be enclosed by the bracket, and (3) the name of the bottommost variable to be enclosed by the bracket.
 #' @param face A typeface for the bracket labels; options are "plain", "bold", "italic", "oblique", and "bold.italic".
 #'
-#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[grid]{grid.draw}}.
+#' @return The function returns a \code{gtable} object, which are viewed with \code{\link[gridExtra]{grid.arrange}}.
 #'
-#' To save, wrap the \code{grid.draw} command with \code{\link[grDevices]{pdf}} or \code{\link[grDevices]{png}}, etc., and \code{\link[grDevices]{dev.off}}.  Alternately, the next release of \code{ggplot2} (>1.0.1.9002) will enable \code{ggsave} for \code{gtable}s; one can install the development version using \code{devtools::install_github("hadley/ggplot2")}.
+#' To save, wrap the \code{grid.arrange} command with \code{\link[ggplot2]{ggsave}}.
 #'
 #' @examples
 #' library(broom)
@@ -28,14 +28,13 @@
 #'
 #' g <- p %>% add_brackets(two_brackets)
 #'
-#' grid.draw(g)  # to display
+#' grid.arrange(g)  # to display
 #'
-#' #pdf("plot.pdf")  # to save (not run)
-#' #grid.draw(g)
-#' #dev.off()
+#' # to save (not run)
+#' #ggsave(file = "gridplot.pdf", g)
 #'
 #' @import gridExtra gtable dplyr
-#' @importFrom grid grid.draw textGrob linesGrob gpar
+#' @importFrom grid textGrob linesGrob gpar
 #'
 #' @export
 

@@ -145,11 +145,11 @@ three_brackets <- list(c("Overall", "wt", "wt"), c("Engine", "cyl", "hp"),
 
 g456 <- p456 %>% add_brackets(three_brackets)
 
-grid.draw(g456)  # to display
+grid.arrange(g456)  # to display
 
-# pdf("plot.pdf")  # to save to file (not run)
-# grid.draw(g456)
-# dev.off()
+# to save to file (not run)
+# g <- grid.arrange(g456)
+# ggsave(file = "gridplot.pdf", g)
 
 ## ----fig.width= 7, fig.height=7, warning=FALSE, message=FALSE------------
 data(diamonds)
