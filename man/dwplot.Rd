@@ -4,7 +4,8 @@
 \alias{dwplot}
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
-dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL)
+dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
+  drop_intercept = FALSE, model_name = "model", ...)
 }
 \arguments{
 \item{x}{Either a tidy data.frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.}
@@ -14,6 +15,12 @@ dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL)
 \item{dodge_size}{A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot.}
 
 \item{order_vars}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.}
+
+\item{drop_intercept}{(logical) drop intercept term from all models?}
+
+\item{model_name}{(character) name of variable}
+
+\item{\dots}{extra arguments to pass to \code{\link[broom]{tidy}}}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -41,25 +48,29 @@ library(dplyr)
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 
-dwplot(m1) +
-    scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Displacement")) +
-    theme_bw() + xlab("Coefficient") + ylab("") +
+(dw1 <- dwplot(m1,drop_intercept=TRUE) +
+    scale_y_continuous(breaks = 3:1, labels=c("Weight", "Cylinders", "Displacement")) +
+    labs(x="Coefficient",y="") +
     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
-    theme(legend.position="none")
+    theme_bw()+theme(legend.position="none"))
 
 # Plot regression coefficients from multiple models on the fly
 
 m2 <- update(m1, . ~ . - disp)
-dwplot(list(full=m1,nodisp=m2))
+dwplot(list(full=m1,nodisp=m2),drop_intercept=TRUE)
+
+# scaled model coefficients
+
+m1s <- update(m1, . ~ scale(wt)+scale(cyl)+scale(disp))
+dwplot(m1s,drop_intercept=TRUE)+geom_vline(xintercept=0,lty=2)
 
 # Plot regression coefficients from multiple models in a tidy data.frame
-library(dplyr)
 by_trans <- mtcars \%>\% group_by(am) \%>\%
     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) \%>\% rename(model=am)
 
-dwplot(by_trans, dodge_size = .05) +
-    scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Displacement")) +
-    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+dwplot(by_trans, drop_intercept=TRUE, dodge_size = .05) +
+    scale_y_continuous(breaks = 3:1, labels=c("Weight", "Cylinders", "Displacement")) +
+    theme_bw() + labs(x="Coefficient Estimate", y="") + 
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage, OLS Estimates") +
     theme(plot.title = element_text(face="bold"),
