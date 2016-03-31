@@ -16,11 +16,11 @@ dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
 
 \item{order_vars}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.}
 
-\item{include_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
+\item{include_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
 
-\item{model_name}{The name of a variable that distinguishes separate models within a tidy data.frame}
+\item{model_name}{The name of a variable that distinguishes separate models within a tidy data.frame.}
 
-\item{\dots}{extra arguments to pass to \code{\link[broom]{tidy}}}
+\item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
