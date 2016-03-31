@@ -8,7 +8,7 @@
 #'
 #' @return The function returns a \code{gtable} object, which are viewed with \code{\link[gridExtra]{grid.arrange}}.
 #'
-#' To save, wrap the \code{grid.arrange} command with \code{\link[ggplot2]{ggsave}}.
+#' To save, use \code{\link[ggplot2]{ggsave}}.
 #'
 #' @examples
 #' library(broom)
@@ -18,11 +18,11 @@
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 #' m1_df <- broom::tidy(m1) # create data.frame of regression results
 #'
-#' p <- dwplot(m1_df) +
-#'     scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Displacement")) +
-#'     theme_bw() + xlab("Coefficient") + ylab("") +
-#'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
-#'     theme(legend.position="none")
+#' p <- dwplot(m1_df, include_intercept = TRUE) +
+#'    relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement")) +
+#'    theme_bw() + xlab("Coefficient") + ylab("") +
+#'    geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
+#'    theme(legend.position="none")
 #'
 #' two_brackets <- list(c("Engine", "cyl", "disp"), c("Not Engine", "(Intercept)", "wt"))
 #'
@@ -31,10 +31,11 @@
 #' grid.arrange(g)  # to display
 #'
 #' # to save (not run)
-#' #ggsave(file = "gridplot.pdf", g)
+#' #ggsave(file = "plot.pdf", g)
 #'
-#' @import gridExtra gtable dplyr
+#' @import gtable dplyr
 #' @importFrom grid textGrob linesGrob gpar
+#' @importFrom gridExtra grid.arrange
 #'
 #' @export
 
