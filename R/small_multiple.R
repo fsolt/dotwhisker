@@ -5,6 +5,7 @@
 #' @param x Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
 #' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
+#' @param include_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted
 #'
 #' @details
 #' Kastellec and Leoni (2007)
@@ -18,8 +19,6 @@
 #' Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desireable is to compare results across samples.  In that case, the data.frame should also include a variable \code{submodel} identifying the submodel of the results.
 #'
 #' @return The function returns a \code{ggplot} object.
-#'
-#' @note Ideally, the y-axes of small multiple plots would vary by predictor, but small_multiple does not currently support this behavior.
 #'
 #' @examples
 #' library(broom)
@@ -79,11 +78,14 @@
 #'
 #' @export
 
-small_multiple <- function(x, dodge_size = .06, alpha=.05) {
+small_multiple <- function(x, dodge_size = .06, alpha = .05, include_intercept = FALSE) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
-    # set variables that will appear in pipelines to NULL to make R CMD check happy
+    # Drop intercept if include_intercept = FALSE
+    if (!include_intercept) df <- df %>% dplyr::filter(term!="(Intercept)")
+
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
     estimate <- submodel <- NULL
 
     n_vars <- length(unique(df$term))

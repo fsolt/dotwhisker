@@ -4,7 +4,8 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, dodge_size = 0.06, alpha = 0.05)
+small_multiple(x, dodge_size = 0.06, alpha = 0.05,
+  include_intercept = FALSE)
 }
 \arguments{
 \item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
@@ -12,6 +13,8 @@ small_multiple(x, dodge_size = 0.06, alpha = 0.05)
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
 \item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
+
+\item{include_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -29,9 +32,6 @@ In place of \code{std.error} one may substitute \code{lb} (the lower bounds of t
 Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
 
 Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desireable is to compare results across samples.  In that case, the data.frame should also include a variable \code{submodel} identifying the submodel of the results.
-}
-\note{
-Ideally, the y-axes of small multiple plots would vary by predictor, but small_multiple does not currently support this behavior.
 }
 \examples{
 library(broom)
