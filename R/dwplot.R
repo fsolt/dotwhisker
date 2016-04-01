@@ -6,7 +6,7 @@
 #' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #' @param dodge_size A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot.
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
-#' @param include_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
+#' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data.frame.
 #' @param \dots Extra arguments to pass to \code{\link[broom]{tidy}}.
 #'
@@ -77,12 +77,12 @@
 #' @export
 
 dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
-                   include_intercept = FALSE, model_name = "model", ...) {
+                   show_intercept = FALSE, model_name = "model", ...) {
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x,...)
 
-    # Drop intercept if include_intercept = FALSE
-    if (!include_intercept) df <- df %>% dplyr::filter(term!="(Intercept)")
+    # Drop intercept if show_intercept = FALSE
+    if (!show_intercept) df <- df %>% dplyr::filter(term!="(Intercept)")
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     estimate <- model <- lb <- ub <- term <- std.error <- NULL
