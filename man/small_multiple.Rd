@@ -4,8 +4,7 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, dodge_size = 0.06, alpha = 0.05,
-  include_intercept = FALSE)
+small_multiple(x, dodge_size = 0.06, alpha = 0.05, show_intercept = FALSE)
 }
 \arguments{
 \item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
@@ -14,7 +13,7 @@ small_multiple(x, dodge_size = 0.06, alpha = 0.05,
 
 \item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
 
-\item{include_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
+\item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
 }
 \value{
 The function returns a \code{ggplot} object.
