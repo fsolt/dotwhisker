@@ -116,7 +116,7 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, include_intercept =
 
     # Add rows of NAs for variables not included in a particular model
     df <- add_NAs(df, n_models, mod_names)
-    if ("submodel" %in% names(df)) {
+    if (n_sub > 1) {
         df$model <- stringr::str_replace(df$model, as.character(df$submodel), "")
         mod_names <- unique(df$model)
         n_models <- length(mod_names)
