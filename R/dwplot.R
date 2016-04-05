@@ -154,7 +154,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
         var_names <- unique(var_names)
     }
 
-
+    # Generate arguments to geom_segment and geom_point
     seg_args0 <- list(aes(x = lb, xend = ub,
                           y = y_ind + shift, yend = y_ind + shift),
                       na.rm = TRUE)
