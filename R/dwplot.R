@@ -77,7 +77,8 @@
 #' @export
 
 dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
-                   show_intercept = FALSE, model_name = "model", ...) {
+                   show_intercept = FALSE, model_name = "model",
+                   segment_args = NULL, point_args = NULL, ...) {
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x,...)
 
@@ -157,14 +158,19 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     }
 
 
+    seg_args0 <- list(aes(x = lb, xend = ub,
+                          y = y_ind + shift, yend = y_ind + shift),
+                      na.rm = TRUE)
+    segment_args <- c(seg_args0,segment_args)
+
+    point_args0 <- list(na.rm = TRUE)
+    point_args <- c(point_args0,point_args)
+
     # Make the plot
     p <- ggplot(transform(df, model=factor(model)),
                           aes(x = estimate, y = y_ind+shift, colour=model)) +
-        geom_point(na.rm = TRUE) +
-        geom_segment(aes(x = lb,
-                         xend = ub,
-                         y = y_ind + shift, yend = y_ind + shift),
-                     na.rm = TRUE) +
+        do.call(geom_point,point_args) +
+        do.call(geom_segment,segment_args) +
         scale_y_continuous(breaks=y_ind, labels=var_names) +
         coord_cartesian(ylim=c(.5, n_vars+.5)) +
         ylab("") + xlab("")
