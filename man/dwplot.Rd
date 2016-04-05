@@ -5,7 +5,8 @@
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
 dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
-  show_intercept = FALSE, model_name = "model", ...)
+  show_intercept = FALSE, model_name = "model", dot_args = NULL,
+  whisker_args = NULL, ...)
 }
 \arguments{
 \item{x}{Either a tidy data.frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.}
@@ -18,7 +19,11 @@ dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
 
-\item{model_name}{The name of a variable that distinguishes separate models within a tidy data.frame.}
+\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
+
+\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
+
+\item{@param}{model_name The name of a variable that distinguishes separate models within a tidy data.frame.}
 
 \item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
 }
@@ -55,14 +60,12 @@ dwplot(m1) +
     theme(legend.position="none")
 
 # Plot regression coefficients from multiple models on the fly
-
 m2 <- update(m1, . ~ . - disp)
 dwplot(list(full = m1, nodisp = m2))
 
-# scaled model coefficients
-
-m1s <- update(m1, . ~ scale(wt) + scale(cyl) + scale(disp))
-dwplot(m1s) + geom_vline(xintercept = 0, linetype = 2)
+# Change the appearance of dots and whiskers
+dwplot(m1, dot_args = list(size = 6, pch = 21, fill = "white"),
+     whisker_args = list(lwd = 2))
 
 # Plot regression coefficients from multiple models in a tidy data.frame
 by_trans <- mtcars \%>\% group_by(am) \%>\%
@@ -73,7 +76,7 @@ dwplot(by_trans, dodge_size = .05) +
     theme_bw() + labs(x = "Coefficient Estimate", y = "") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage, OLS Estimates") +
-    theme(plot.title = element_text(face="bold"),
+    theme(plot.title = element_text(face = "bold"),
           legend.justification=c(0, 0), legend.position=c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
