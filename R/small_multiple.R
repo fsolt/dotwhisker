@@ -6,6 +6,8 @@
 #' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted
+#' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.
+#' @param whisker_args A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.
 #'
 #' @details
 #' Kastellec and Leoni (2007)
@@ -78,7 +80,8 @@
 #'
 #' @export
 
-small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FALSE) {
+small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FALSE,
+                           dot_args = NULL, whisker_args = NULL) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
@@ -151,13 +154,20 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FA
         x_ind <- unique(x_ind)
     }
 
+    # Generate arguments to geom_segment and geom_point
+    seg_args0 <- list(aes(x = x_ind + shift, xend = x_ind + shift,
+                          y = ub, yend = lb,
+                          color = factor(submodel)),
+                      na.rm = TRUE)
+    segment_args <- c(seg_args0, whisker_args)
+
+    point_args0 <- list(na.rm = TRUE)
+    point_args <- c(point_args0, dot_args)
+
     # Plot
     p <- ggplot(df, aes(x = x_ind + shift, y = estimate, colour=factor(submodel))) +
-        geom_point(na.rm = TRUE) +
-        geom_segment(aes(x = x_ind + shift,
-                         xend = x_ind + shift,
-                         y = ub, yend = lb,
-                         colour=factor(submodel)), na.rm = TRUE) +
+        do.call(geom_segment, segment_args) +  # Draw segments first ...
+        do.call(geom_point, point_args) +
         scale_x_continuous(breaks=x_ind, labels=mod_names) +
         xlab("") +
         facet_grid(term ~ ., scales = "free_y")
