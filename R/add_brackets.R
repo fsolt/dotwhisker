@@ -28,12 +28,12 @@
 #'
 #' g <- p %>% add_brackets(two_brackets)
 #'
-#' grid.arrange(g)  # to display
+#' gridExtra::grid.arrange(g)  # to display
 #'
 #' # to save (not run)
 #' #ggsave(file = "gridplot.pdf", g)
 #'
-#' @import gridExtra gtable dplyr
+#' @import gtable dplyr
 #' @importFrom grid textGrob linesGrob gpar
 #'
 #' @export

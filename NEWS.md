@@ -1,4 +1,4 @@
-## Version 0.2.0.4
+## Version 0.2.0.5
 1. Fixed the error due to the update of `gridExtra`
 2. Fixed the error due to the update of `ggplot2`
 

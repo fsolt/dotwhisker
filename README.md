@@ -1,4 +1,4 @@
-[![CRAN version](http://www.r-pkg.org/badges/version/dotwhisker)](https://cran.r-project.org/web/packages/dotwhisker/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker)
+[![CRAN version](http://www.r-pkg.org/badges/version/dotwhisker)](https://cran.r-project.org/package=dotwhisker) ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker)
 
 ------------------------------------------------------------------------
 dotwhisker

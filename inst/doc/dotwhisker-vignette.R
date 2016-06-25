@@ -142,11 +142,11 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 g123 <- p123 %>% add_brackets(three_brackets)
 
 # to save to file (not run)
-# g <- grid.draw(g456)
+# g <- grid.arrange(g456)
 # ggsave(file = "gridplot.pdf", g)
 
 
-grid.arrange(g123)    # to display
+gridExtra::grid.arrange(g123)    # to display
 
 ## ----fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE-----
 data(diamonds)
