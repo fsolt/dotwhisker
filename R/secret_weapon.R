@@ -5,6 +5,8 @@
 #' @param x Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
 #' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
+#' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.
+#' @param whisker_args A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.
 #'
 #' @details
 #' Andrew Gelman has coined the term \href{http://andrewgelman.com/2005/03/07/the_secret_weap/}{"the secret weapon"} for dot-and-whisker plots that compare the estimated coefficients for a single predictor across many models or datasets.
@@ -36,11 +38,12 @@
 #'
 #' @export
 
-secret_weapon <- function(x, var=NULL, alpha=.05) {
+secret_weapon <- function(x, var = NULL, alpha = .05,
+                          dot_args = NULL, whisker_args = NULL) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
-    # set variables that will appear in pipelines to NULL to make R CMD check happy
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
     term <- model <- NULL
 
     n_vars <- length(unique(df$term))
@@ -58,7 +61,7 @@ secret_weapon <- function(x, var=NULL, alpha=.05) {
     mod_names <- unique(df$model)
 
     df <- df %>% filter(term == var) %>% select(-term) %>% rename(term = model)
-    p <- df %>% dwplot(alpha = alpha)
+    p <- df %>% dwplot(alpha = alpha, dot_args = dot_args, whisker_args = whisker_args)
     return(p)
 }
 

@@ -4,7 +4,8 @@
 \alias{secret_weapon}
 \title{Generate a 'Secret Weapon' Plot of Regression Results from Multiple Models}
 \usage{
-secret_weapon(x, var = NULL, alpha = 0.05)
+secret_weapon(x, var = NULL, alpha = 0.05, dot_args = NULL,
+  whisker_args = NULL)
 }
 \arguments{
 \item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
@@ -12,6 +13,10 @@ secret_weapon(x, var = NULL, alpha = 0.05)
 \item{var}{The predictor whose results are to be shown in the 'secret weapon' plot}
 
 \item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
+
+\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
+
+\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
 }
 \value{
 The function returns a \code{ggplot} object.

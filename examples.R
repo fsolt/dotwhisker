@@ -8,7 +8,7 @@ m1_df <- tidy(m1) # create data.frame of regression results
 dwplot(m1_df)
 
 p0 <- dwplot(m1_df) +
-    scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Displacement")) +
+    relabel_y_axis(c("Weight", "Cylinders", "Displacement")) +
     theme_bw() + xlab("Coefficient") + ylab("") +
     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
     theme(legend.position="none")
@@ -21,8 +21,8 @@ library(dplyr)
 by_origin <- mtcars %>% group_by(am) %>%
     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>% rename(model=am)
 
-p1 <- dwplot(by_origin, dodge_size = .05) +
-    scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Weight", "Cylinders", "Displacement")) +
+p1 <- dwplot(by_origin, dodge_size = .05, show_intercept = TRUE) +
+    relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement")) +
     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage, OLS Estimates") +
@@ -43,8 +43,7 @@ g <- p1 %>% add_brackets(two_brackets)
 grid.arrange(g)  # to display
 
 # to save
-g <- grid.arrange(g)
-ggsave(file = "gridplot.pdf", g)
+ggsave(file = "plot.pdf", g)
 
 # The "Secret Weapon" (plot one coefficient for many models)
 data(diamonds)
@@ -65,10 +64,10 @@ p2
 library(latex2exp)
 cats <- MASS::cats
 
-p3 <- lm(Hwt ~ Sex*Bwt, data = cats) %>% tidy %>% dwplot +
-    scale_y_discrete(breaks = 4:1, labels=c("Intercept", "Male", "Weight", "Male X Weight")) +
+p3 <- lm(Hwt ~ Sex*Bwt, data = cats) %>% tidy %>% dwplot(show_intercept = TRUE) +
+    relabel_y_axis(c("Intercept", "Male", "Weight", "Male X Weight")) +
     xlab("Estimated Coefficient") + ylab("") +
-    ggtitle(latex2exp("Predicting Cats' $\\heartsuit$")) +
+    ggtitle(TeX("Predicting Cats' $\\heartsuit$")) +
     theme(plot.title = element_text(face="bold"),
           legend.position = "none")
 p3

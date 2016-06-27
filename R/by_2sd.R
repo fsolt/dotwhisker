@@ -33,6 +33,11 @@ by_2sd <- function(df, dataset) {
 
   sdX2 <- df$term %>% as.list %>%
       lapply(function(x) {
+          if(str_detect(x, ":")) {
+              first <- str_replace(x, ":.*", "")
+              second <- str_replace(x, ".*:", "")
+              dataset[[paste0(first,":",second)]] <- dataset[[first]]*dataset[[second]]
+          }
           unmatched <- !x %in% names(dataset)
           dich <- ifelse(unmatched, TRUE,
                          unique(dataset[[x]])[!is.na(unique(dataset[[x]]))] %>%

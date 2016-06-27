@@ -15,7 +15,7 @@ relabel_y_axis(x)
 \examples{
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-dwplot(m1) + relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement"))
+dwplot(m1) + relabel_y_axis(c("Weight", "Cylinders", "Displacement"))
 
 }
 \seealso{
