@@ -26,6 +26,8 @@
 #'
 #' @import dplyr
 #' @importFrom stats sd
+#' @importFrom stringr str_detect
+#' @importFrom stringr str_replace
 #'
 #' @export
 

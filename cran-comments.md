@@ -30,5 +30,3 @@ There were no ERRORs or WARNINGs.
 R CMD check succeeded
 
 ### v 0.2.0.5
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded

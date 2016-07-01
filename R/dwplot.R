@@ -229,7 +229,7 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
             if ("submodel" %in% names(m)) {
                 t$submodel <- m$submodel[1]
             }
-            m <- merge(m, t, all = TRUE)
+            m <- full_join(m, t)
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
     }

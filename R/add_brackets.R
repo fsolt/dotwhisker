@@ -28,7 +28,7 @@
 #'
 #' g <- p %>% add_brackets(two_brackets)
 #'
-#' gridExtra::grid.arrange(g)  # to display
+#' grid.arrange(g)  # to display
 #'
 #' # to save (not run)
 #' #ggsave(file = "plot.pdf", g)

@@ -4,21 +4,20 @@ Title: Dot-and-Whisker Plots of Regression Results
 Version: 0.2.0.5
 Date: 2016-02-14
 Authors@R: c(
-    person("Frederick", "Solt", email = "frederick-solt@uiowa.edu", role = c("aut", "cre")),
-    person("Yue", "Hu", email = "yue-hu-1@uiowa.edu", role = c("aut", "cre"),
-    person("Oliver", "Keyes", email = "ironholds@gmail.com", role = "ctb"),
-    person("Ben", "Bolker", email = "bbolker@gmail.com", role = "ctb"))
->>>>>>> b30a3eb9cf2e486c586b9a247b6b45f3e142e66c
+    person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
+    person("Yue", "Hu", role = c("aut", "cre"), email = "yue-hu-1@uiowa.edu"),
+    person("Oliver", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
+    person("Ben", "Bolker", role = "ctb", email = "bbolker@gmail.com"))
 Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression results.
 BugReports: https://github.com/fsolt/dotwhisker/issues
 Depends:
     R (>= 3.2.0),
     ggplot2,
+    gridExtra,
     gtable
 Imports:
     grid,
-    gridExtra,
     stats,
     broom,
     plyr,

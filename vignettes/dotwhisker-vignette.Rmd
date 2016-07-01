@@ -155,8 +155,7 @@ An input data frame can also be constructed from estimates of other quantities o
 
 ```{r fig.width = 7, message = FALSE, warning = FALSE}
 # Create a data.frame of marginal effects
-library(mfx)
-m5 <- logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
+m5 <- mfx::logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
 m5_margin <- data.frame(m5$mfxest) %>% 
   add_rownames("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
@@ -167,7 +166,6 @@ dwplot(m5_margin)
 
 ## Advanced Use: Grouping Predictors 
 It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.arrange` and saved using `ggsave`.
-
 
 ```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
 # Define order for predictors that can be grouped
@@ -210,8 +208,7 @@ g123 <- p123 %>% add_brackets(three_brackets)
 # ggsave(file = "plot.pdf", g123)
 
 
-
-gridExtra::grid.arrange(g123)    # to display
+grid.arrange(g123)    # to display
 ```
 
 

@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .DS_Store
+developing-note.Rmd
+developing-note.nb.html
+vignettes/dotwhisker-vignette.R
+vignettes/dotwhisker-vignette.html
+vignettes/kl2007_examples.R
+vignettes/kl2007_examples.html

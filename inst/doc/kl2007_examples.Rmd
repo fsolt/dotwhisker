@@ -206,7 +206,7 @@ p <- results_df %>% dwplot + theme_bw() +
     ggtitle("Electoral Incentives and LDP Post Allocation\nPekkanen, Nyblade, and Krause (2006)\nvia Kastellec and Leoni (2007)")
 
 # Add brackets
-gridExtra::grid.arrange(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"), 
+grid.arrange(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"), 
                  c("Misc Controls", "Urban-Rural Index", "Legal Professional"),
                  c("Seniority", "1st Term", "12th Term"))))
 ```
@@ -390,7 +390,7 @@ plot.reg <- function(Y,
     fg <- placeGrob(fg,legendGrob(c(21,21),legend,cex=leg.mult,leg.fontsize=leg.fontsize,fill=c("black","white")),col=1,row=i+1)
   }
   if (print) {
-    gridExtra::grid.arrange(fg)
+    grid.arrange(fg)
   } else {
     ## if we are not printing, return the graphical object
     fg
@@ -566,7 +566,7 @@ grid.Vdotplot <- function(Y,Y2=NULL,x=NULL,sp=c(.1,.1),draw=TRUE,refline=0,label
     grid.newpage()
     fg <- frameGrob(layout=grid.layout(2,2,widths=unit(c(sp[1],1-sp[1]),"npc"),heights=unit(c(1-sp[2],sp[2]),"npc")))
     fg <- placeGrob(fg,gplot,col=2,row=1)
-    gridExtra::grid.arrange(fg)
+    grid.arrange(fg)
   } else {
     gplot
   }
@@ -616,7 +616,7 @@ grid.legend <- function(pch, labels, frame = TRUE,
   gf <- legendGrob(pch, labels, frame, hgap,
                     vgap, default.units, vp)
    if (draw)
-     gridExtra::grid.arrange(gf)
+     grid.arrange(gf)
    gf
  }
 
@@ -676,7 +676,7 @@ tmp <- editGrob(tmp,gPath("xaxis","labels"),rot=45,just="right",gp=gpar(lineheig
 ##tmp is the object we have just created,"xaxis" is the name of element in the object with the x-axis
 ##elements, and "labels" is the actual object in xaxis that we want to rotate
 ##just is the justification of the text
-gridExtra::grid.arrange(tmp) ## print the graph
+grid.arrange(tmp) ## print the graph
 
 ```
 
