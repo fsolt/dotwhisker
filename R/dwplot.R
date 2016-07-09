@@ -221,6 +221,9 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
     }
     for (i in seq(n_models)) {
         m <- df[dfmod==mod_names[[i]], ]
+        for(k in seq(m)){
+            if(is.factor(m[,k])) m[,k] <- as.character(m[,k])
+        }
         not_in <- setdiff(unique(df$term), m$term)
         for (j in seq(not_in)) {
             t <- data.frame(term = not_in[j],
@@ -233,7 +236,8 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
     }
-    df <- dft %>% group_by(model) %>% arrange(term) %>% ungroup
+    df <- dft
+    #%>% group_by(model) %>% arrange(term) %>% ungroup
     df$estimate <- as.numeric(df$estimate)
     if ("std.error" %in% names(df)) {
         df$std.error <- as.numeric(df$std.error)
@@ -244,5 +248,7 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
     if ("lb" %in% names(df)) {
         df$lb <- as.numeric(df$lb)
     }
+
+
     return(df)
 }
