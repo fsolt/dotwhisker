@@ -6,3 +6,5 @@
 ^plot\.pdf$
 ^examples\.R$
 ^R\add_headers.R$
+^developing-note.Rmd$
+^developing-note.nb.html$

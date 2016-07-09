@@ -19,11 +19,11 @@ dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
 
+\item{model_name}{The name of a variable that distinguishes separate models within a tidy data.frame.}
+
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
 
 \item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
-
-\item{@param}{model_name The name of a variable that distinguishes separate models within a tidy data.frame.}
 
 \item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
 }

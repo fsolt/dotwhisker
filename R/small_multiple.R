@@ -89,7 +89,7 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FA
     if (!show_intercept) df <- df %>% dplyr::filter(term!="(Intercept)")
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- submodel <- NULL
+    term <- estimate <- submodel <- NULL
 
     n_vars <- length(unique(df$term))
 

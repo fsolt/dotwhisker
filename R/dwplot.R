@@ -7,7 +7,7 @@
 #' @param dodge_size A number (typically between 0 and 0.3) indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot.
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
-#' @param @param model_name The name of a variable that distinguishes separate models within a tidy data.frame.
+#' @param model_name The name of a variable that distinguishes separate models within a tidy data.frame.
 #' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.
 #' @param whisker_args A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.
 #' @param \dots Extra arguments to pass to \code{\link[broom]{tidy}}.
@@ -220,7 +220,7 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
         df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
     }
     for (i in seq(n_models)) {
-        m <- df[dfmod==mod_names[[i]], ]
+        m <- df[dfmod==mod_names[[i]], ] %>% as.data.frame()
         for(k in seq(m)){
             if(is.factor(m[,k])) m[,k] <- as.character(m[,k])
         }
