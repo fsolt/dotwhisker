@@ -1,4 +1,4 @@
-## Version 0.2.6
+## Version 0.2.1
 1. Fixed the error due to the update of `dplyr`
 2. Fixing the errors in vignette.
 3. Adding the `show_intercept` argument. 
