@@ -20,14 +20,17 @@ m3 <- update(m2, . ~ . + am) # and another
 dwplot(list(m1, m2, m3))
 
 ## ----fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE-----
+dwplot(list(m1, m2, m3), show_intercept = TRUE)
+
+## ----fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE-----
 dwplot(list(m1, m2, m3)) +
-     relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement", 
+     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
                      "Gears", "Horsepower", "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
      theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 0), legend.position=c(1, 0),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
 
@@ -46,10 +49,9 @@ two_models <- rbind(m1_df, m2_df)
 dwplot(two_models)
 
 ## ----fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE-----
-# Run model on subsets of data, save results as tidy df, drop intercept, make a model variable, and relabel predictors
+# Run model on subsets of data, save results as tidy df, make a model variable, and relabel predictors
 by_trans <- mtcars %>% group_by(am) %>%                      # group data by trans
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
-    filter(term != "(Intercept)") %>%                        # drop intercepts
     rename(model=am) %>%                                     # make model variable
     relabel_predictors(c(wt = "Weight",                      # relabel predictors
                      cyl = "Cylinder",
@@ -87,16 +89,14 @@ dwplot(m4_df)
 # Customize the input data frame
 m1_df_mod <- m1_df %>%                 # the original tidy data.frame
     by_2sd(mtcars) %>%                 # rescale the coefficients
-    filter(term != "(Intercept)") %>%  # omit the intercept
     arrange(term)                      # alphabetize the variables
 
-m1_df_mod  # rescaled, intercept omitted, and variables reordered alphabetically
+m1_df_mod  # rescaled, with variables reordered alphabetically
 dwplot(m1_df_mod)
 
 ## ----fig.width = 7, message = FALSE, warning = FALSE---------------------
 # Create a data.frame of marginal effects
-library(mfx)
-m5 <- logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
+m5 <- mfx::logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
 m5_margin <- data.frame(m5$mfxest) %>% 
   add_rownames("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
@@ -111,7 +111,6 @@ reordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m123_df <- rbind(tidy(m1) %>% mutate(model = "Model 1"),      # tidy results &
                  tidy(m2) %>% mutate(model = "Model 2"),      # add a variable to
                  tidy(m3) %>% mutate(model = "Model 3")) %>%  # identify model.
-    filter(term != "(Intercept)") %>%                         # drop intercepts
     by_2sd(mtcars) %>%                                        # rescale coefficients
     mutate(term = factor(term, levels = reordered_vars)) %>%  # make term a factor &
     group_by(model) %>% arrange(term) %>%                     # reorder
@@ -142,8 +141,7 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 g123 <- p123 %>% add_brackets(three_brackets)
 
 # to save to file (not run)
-# g <- grid.draw(g456)
-# ggsave(file = "gridplot.pdf", g)
+# ggsave(file = "plot.pdf", g123)
 
 
 grid.arrange(g123)    # to display
@@ -157,7 +155,7 @@ by_clarity <- diamonds %>% group_by(clarity) %>%
  ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
-secret_weapon(by_clarity, var="carat", alpha=.01) + 
+secret_weapon(by_clarity, var = "carat", alpha = .01) + 
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))

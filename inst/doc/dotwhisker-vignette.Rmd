@@ -47,17 +47,23 @@ m3 <- update(m2, . ~ . + am) # and another
 dwplot(list(m1, m2, m3))
 ```
 
+Model intercepts are rarely theoretically interesting [see @Kastellec2007, 765], so they are excluded by `dwplot` by default.  They are easy to include if desired, however, by setting the `show_intercept` argument to true.
+
+```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
+dwplot(list(m1, m2, m3), show_intercept = TRUE)
+```
+
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 dwplot(list(m1, m2, m3)) +
-     relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement", 
+     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
                      "Gears", "Horsepower", "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
      theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 0), legend.position=c(1, 0),
+           legend.justification=c(0, 0), legend.position=c(0, 0),
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
 ```
@@ -68,7 +74,7 @@ There are many other packages (e.g., `coefplot`) that have the ability to draw d
 
 
 ## Advanced Use: Plotting Results Stored in a Tidy Data Frame 
-In addition to model objects, the input for `dwplot` may be a tidy data frame that includes three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. In place of `std.error` one may substitute `lb`, the lower bounds of the confidence intervals of the estimates, and `ub`, the corresponding upper bounds. As noted above, `broom::tidy` [@Robinson2015] produces such a data frame of estimates for many common classes of model objects (indeed, `dwplot` was written to expect a data.frame with the columns `term`, `estimate`, and `std.error` because this is the format of the output produced by `tidy`). When more than one model's results are to be plotted, an additional column `model` that identifies the two models must be added to the data frame. 
+In addition to model objects, the input for `dwplot` may be a tidy data frame that includes three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. In place of `std.error` one may substitute `lb`, the lower bounds of the confidence intervals of the estimates, and `ub`, the corresponding upper bounds. As noted above, `broom::tidy` [@Robinson2015] produces such a data frame of estimates for many common classes of model objects (indeed, `dwplot` was written to expect a data.frame with the columns `term`, `estimate`, and `std.error` because this is the format of the output produced by `tidy`). When more than one model's results are to be plotted, an additional column `model` that identifies the two models must be added to the data frame (alternate names for this last column may be specified by using the `model_name` argument). 
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 # regression compatible with tidy
@@ -77,7 +83,7 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 ```
 
-Using `tidy` first can be helpful when one wishes to omit certain model estimates---for example, the intercept---from the plot:
+Using `tidy` can be helpful when one wishes to omit certain model estimates from the plot.  To illustrate, we drop the intercept:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
@@ -91,10 +97,9 @@ dwplot(two_models)
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-# Run model on subsets of data, save results as tidy df, drop intercept, make a model variable, and relabel predictors
+# Run model on subsets of data, save results as tidy df, make a model variable, and relabel predictors
 by_trans <- mtcars %>% group_by(am) %>%                      # group data by trans
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
-    filter(term != "(Intercept)") %>%                        # drop intercepts
     rename(model=am) %>%                                     # make model variable
     relabel_predictors(c(wt = "Weight",                      # relabel predictors
                      cyl = "Cylinder",
@@ -134,16 +139,15 @@ m4_df
 dwplot(m4_df)
 ```
 
-Working with a tidy data frame, it is similarly straightforward to plot just a subset of results or to rescale or reorder coefficients.  For example, many users will wish to consider omitting model intercepts as they are rarely theoretically interesting [see @Kastellec2007, 765]. Another often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this can of course be done before model estimation, it can be more convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
+Working with a tidy data frame, it is similarly straightforward to plot just a subset of results or to rescale or reorder coefficients.  One often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this can of course be done before model estimation, it can be more convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
 
 ```{r fig.width = 7, message = FALSE, warning = FALSE}
 # Customize the input data frame
 m1_df_mod <- m1_df %>%                 # the original tidy data.frame
     by_2sd(mtcars) %>%                 # rescale the coefficients
-    filter(term != "(Intercept)") %>%  # omit the intercept
     arrange(term)                      # alphabetize the variables
 
-m1_df_mod  # rescaled, intercept omitted, and variables reordered alphabetically
+m1_df_mod  # rescaled, with variables reordered alphabetically
 dwplot(m1_df_mod)
 ```
 
@@ -151,8 +155,7 @@ An input data frame can also be constructed from estimates of other quantities o
 
 ```{r fig.width = 7, message = FALSE, warning = FALSE}
 # Create a data.frame of marginal effects
-library(mfx)
-m5 <- logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
+m5 <- mfx::logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
 m5_margin <- data.frame(m5$mfxest) %>% 
   add_rownames("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
@@ -162,7 +165,7 @@ dwplot(m5_margin)
 
 
 ## Advanced Use: Grouping Predictors 
-It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.arrange` and saved, at present, by calling a device.
+It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  Note that `add_brackets` outputs a `gtable` rather than a `ggplot` object.  Therefore, the output is displayed using `grid.arrange` and saved using `ggsave`.
 
 ```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
 # Define order for predictors that can be grouped
@@ -172,7 +175,6 @@ reordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m123_df <- rbind(tidy(m1) %>% mutate(model = "Model 1"),      # tidy results &
                  tidy(m2) %>% mutate(model = "Model 2"),      # add a variable to
                  tidy(m3) %>% mutate(model = "Model 3")) %>%  # identify model.
-    filter(term != "(Intercept)") %>%                         # drop intercepts
     by_2sd(mtcars) %>%                                        # rescale coefficients
     mutate(term = factor(term, levels = reordered_vars)) %>%  # make term a factor &
     group_by(model) %>% arrange(term) %>%                     # reorder
@@ -203,8 +205,7 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 g123 <- p123 %>% add_brackets(three_brackets)
 
 # to save to file (not run)
-# g <- grid.draw(g456)
-# ggsave(file = "gridplot.pdf", g)
+# ggsave(file = "plot.pdf", g123)
 
 
 grid.arrange(g123)    # to display
@@ -223,7 +224,7 @@ by_clarity <- diamonds %>% group_by(clarity) %>%
  ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
-secret_weapon(by_clarity, var="carat", alpha=.01) + 
+secret_weapon(by_clarity, var = "carat", alpha = .01) + 
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))
