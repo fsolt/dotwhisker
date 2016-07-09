@@ -1,7 +1,8 @@
-## Version 0.2.0.6
+## Version 0.2.6
 1. Fixed the error due to the update of `dplyr`
 2. Fixing the errors in vignette.
 3. Adding the `show_intercept` argument. 
+4. Shorten the version number to three digits as `devtools` suggests.
 
 
 ## Version 0.2.0.5

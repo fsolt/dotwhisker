@@ -1,7 +1,7 @@
 Package: dotwhisker
 Type: Package
 Title: Dot-and-Whisker Plots of Regression Results
-Version: 0.2.0.6
+Version: 0.2.6
 Date: 2016-07-09
 Authors@R: c(
     person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
