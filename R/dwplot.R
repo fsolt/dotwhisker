@@ -232,21 +232,21 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
             if ("submodel" %in% names(m)) {
                 t$submodel <- m$submodel[1]
             }
-            
+
             for(l in seq(t)){
               if(is.factor(t[,l])) t[,l] <- as.character(t[,l])
             }
-            
+
             m <- full_join(m, t)
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
         if (i==1) order_var <- dft$term
     }
-    
+
     order_df <- data.frame(term = order_var, stringsAsFactors = F)
     order_df$order <- seq(order_df$term)
-    df <- dft %>% group_by(model) %>% left_join(order_df, .) %>% ungroup %>% arrange(model)
-    
+    df <-  left_join(order_df, group_by(dft,model)) %>% ungroup %>% arrange(model)
+
     df$estimate <- as.numeric(df$estimate)
     if ("std.error" %in% names(df)) {
         df$std.error <- as.numeric(df$std.error)
