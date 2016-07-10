@@ -82,7 +82,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x,...)
 
-    if (!show_intercept) df <- df %>% dplyr::filter(term!="(Intercept)")
+    if (!show_intercept) df <- df %>% filter(term!="(Intercept)")
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     estimate <- model <- lb <- ub <- term <- std.error <- NULL
@@ -146,8 +146,8 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     } else {
         shift <- seq(dodge_size, -dodge_size, length.out = n_models)
     }
-    shift_index <- data.frame(model = mod_names, shift)
-    df <- dplyr::left_join(df, shift_index, by="model")
+    shift_index <- data.frame(model = as.character(mod_names), shift, stringsAsFactors = F)
+    df <- left_join(df, shift_index, by="model")
 
     # Catch difference between single and multiple models
     if (length(y_ind) != length(var_names)) {
@@ -232,12 +232,21 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
             if ("submodel" %in% names(m)) {
                 t$submodel <- m$submodel[1]
             }
+            
+            for(l in seq(t)){
+              if(is.factor(t[,l])) t[,l] <- as.character(t[,l])
+            }
+            
             m <- full_join(m, t)
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
+        if (i==1) order_var <- dft$term
     }
-    df <- dft
-    #%>% group_by(model) %>% arrange(term) %>% ungroup
+    
+    order_df <- data.frame(term = order_var, stringsAsFactors = F)
+    order_df$order <- seq(order_df$term)
+    df <- dft %>% group_by(model) %>% left_join(order_df, .) %>% ungroup %>% arrange(model)
+    
     df$estimate <- as.numeric(df$estimate)
     if ("std.error" %in% names(df)) {
         df$std.error <- as.numeric(df$std.error)

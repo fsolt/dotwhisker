@@ -14,6 +14,6 @@ To install:
 
 
 
-More details are available at the vignettes, which can be found here:
+More details are available at here:
 
-http://cran.r-project.org/package=dotwhisker
+https://cran.r-project.org/web/packages/dotwhisker/vignettes/dotwhisker-vignette.html
