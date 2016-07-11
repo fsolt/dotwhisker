@@ -233,11 +233,15 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
                 t$submodel <- m$submodel[1]
             }
 
-            for(l in seq(t)){
+            for (l in seq(t)){
               if(is.factor(t[,l])) t[,l] <- as.character(t[,l])
             }
 
-            m <- full_join(m, t)
+            if ("submodel" %in% names(m)) {
+                m <- full_join(m, t, by = c("term", "model", "submodel"))
+            } else {
+                m <- full_join(m, t, by = c("term", "model"))
+            }
         }
         if (i==1) dft <- m else dft <- rbind(dft, m)
         if (i==1) order_var <- dft$term
