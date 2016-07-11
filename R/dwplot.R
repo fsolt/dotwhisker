@@ -146,7 +146,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     } else {
         shift <- seq(dodge_size, -dodge_size, length.out = n_models)
     }
-    shift_index <- data.frame(model = as.character(mod_names), shift, stringsAsFactors = F)
+    shift_index <- data.frame(model = mod_names, shift)
     df <- left_join(df, shift_index, by="model")
 
     # Catch difference between single and multiple models
@@ -220,36 +220,28 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
         df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
     }
     for (i in seq(n_models)) {
-        m <- df[dfmod==mod_names[[i]], ] %>% as.data.frame()
-        for(k in seq(m)){
-            if(is.factor(m[,k])) m[,k] <- as.character(m[,k])
-        }
+        m <- df[dfmod==mod_names[[i]], ]
         not_in <- setdiff(unique(df$term), m$term)
         for (j in seq(not_in)) {
-            t <- data.frame(term = not_in[j],
-                            model = mod_names[[i]],
-                            stringsAsFactors = FALSE)
+            t <- data.frame(term = factor(not_in[j], levels = levels(df$term)),
+                            model = mod_names[[i]])
             if ("submodel" %in% names(m)) {
                 t$submodel <- m$submodel[1]
             }
-
-            for (l in seq(t)){
-              if(is.factor(t[,l])) t[,l] <- as.character(t[,l])
-            }
-
             if ("submodel" %in% names(m)) {
                 m <- full_join(m, t, by = c("term", "model", "submodel"))
             } else {
                 m <- full_join(m, t, by = c("term", "model"))
             }
         }
-        if (i==1) dft <- m else dft <- rbind(dft, m)
-        if (i==1) order_var <- dft$term
+        if (i==1) {
+            dft <- m %>% arrange(term)
+        } else {
+            dft <- bind_rows(dft, m %>% arrange(term))
+        }
     }
 
-    order_df <- data.frame(term = order_var, stringsAsFactors = F)
-    order_df$order <- seq(order_df$term)
-    df <-  left_join(order_df, group_by(dft,model)) %>% ungroup %>% arrange(model)
+    df <- dft
 
     df$estimate <- as.numeric(df$estimate)
     if ("std.error" %in% names(df)) {
@@ -261,7 +253,6 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
     if ("lb" %in% names(df)) {
         df$lb <- as.numeric(df$lb)
     }
-
 
     return(df)
 }
