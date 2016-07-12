@@ -136,7 +136,7 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FA
         lb <- c(df$estimate - qnorm(ci) * df$std.error)
         ub <- c(df$estimate + qnorm(ci) * df$std.error)
 
-        df <- cbind(df, lb, ub)
+        df <- cbind(as.data.frame(df), lb, ub)
     }
 
     # Calculate x-axis shift for plotting multiple submodels, generate x index
