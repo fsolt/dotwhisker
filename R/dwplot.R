@@ -29,7 +29,7 @@
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @import ggplot2
-#' @import dplyr
+#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows
 #' @importFrom stats qnorm
 #' @importFrom broom tidy
 #' @importFrom plyr ldply
@@ -220,11 +220,11 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
         df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
     }
     for (i in seq(n_models)) {
-        m <- df[dfmod==mod_names[[i]], ]
+        m <- df %>% filter(model==factor(mod_names[[i]], levels = mod_names))
         not_in <- setdiff(unique(df$term), m$term)
         for (j in seq(not_in)) {
             t <- data.frame(term = factor(not_in[j], levels = levels(df$term)),
-                            model = mod_names[[i]])
+                            model = factor(mod_names[[i]], levels = mod_names))
             if ("submodel" %in% names(m)) {
                 t$submodel <- m$submodel[1]
             }

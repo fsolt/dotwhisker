@@ -24,7 +24,7 @@
 #'
 #' @seealso \code{\link[arm]{standardize}}
 #'
-#' @import dplyr
+#' @importFrom dplyr "%>%"
 #' @importFrom stats sd
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_replace
@@ -43,7 +43,7 @@ by_2sd <- function(df, dataset) {
           unmatched <- !x %in% names(dataset)
           dich <- ifelse(unmatched, TRUE,
                          unique(dataset[[x]])[!is.na(unique(dataset[[x]]))] %>%
-                             sort %>% identical(c(0,1)))
+                             sort() %>% identical(c(0,1)))
           ifelse(any(dich, unmatched), 1, 2*stats::sd(dataset[[x]], na.rm=T))
       }) %>% unlist
 

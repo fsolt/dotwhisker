@@ -33,7 +33,7 @@
 #' # to save (not run)
 #' #ggsave(file = "plot.pdf", g)
 #'
-#' @import gtable dplyr
+#' @import gtable
 #' @importFrom grid textGrob linesGrob gpar
 #' @importFrom gridExtra grid.arrange
 #'

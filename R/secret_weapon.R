@@ -32,7 +32,7 @@
 #' secret_weapon(by_clarity, "carat")
 #'
 #'
-#' @import dplyr
+#' @importFrom dplyr "%>%" filter select rename
 #' @importFrom broom tidy
 #' @importFrom utils globalVariables
 #'
