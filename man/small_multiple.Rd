@@ -67,14 +67,16 @@ mod <- "mpg ~ wt"
 by_trans <- mtcars \%>\% group_by(am) \%>\%  # group data by transmission
   do(tidy(lm(mod, data = .))) \%>\%        # run model on each group
   rename(submodel = am) \%>\%              # make submodel variable
-  mutate(model = "Model 1")              # make model variable
+  mutate(model = "Model 1") \%>\%          # make model variable
+ ungroup()
 
 for (i in 2:5) {
-  mod <- paste(mod, "+", ordered_vars[i])
-  by_trans <- rbind(by_trans, mtcars \%>\% group_by(am) \%>\%
-                   do(tidy(lm(mod, data = .))) \%>\%
-                   rename(submodel = am) \%>\%
-                   mutate(model = paste("Model", i)))
+   mod <- paste(mod, "+", ordered_vars[i])
+   by_trans <- rbind(by_trans, mtcars \%>\% group_by(am) \%>\%
+                         do(tidy(lm(mod, data = .))) \%>\%
+                         rename(submodel = am) \%>\%
+                         mutate(model = paste("Model", i)) \%>\%
+                         ungroup())
 }
 
 small_multiple(by_trans) +
