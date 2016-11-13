@@ -133,7 +133,7 @@ library(dplyr)
 m4 <- ordinal::clm(factor(gear) ~ wt + cyl + disp, data = mtcars)
 m4_df <- coef(summary(m4)) %>% 
   data.frame() %>% 
-  add_rownames("term") %>%
+  tibble::rownames_to_column("term") %>%
   rename(estimate = Estimate, std.error = Std..Error)
 m4_df
 dwplot(m4_df)
@@ -157,7 +157,7 @@ An input data frame can also be constructed from estimates of other quantities o
 # Create a data.frame of marginal effects
 m5 <- mfx::logitmfx(formula = am ~ wt + cyl + disp, data = mtcars) 
 m5_margin <- data.frame(m5$mfxest) %>% 
-  add_rownames("term") %>% 
+  tibble::rownames_to_column("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
 m5_margin
 dwplot(m5_margin)

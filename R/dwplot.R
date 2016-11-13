@@ -110,6 +110,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     # Specify order of variables if an order is provided
     if (!is.null(order_vars)) {
         df$term <- factor(df$term, levels = order_vars)
+        df <- df[match(order_vars, df$term),] %>% stats::na.omit()
     }
 
     # Add rows of NAs for variables not included in a particular model
