@@ -1,5 +1,5 @@
 ## Version 0.2.3
-1. Fixed  the error of variable ordering with a single model.
+1. Fixed the error of variable ordering with a single model.
 
 ## Version 0.2.2
 1. Fixed the error in presenting multiple models.
