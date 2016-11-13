@@ -6,11 +6,11 @@ citEntry(entry = "misc",
                    as.person("Yue Hu")),
   howpublished = "Available at The Comprehensive R Archive Network (CRAN)",
   year         = "2015",
-  url          = "http://CRAN.R-project.org/package=dotwhisker",
+  url          = "https://CRAN.R-project.org/package=dotwhisker",
 
   textVersion  =
   paste("Frederick Solt and Yue Hu (2015).",
         "dotwhisker: Dot-and-Whisker Plots of Regression Results.",
         "available at The Comprehensive R Archive Network (CRAN).",
-        "URL http://CRAN.R-project.org/package=dotwhisker.")
+        "URL https://CRAN.R-project.org/package=dotwhisker.")
 )
