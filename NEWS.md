@@ -1,3 +1,6 @@
+## Version 0.2.4
+1. Improved the presentation of `small_multiple`.
+
 ## Version 0.2.3
 1. Fixed the error of variable ordering with a single model.
 

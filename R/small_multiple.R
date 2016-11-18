@@ -167,10 +167,10 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FA
     point_args <- c(point_args0, dot_args)
 
     # Plot
-    p <- ggplot(df, aes(x = x_ind + shift, y = estimate, colour=factor(submodel))) +
+    p <- ggplot(df, aes(x = as.factor(x_ind + shift), y = estimate, colour=factor(submodel))) +
         do.call(geom_segment, segment_args) +  # Draw segments first ...
         do.call(geom_point, point_args) +
-        scale_x_continuous(breaks=x_ind, labels=mod_names) +
+        scale_x_discrete(breaks=x_ind, labels=mod_names) +
         xlab("") +
         facet_grid(term ~ ., scales = "free_y")
 
