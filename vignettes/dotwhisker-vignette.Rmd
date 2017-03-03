@@ -124,6 +124,27 @@ dwplot(by_trans, dodge_size = .05) +
 
 Also note in the above example the use of an additional `dotwhisker` function for quickly relabeling predictors in a tidy data frame before passing the data frame to `dwplot`, the aptly named `relabel_predictors` function.  Whether it is more convenient to use `relabel_predictors` on a tidy data frame before calling `dwplot` or to use `relabel_y_axis` after calling `dwplot` is a choice left to the user (it is worth noting, though, that because `relabel_predictors` requires matched pairs of variable names and labels, this approach minimizes the possiblity of making mistakes). 
 
+Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.
+
+```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
+ dwplot(by_trans, dodge_size = .05) +
+   geom_point(aes(colour = model, shape = model), size = 3) +
+   theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+   geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+   ggtitle("Predicting Gas Mileage by Transmission Type") +
+   theme(plot.title = element_text(face="bold"),
+         legend.justification=c(0, 0), legend.position=c(0, 0),
+         legend.background = element_rect(colour="grey80"),
+         legend.title.align = .5) +
+   scale_colour_grey(start = .1, end = .1, # if start and end same value, use same colour for all models 
+                     name  ="Model", 
+                     breaks=c(0, 1),
+                     labels=c("Automatic", "Manual")) +
+   scale_shape_discrete(name  ="Model",
+                        breaks=c(0, 1),
+                        labels=c("Automatic", "Manual"))
+```
+
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
 
 ```{r fig.width = 7, message = FALSE, warning = FALSE}
