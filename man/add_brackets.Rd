@@ -45,4 +45,3 @@ grid.arrange(g)  # to display
 #ggsave(file = "plot.pdf", g)
 
 }
-

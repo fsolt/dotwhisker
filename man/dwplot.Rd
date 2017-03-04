@@ -89,4 +89,3 @@ dwplot(by_trans, dodge_size = .05) +
 \references{
 Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
 }
-

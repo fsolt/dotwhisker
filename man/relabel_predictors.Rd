@@ -34,4 +34,3 @@ dwplot(m1_df)
 \seealso{
 \code{\link[dotwhisker]{relabel_y_axis}} to relabel the predictors on the y-axis of a dot-whisker plot after using \code{\link[dotwhisker]{dwplot}}
 }
-

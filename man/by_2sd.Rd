@@ -37,4 +37,3 @@ Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Dev
 \seealso{
 \code{\link[arm]{standardize}}
 }
-

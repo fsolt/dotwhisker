@@ -21,4 +21,3 @@ dwplot(m1) + relabel_y_axis(c("Weight", "Cylinders", "Displacement"))
 \seealso{
 \code{\link[dotwhisker]{relabel_predictors}} to relabel the predictors in a tidy data.frame before using \code{\link[dotwhisker]{dwplot}}
 }
-

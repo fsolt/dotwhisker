@@ -47,4 +47,3 @@ secret_weapon(by_clarity, "carat")
 
 
 }
-

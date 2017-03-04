@@ -93,4 +93,3 @@ theme_bw() + ylab("Coefficient Estimate") +
     labels = c("Automatic", "Manual"))
 
 }
-

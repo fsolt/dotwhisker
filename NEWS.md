@@ -1,3 +1,6 @@
+## Version 0.2.5
+1. Provided example of using multiple shapes for multiple models in vignette.
+
 ## Version 0.2.4
 1. Improved the presentation of `small_multiple`.
 
