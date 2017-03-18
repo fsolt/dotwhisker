@@ -1,10 +1,10 @@
 #' Relabel the Y-Axis of a Dot-Whisker Plot
 #'
-#' \code{relabel_y_axis} is a convenience function for relabeling the predictors on the y-axis of a dot-whisker plot created by \code{\link[dotwhisker]{dwplot}}
+#' \code DEPRECATED {relabel_y_axis} is a convenience function for relabeling the predictors on the y-axis of a dot-whisker plot created by \code{\link[dotwhisker]{dwplot}}.  It is deprecated; use \code{\link[dotwhisker]{relabel_predictors}} instead.
 #'
 #' @param x A vector of labels for predictors, listed from top to bottom
 #'
-#' @seealso \code{\link[dotwhisker]{relabel_predictors}} to relabel the predictors in a tidy data.frame before using \code{\link[dotwhisker]{dwplot}}
+#' @seealso \code{\link[dotwhisker]{relabel_predictors}} to relabel predictors on the y-axis of a dot-whisker plot or in a tidy data.frame
 #'
 #' @examples
 #' data(mtcars)
