@@ -1,4 +1,6 @@
 ## Version 0.2.5
+1. Expanded capabilities of `relabel_predictors`.  `relabel_predictors` now accepts plots as well as tidy dataframes as input; that is, it may now be used both before and after calls to `dwplot`.
+1. Deprecated `relabel_y_axis`.  It is easy to mistakenly mislabel variables with `relabel_y_axis`, and it has a conflict with `add_brackets` in single-model plots. 
 1. Provided example of using multiple shapes for multiple models in vignette.
 
 ## Version 0.2.4
