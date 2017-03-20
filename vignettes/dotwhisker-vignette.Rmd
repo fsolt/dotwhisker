@@ -56,9 +56,13 @@ dwplot(list(m1, m2, m3), show_intercept = TRUE)
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-dwplot(list(m1, m2, m3)) +
-     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
-                     "Gears", "Horsepower", "Manual")) +
+dwplot(list(m1, m2, m3)) %>% 
+    relabel_predictors(c(wt = "Weight",                       
+                         cyl = "Cylinders", 
+                         disp = "Displacement", 
+                         hp = "Horsepower", 
+                         gear = "Gears", 
+                         am = "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
@@ -68,7 +72,7 @@ dwplot(list(m1, m2, m3)) +
            legend.title = element_blank()) 
 ```
 
-Note that providing a character vector to `relabel_y_axis`, a `dotwhisker` function, conveniently renames the predictors from top to bottom.
+Note that providing a named character vector to `relabel_predictors`, a `dotwhisker` function, conveniently renames the predictors.
 
 There are many other packages (e.g., `coefplot`) that have the ability to draw dot-and-whisker plots of at least a single set of regression results taking model objects as input. While this is very convenient, it also comes with some severe limitations.  First, many less common model objects are not supported.  Second, rescaling coefficients, reordering them, or just plotting a subset of results is typically impossible.  And third, quantities of interest beyond coefficient estimates cannot be plotted.  The `dotwhisker` package avoids all of these limitations by optionally taking as its input a tidy data frame of estimates drawn from a model object rather than the model object itself. 
 
@@ -123,7 +127,7 @@ dwplot(by_trans, dodge_size = .05) +
                       labels = c("Automatic", "Manual"))
 ```
 
-Also note in the above example the use of an additional `dotwhisker` function for quickly relabeling predictors in a tidy data frame before passing the data frame to `dwplot`, the aptly named `relabel_predictors` function.  Whether it is more convenient to use `relabel_predictors` on a tidy data frame before calling `dwplot` or to use `relabel_y_axis` after calling `dwplot` is a choice left to the user (it is worth noting, though, that because `relabel_predictors` requires matched pairs of variable names and labels, this approach minimizes the possiblity of making mistakes). 
+Also note in the above example the additional manner of using the `relabel_predictors` function: in addition to being used on the `ggplot` object created by `dwplot` before further customization, it may also be used on a tidy data frame before it is passed to `dwplot`.
 
 Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.
 
@@ -209,8 +213,6 @@ m123_df <- rbind(tidy(m1) %>% mutate(model = "Model 1"),      # tidy results &
 
 # Save finalized plot to an object 
 p123 <- dwplot(m123_df, dodge_size = .08) +
-     relabel_y_axis(c("Weight", "Cylinders", "Displacement", 
-                               "Horsepower", "Gears", "Manual")) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
