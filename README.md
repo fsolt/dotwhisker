@@ -1,4 +1,4 @@
-[![CRAN version](http://www.r-pkg.org/badges/version/dotwhisker)](https://cran.r-project.org/web/packages/dotwhisker/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker) [![Travis-CI Build Status](https://travis-ci.org/fsolt/dotwhisker.svg?branch=master)](https://travis-ci.org/fsolt/ukds)
+[![CRAN version](http://www.r-pkg.org/badges/version/dotwhisker)](https://cran.r-project.org/web/packages/dotwhisker/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker) [![Travis-CI Build Status](https://travis-ci.org/fsolt/dotwhisker.svg?branch=master)](https://travis-ci.org/fsolt/dotwhisker)
 
 ------------------------------------------------------------------------
 dotwhisker
