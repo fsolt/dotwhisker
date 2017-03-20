@@ -98,7 +98,8 @@ It can also be convenient to build a tidy data frame of regression results direc
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 # Run model on subsets of data, save results as tidy df, make a model variable, and relabel predictors
-by_trans <- mtcars %>% group_by(am) %>%                      # group data by trans
+by_trans <- mtcars %>% 
+    group_by(am) %>%                                         # group data by trans
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
     rename(model=am) %>%                                     # make model variable
     relabel_predictors(c(wt = "Weight",                      # relabel predictors
