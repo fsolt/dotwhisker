@@ -33,7 +33,7 @@
 
 relabel_predictors <- function(x, replace = NULL) {
     if (is.data.frame(x)) {
-        x$term <- plyr::revalue(df$term, replace = replace)
+        x$term <- plyr::revalue(x$term, replace = replace)
         return(x)
     }
     else if (is.ggplot(x)) {
