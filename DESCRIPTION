@@ -29,7 +29,8 @@ Suggests:
     mfx,
     ordinal,
     tibble,
-    knitr
+    knitr,
+    rmarkdown
 License: MIT + file LICENSE
 LazyData: TRUE
 VignetteBuilder: knitr
