@@ -10,7 +10,7 @@ relabel_y_axis(x)
 \item{x}{A vector of labels for predictors, listed from top to bottom}
 }
 \description{
-\code DEPRECATED {relabel_y_axis} is a convenience function for relabeling the predictors on the y-axis of a dot-whisker plot created by \code{\link[dotwhisker]{dwplot}}.  It is deprecated; use \code{\link[dotwhisker]{relabel_predictors}} instead.
+\code{relabel_y_axis} DEPRECATED. A convenience function for relabeling the predictors on the y-axis of a dot-whisker plot created by \code{\link[dotwhisker]{dwplot}}.  It is deprecated; use \code{\link[dotwhisker]{relabel_predictors}} instead.
 }
 \examples{
 data(mtcars)
