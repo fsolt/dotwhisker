@@ -182,7 +182,11 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     return(p)
 }
 
+
 dw_tidy <- function(x,...) {
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
+    process_lm <- tidy.summary.lm <- NULL
+
     if (!is.data.frame(x)) {
         if (class(x)=="list") {
             ind <- seq(length(x))
@@ -203,7 +207,17 @@ dw_tidy <- function(x,...) {
         } else {
             if (class(x) == "polr"){
                 family.polr <- function(object,...) NULL
-                tidy.polr <- broom:::tidy.lm
+                tidy.polr <- function (x, conf.int = FALSE, conf.level = 0.95, exponentiate = FALSE, quick = FALSE, ...) {
+                    if (quick) {
+                        co <- stats::coef(x)
+                        ret <- data.frame(term = names(co), estimate = unname(co))
+                        return(process_lm(ret, x, conf.int = FALSE, exponentiate = exponentiate))
+                    }
+                    s <- summary(x)
+                    ret <- tidy.summary.lm(s)
+                    process_lm(ret, x, conf.int = conf.int, conf.level = conf.level,
+                               exponentiate = exponentiate)
+                }
             }
             df <- broom::tidy(x,...)
         }
