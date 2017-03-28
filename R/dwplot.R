@@ -82,7 +82,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x,...)
 
-    if (!show_intercept) df <- df %>% filter(term!="(Intercept)")
+    if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     estimate <- model <- lb <- ub <- term <- std.error <- NULL
@@ -201,6 +201,10 @@ dw_tidy <- function(x,...) {
             group <- vector() # only for avoiding the NOTE in check
             df <- broom::tidy(x) %>% filter(group == "fixed")
         } else {
+            if (class(x) == "polr"){
+                family.polr <- function(object,...) NULL
+                tidy.polr <- broom:::tidy.lm
+            }
             df <- broom::tidy(x,...)
         }
     } else {
