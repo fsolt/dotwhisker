@@ -88,7 +88,7 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FA
     df <- dw_tidy(x)
 
     # Drop intercept if show_intercept = FALSE
-    if (!show_intercept) df <- df %>% dplyr::filter(term!="(Intercept)")
+    if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     term <- estimate <- submodel <- NULL

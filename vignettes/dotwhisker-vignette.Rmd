@@ -201,6 +201,7 @@ reordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m123_df <- rbind(tidy(m1) %>% mutate(model = "Model 1"),      # tidy results &
                  tidy(m2) %>% mutate(model = "Model 2"),      # add a variable to
                  tidy(m3) %>% mutate(model = "Model 3")) %>%  # identify model.
+    filter(term != "(Intercept)") %>%                         # remove intercepts
     by_2sd(mtcars) %>%                                        # rescale coefficients
     mutate(term = factor(term, levels = reordered_vars)) %>%  # make term a factor &
     group_by(model) %>% arrange(term) %>%                     # reorder
@@ -323,7 +324,7 @@ by_trans <- by_trans %>% dplyr::select(-submodel, everything(), submodel) %>%
 
 by_trans
 
-small_multiple(by_trans, dodge_size = .06) +
+small_multiple(by_trans, dodge_size = 0.06) +
     theme_bw() + ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
     theme(axis.text.x  = element_text(angle = 45, hjust = 1),
