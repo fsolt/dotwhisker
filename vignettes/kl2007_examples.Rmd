@@ -10,13 +10,13 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-I have been a big fan of @Kastellec2007 since it came out, and [by putting their code for creating graphs from actually-published tables online](http://tables2graphs.com/doku.php?id=04_regression_coefficients), the authors allowed me and many others to adapt it for our own needs.  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight-plus years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
+I have been a big fan of @Kastellec2007 since it came out, and [by putting their code for creating graphs from actually-published tables online](https://www.princeton.edu/~jkastell/tables2graphs.html), the authors allowed me and many others to adapt it for our own needs.  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight-plus years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
 
 Below, I present their original code for their three examples of plotting regression results, along with similar plots done using `dotwhisker`.  I hope you'll agree that the latter plots are not only much easier to make, but also---thanks to Hadley Wickham's [-@Wickham2009] `ggplot`---better looking (and more easily further customizable).
 
 ### Figure 6: Presenting a Single Regression Model Using a Dot Plot with Error Bars.
 
-Original, with very light edits, via Kastellec and Leoni's http://svn.tables2graphs.com/tables2graphs/Rcode/Final%20Code%20for%20Website/figure_6_stevens_table_2.R
+Kastellec and Leoni's original codes:
 
 ```{r fig.width=7, fig.height=7, warning=FALSE, message=FALSE}
 #Create vectors for coefficients, standard errors and variable names 
@@ -89,7 +89,7 @@ results_df %>% dwplot + theme_bw() + theme(legend.position="none") +
 
 ### Figure 7: Using Parallel Dot Plots with Error Bars to Present Two Regression Models.
 
-Original, with very light edits, via Kastellec and Leoni's http://svn.tables2graphs.com/tables2graphs/Rcode/Final%20Code%20for%20Website/figure_7_pekkanen_table_1.R
+Kastellec and Leoni's original codes:
 
 ```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
 #Create Vectors for coefs and standard errors for each model, and variable names
@@ -215,8 +215,7 @@ grid.arrange(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR")
 
 ### Figure 8: Using "Small Multiple" Plots to Present Regression Results from Several Models.
 
-Original, with light edits, via Kastellec and Leoni's http://svn.tables2graphs.com/tables2graphs/Rcode/Final%20Code%20for%20Website/figure_8_ansolabehere_table_4.R
-
+Kastellec and Leoni's original codes:
 
 ```{r fig.width=5, fig.height=9, warning=FALSE, message=FALSE}
 library(grid)
