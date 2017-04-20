@@ -56,6 +56,7 @@ dwplot(list(m1, m2, m3), show_intercept = TRUE)
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
+
 dwplot(list(m1, m2, m3)) %>% 
     relabel_predictors(c(wt = "Weight",                       
                          cyl = "Cylinders", 
@@ -70,6 +71,7 @@ dwplot(list(m1, m2, m3)) %>%
            legend.justification=c(0, 0), legend.position=c(0, 0),
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
+
 ```
 
 Note that providing a named character vector to `relabel_predictors`, a `dotwhisker` function, conveniently renames the predictors.
