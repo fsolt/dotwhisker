@@ -76,9 +76,9 @@
 #'
 #' @export
 
-dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
+dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
                    show_intercept = FALSE, model_name = "model",
-                   dot_args = NULL, whisker_args = NULL, ...) {
+                   dot_args = NULL, ...) {
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x,...)
 
@@ -141,37 +141,22 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
         }
     }
 
-    # Calculate y-axis shift for plotting multiple models
-    if (n_models == 1) {
-        shift <- 0
-    } else {
-        shift <- seq(dodge_size, -dodge_size, length.out = n_models)
-    }
-    shift_index <- data.frame(model = mod_names, shift)
-    df <- left_join(df, shift_index, by="model")
-
     # Catch difference between single and multiple models
     if (length(y_ind) != length(var_names)) {
         var_names <- unique(var_names)
     }
 
-    # Generate arguments to geom_segment and geom_point
-    seg_args0 <- list(aes(x = lb, xend = ub,
-                          y = y_ind + shift, yend = y_ind + shift),
-                      na.rm = TRUE)
-    segment_args <- c(seg_args0, whisker_args)
-
-    point_args0 <- list(na.rm = TRUE)
+    point_args0 <- list(na.rm = TRUE, position=position_dodgev(height = dodge_size))
     point_args <- c(point_args0, dot_args)
 
 
     # Make the plot
-    p <- ggplot(transform(df, model = factor(model)),
-                          aes(x = estimate, y = y_ind + shift, colour = model)) +
-        do.call(geom_segment, segment_args) +  # Draw segments first ...
-        do.call(geom_point, point_args) +
-        scale_y_continuous(breaks = y_ind, labels = var_names) +
-        coord_cartesian(ylim = c(.5, n_vars+.5)) +
+
+
+
+
+    p <- ggplot(df,aes(x = estimate, xmin = lb,xmax = ub, y = reorder(term, y_ind), colour = model))+
+        do.call(geom_pointrangeh, point_args) +
         ylab("") + xlab("")
 
     # Omit the legend if there is only one model
