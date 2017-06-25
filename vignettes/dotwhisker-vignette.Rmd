@@ -38,14 +38,23 @@ By default, the whiskers span the 95\% confidence interval.  To change the width
 dwplot(m1, alpha = .01)  # using 99% CI
 ```
 
-Plotting the results of more than one regression model is just as easy.  Just pass the model objects to `dwplot` as a list.  The `dodge_size` argument is used to adjust the space between the estimates of one variable when multiple models are presented in a single plot.  Its default value of .15 will usually be fine, but, depending on the dimensions of the desired plot, more pleasing results may be achieved by setting `dodge_size` to lower values when the plotted results include a relatively small number of predictors or to higher values when many models appear on the same plot.
+Plotting the results of more than one regression model is just as easy. Just pass the model objects to `dwplot` as a list.  The `dodge_size` argument is used to adjust the space between the estimates of one variable when multiple models are presented in a single plot.  Its default value of .15 will usually be fine, but, depending on the dimensions of the desired plot, more pleasing results may be achieved by setting `dodge_size` to lower values when the plotted results include a relatively small number of predictors or to higher values when many models appear on the same plot.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 m2 <- update(m1, . ~ . + hp) # add another predictor
 m3 <- update(m2, . ~ . + am) # and another 
 
-dwplot(list(m1, m2, m3), dot_args = list(size = .3))
+dwplot(list(m1, m2, m3))
 ```
+
+`dwplot` also allows users to compare the result in a parallel way, as shown following. 
+
+```{r}
+dwplot(list(m1, m2, m3)) +
+    facet_grid(~model, scales="free_y")
+```
+
+
 
 Model intercepts are rarely theoretically interesting [see @Kastellec2007, 765], so they are excluded by `dwplot` by default.  They are easy to include if desired, however, by setting the `show_intercept` argument to true.
 
@@ -89,11 +98,26 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 ```
 
+
+If the lower and upper bounds of the uncertainty intervals are already estimated (e.g., in Bayesian analysis), one can ask `dwplot` to use them by named the columns as `lb` and `ub`.
+In the following case, we created the `lb` and `ub` based on the `std.error`. Then you can see, as long as the `lb` and `ub` are defined, `dwplot` can still replicate the preceding plot when the `std.error` is removed.
+
+```{r}
+m1a_df <- mutate(m1_df, 
+                lb = estimate - qnorm(.975) * std.error,
+                ub = estimate + qnorm(.975) * std.error) %>% # create the lower and upper bounds
+                    select(-std.error) # remove the std.error
+
+dwplot(m1a_df)
+```
+
+
+
 Using `tidy` can be helpful when one wishes to omit certain model estimates from the plot.  To illustrate, we drop the intercept:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
-m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2")
+m1_df <- tidy(m1) %>% filter(term != "gear") %>% mutate(model = "Model 1")
+m2_df <- tidy(m2) %>% filter(term != "gear") %>% mutate(model = "Model 2")
 
 two_models <- rbind(m1_df, m2_df)
 
