@@ -81,8 +81,8 @@
 #'
 #' @export
 
-small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FALSE,
-                           dot_args = NULL, whisker_args = NULL) {
+small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FALSE,
+                           dot_args = list(size = .3), whisker_args = NULL) {
     # If x is list of model objects, convert to a tidy data.frame
     df <- dw_tidy(x)
 
@@ -155,12 +155,12 @@ small_multiple <- function(x, dodge_size = .06, alpha = .05, show_intercept = FA
         x_ind <- unique(x_ind)
     }
 
-    point_args0 <- list(na.rm = TRUE)
+    point_args0 <- list(na.rm = TRUE, position=position_dodge(width = dodge_size))
     point_args <- c(point_args0, dot_args)
 
     # Plot
     p <- ggplot(df,aes(y = estimate, ymin = lb,ymax = ub, x = as.factor(model), colour = submodel))+
-        geom_pointrange(position = position_dodge(width = dodge_size)) +
+        do.call(geom_pointrange, point_args) +
         ylab("") + xlab("") +
         facet_grid(term ~ ., scales = "free_y")
 

@@ -77,7 +77,7 @@
 
 dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
                    show_intercept = FALSE, model_name = "model",
-                   dot_args = NULL, ...) {
+                   dot_args = list(size = .3), ...) {
     # If x is model object(s), convert to a tidy data.frame
     df <- dw_tidy(x,...)
 
