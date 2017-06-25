@@ -44,7 +44,7 @@ Plotting the results of more than one regression model is just as easy.  Just pa
 m2 <- update(m1, . ~ . + hp) # add another predictor
 m3 <- update(m2, . ~ . + am) # and another 
 
-dwplot(list(m1, m2, m3))
+dwplot(list(m1, m2, m3), dot_args = list(size = .3))
 ```
 
 Model intercepts are rarely theoretically interesting [see @Kastellec2007, 765], so they are excluded by `dwplot` by default.  They are easy to include if desired, however, by setting the `show_intercept` argument to true.
@@ -115,7 +115,7 @@ by_trans <- mtcars %>%
 
 by_trans
 
-dwplot(by_trans, dodge_size = .05) +
+dwplot(by_trans) +
     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage by Transmission Type") +
@@ -134,8 +134,7 @@ Also note in the above example the additional manner of using the `relabel_predi
 Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
- dwplot(by_trans, dodge_size = .05) +
-   geom_point(aes(colour = model, shape = model), size = 3) +
+ dwplot(by_trans, dot_args = list(aes(colour = model, shape = model), size = .5)) +
    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
    ggtitle("Predicting Gas Mileage by Transmission Type") +
@@ -155,8 +154,6 @@ Additionally, one can change the shape of the point estimate instead of using di
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
 
 ```{r fig.width = 7, message = FALSE, warning = FALSE}
-library(dplyr)
-
 # the ordinal regression model is not supported by tidy
 m4 <- ordinal::clm(factor(gear) ~ wt + cyl + disp, data = mtcars)
 m4_df <- coef(summary(m4)) %>% 
@@ -215,7 +212,7 @@ m123_df <- rbind(tidy(m1) %>% mutate(model = "Model 1"),      # tidy results &
                          am = "Manual"))
 
 # Save finalized plot to an object 
-p123 <- dwplot(m123_df, dodge_size = .08) +
+p123 <- dwplot(m123_df) +
      theme_bw() + xlab("Coefficient Estimate") + ylab("") +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
@@ -326,7 +323,7 @@ by_trans <- by_trans %>% dplyr::select(-submodel, everything(), submodel) %>%
 
 by_trans
 
-small_multiple(by_trans, dodge_size = 0.06) +
+small_multiple(by_trans, dodge_size = 1) +
     theme_bw() + ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
     theme(axis.text.x  = element_text(angle = 45, hjust = 1),

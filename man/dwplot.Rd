@@ -4,9 +4,8 @@
 \alias{dwplot}
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
-dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
-  show_intercept = FALSE, model_name = "model", dot_args = NULL,
-  whisker_args = NULL, ...)
+dwplot(x, alpha = 0.05, dodge_size = 0.4, order_vars = NULL,
+  show_intercept = FALSE, model_name = "model", dot_args = NULL, ...)
 }
 \arguments{
 \item{x}{Either a tidy data.frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.}
@@ -23,9 +22,9 @@ dwplot(x, alpha = 0.05, dodge_size = 0.15, order_vars = NULL,
 
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
 
-\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
-
 \item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
+
+\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
