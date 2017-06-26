@@ -99,7 +99,7 @@ dwplot(m1_df) #same as dwplot(m1)
 ```
 
 
-If the lower and upper bounds of the uncertainty intervals are already estimated (e.g., in Bayesian analysis), one can ask `dwplot` to use them by named the columns as `lb` and `ub`.
+If the lower and upper bounds of the uncertainty intervals are already estimated in the model outputs (e.g., in Bayesian analyses), one can ask `dwplot` to use them by named the columns as `lb` and `ub`.
 In the following case, we created the `lb` and `ub` based on the `std.error`. Then you can see, as long as the `lb` and `ub` are defined, `dwplot` can still replicate the preceding plot when the `std.error` is removed.
 
 ```{r}
