@@ -4,8 +4,8 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, dodge_size = 0.06, alpha = 0.05, show_intercept = FALSE,
-  dot_args = NULL, whisker_args = NULL)
+small_multiple(x, dodge_size = 0.4, alpha = 0.05, show_intercept = FALSE,
+  dot_args = list(size = 0.3))
 }
 \arguments{
 \item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
@@ -16,9 +16,7 @@ small_multiple(x, dodge_size = 0.06, alpha = 0.05, show_intercept = FALSE,
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
 
-\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
-
-\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
+\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
 }
 \value{
 The function returns a \code{ggplot} object.

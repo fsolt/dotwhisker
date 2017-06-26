@@ -18,7 +18,7 @@ A tidy data.frame
 \code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dotwhisker]{dwplot}}.
 }
 \details{
-\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed.  Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dotwhisker]{dwplot}}.
+\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed. Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dotwhisker]{dwplot}}. Note that the current version of \code{by_2sd} does not subtract the mean (in contrast to Gelman's (2008) formula). However, all estimates and standard errors of the independent variables are the same as if the mean was substracted. The only difference to Gelman (2008) is that for all variables in the model the intercept is shifted by the coefficient times the mean of the variable.
 
 An alternative available in some circumstances is to pass a model object to \code{\link[arm]{standardize}} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data.frame and so is not restricted to only those model objects that \code{standardize} accepts.
 }

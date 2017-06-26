@@ -1,3 +1,7 @@
+## Version 0.3.0
+1. Rewrote the plotting functions based on the `ggstance` functions. The new `dwplot` allows cooperating with more `ggplot` functions, such as `facet_*`. 
+1. Clarified the description of `by_2sd`.
+
 ## Version 0.2.6
 1. Fixed the bug in `relabel_predictors`.
 

@@ -30,38 +30,33 @@
 #' @import ggplot2
 #' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows
 #' @importFrom stats qnorm
+#' @importFrom stats reorder
+#' @importFrom ggstance geom_pointrangeh
+#' @importFrom ggstance position_dodgev
 #' @importFrom broom tidy
 #' @importFrom plyr ldply
 #'
 #' @examples
 #' library(broom)
 #' library(dplyr)
-#'
 #' # Plot regression coefficients from a single model object
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-#'
 #' dwplot(m1) +
-#'     scale_y_continuous(breaks = 3:1, labels=c("Weight", "Cylinders", "Displacement")) +
-#'     labs(x = "Coefficient", y = "") +
+#'     xlab("Coefficient") + ylab("") +
 #'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
 #'     theme(legend.position="none")
-#'
 #' # Plot regression coefficients from multiple models on the fly
 #' m2 <- update(m1, . ~ . - disp)
 #' dwplot(list(full = m1, nodisp = m2))
-#'
 #' # Change the appearance of dots and whiskers
 #' dwplot(m1, dot_args = list(size = 6, pch = 21, fill = "white"),
 #'      whisker_args = list(lwd = 2))
-#'
 #' # Plot regression coefficients from multiple models in a tidy data.frame
 #' by_trans <- mtcars %>% group_by(am) %>%
 #'     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>% rename(model=am)
-#'
-#' dwplot(by_trans, dodge_size = .05) +
-#'     scale_y_continuous(breaks = 3:1, labels=c("Weight", "Cylinders", "Displacement")) +
-#'     theme_bw() + labs(x = "Coefficient Estimate", y = "") +
+#' dwplot(by_trans) +
+#'     theme_bw() + xlab("Coefficient") + ylab("") +
 #'     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
 #'     ggtitle("Predicting Gas Mileage, OLS Estimates") +
 #'     theme(plot.title = element_text(face = "bold"),
@@ -145,14 +140,14 @@ dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
         var_names <- unique(var_names)
     }
 
-    point_args0 <- list(na.rm = TRUE, position=position_dodgev(height = dodge_size))
+    point_args0 <- list(na.rm = TRUE, position=ggstance::position_dodgev(height = dodge_size))
     point_args <- c(point_args0, dot_args)
 
 
     # Make the plot
 
-    p <- ggplot(df,aes(x = estimate, xmin = lb,xmax = ub, y = reorder(term, y_ind), colour = model))+
-        do.call(geom_pointrangeh, point_args) +
+    p <- ggplot(df,aes(x = estimate, xmin = lb,xmax = ub, y = stats::reorder(term, y_ind), colour = model))+
+        do.call(ggstance::geom_pointrangeh, point_args) +
         ylab("") + xlab("")
 
     # Omit the legend if there is only one model

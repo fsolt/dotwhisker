@@ -1,7 +1,7 @@
 Package: dotwhisker
 Type: Package
 Title: Dot-and-Whisker Plots of Regression Results
-Version: 0.2.6
+Version: 0.2.7
 Date: 2017-04-19
 Authors@R: c(
     person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
@@ -17,15 +17,15 @@ Depends:
     R (>= 3.2.0),
     ggplot2,
     gridExtra,
-    gtable,
-    ggstance
+    gtable
 Imports:
     grid,
     stats,
     broom,
     plyr,
     dplyr,
-    stringr
+    stringr,
+    ggstance
 Suggests:
     mfx,
     ordinal,

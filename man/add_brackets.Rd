@@ -24,21 +24,21 @@ To save, use \code{\link[ggplot2]{ggsave}}.
 \examples{
 library(broom)
 library(dplyr)
-
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-m1_df <- broom::tidy(m1) # create data.frame of regression results
-
+m1_df <- broom::tidy(m1) \%>\% # create data.frame of regression results
+    relabel_predictors(c("(Intercept)" = "Intercept",
+                     wt = "Weight",
+                     cyl = "Cylinder",
+                     disp = "Displacement"))#'
 p <- dwplot(m1_df, include_intercept = TRUE) +
-   relabel_y_axis(c("Intercept", "Weight", "Cylinders", "Displacement")) +
    theme_bw() + xlab("Coefficient") + ylab("") +
    geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
    theme(legend.position="none")
 
-two_brackets <- list(c("Engine", "cyl", "disp"), c("Not Engine", "(Intercept)", "wt"))
-
+two_brackets <- list(c("Engine", "Cylinder", "Displacement"),
+c("Not Engine", "Intercept", "Weight"))
 g <- p \%>\% add_brackets(two_brackets)
-
 grid.arrange(g)  # to display
 
 # to save (not run)

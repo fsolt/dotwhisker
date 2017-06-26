@@ -12,12 +12,6 @@ relabel_y_axis(x)
 \description{
 \code{relabel_y_axis} DEPRECATED. A convenience function for relabeling the predictors on the y-axis of a dot-whisker plot created by \code{\link[dotwhisker]{dwplot}}.  It is deprecated; use \code{\link[dotwhisker]{relabel_predictors}} instead.
 }
-\examples{
-data(mtcars)
-m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-dwplot(m1) + relabel_y_axis(c("Weight", "Cylinders", "Displacement"))
-
-}
 \seealso{
 \code{\link[dotwhisker]{relabel_predictors}} to relabel predictors on the y-axis of a dot-whisker plot or in a tidy data.frame
 }

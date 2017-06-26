@@ -49,7 +49,7 @@ dwplot(list(m1, m2, m3))
 
 `dwplot` also allows users to compare the result in a parallel way, as shown following. 
 
-```{r}
+```{r  fig.width = 7}
 dwplot(list(m1, m2, m3)) +
     facet_grid(~model, scales="free_y")
 ```

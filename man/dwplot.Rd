@@ -5,7 +5,8 @@
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
 dwplot(x, alpha = 0.05, dodge_size = 0.4, order_vars = NULL,
-  show_intercept = FALSE, model_name = "model", dot_args = NULL, ...)
+  show_intercept = FALSE, model_name = "model", dot_args = list(size =
+  0.3), ...)
 }
 \arguments{
 \item{x}{Either a tidy data.frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.}
@@ -20,11 +21,9 @@ dwplot(x, alpha = 0.05, dodge_size = 0.4, order_vars = NULL,
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data.frame.}
 
-\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
+\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
 
 \item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
-
-\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -47,32 +46,24 @@ Together, these two features make \code{dwplot} extremely flexible.
 \examples{
 library(broom)
 library(dplyr)
-
 # Plot regression coefficients from a single model object
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-
 dwplot(m1) +
-    scale_y_continuous(breaks = 3:1, labels=c("Weight", "Cylinders", "Displacement")) +
-    labs(x = "Coefficient", y = "") +
+    xlab("Coefficient") + ylab("") +
     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
     theme(legend.position="none")
-
 # Plot regression coefficients from multiple models on the fly
 m2 <- update(m1, . ~ . - disp)
 dwplot(list(full = m1, nodisp = m2))
-
 # Change the appearance of dots and whiskers
 dwplot(m1, dot_args = list(size = 6, pch = 21, fill = "white"),
      whisker_args = list(lwd = 2))
-
 # Plot regression coefficients from multiple models in a tidy data.frame
 by_trans <- mtcars \%>\% group_by(am) \%>\%
     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) \%>\% rename(model=am)
-
-dwplot(by_trans, dodge_size = .05) +
-    scale_y_continuous(breaks = 3:1, labels=c("Weight", "Cylinders", "Displacement")) +
-    theme_bw() + labs(x = "Coefficient Estimate", y = "") +
+dwplot(by_trans) +
+    theme_bw() + xlab("Coefficient") + ylab("") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage, OLS Estimates") +
     theme(plot.title = element_text(face = "bold"),
