@@ -76,7 +76,7 @@
 #'
 #' @export
 
-dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
+dwplot <- function(x, alpha = .05,  alpha2 = NULL, dodge_size = .15, order_vars = NULL,
                    show_intercept = FALSE, model_name = "model",
                    dot_args = NULL, whisker_args = NULL, ...) {
     # If x is model object(s), convert to a tidy data.frame
@@ -85,7 +85,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
     if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- model <- lb <- ub <- term <- std.error <- NULL
+    estimate <- model <- lb <- ub <- lb_alpha2 <- ub_alpha2 <- term <- std.error <- NULL
 
     n_vars <- length(unique(df$term))
     dodge_size <- dodge_size
@@ -140,7 +140,24 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
             df <- transform(df, lb=NA, ub=NA)
         }
     }
+  
+    # Confirm alpha within bounds (for second alpha)
+    if (alpha2 < 0 | alpha2 > 1) {
+      stop("Value of alpha for the confidence intervals should be between 0 and 1.")
+    }
 
+    # Generate lower and upper bound if not included in results
+    if ((!"lb_alpha2" %in% names(df)) || (!"ub_alpha2" %in% names(df))) {
+      if ("std.error_alpha2" %in% names(df)) {
+        ci2 <- 1 - alpha2/2
+        df <- transform(df,
+                         lb_alpha2 = estimate - stats::qnorm(ci2) * std.error,
+                         ub_alpha2 = estimate + stats::qnorm(ci2) * df$std.error)
+      } else {
+        df <- transform(df, lb_alpha2=NA, ub_alpha2=NA)
+      }
+    }
+  
     # Calculate y-axis shift for plotting multiple models
     if (n_models == 1) {
         shift <- 0
@@ -160,6 +177,12 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
                           y = y_ind + shift, yend = y_ind + shift),
                       na.rm = TRUE)
     segment_args <- c(seg_args0, whisker_args)
+  
+    # Generate argument to geom_segment for second alpha
+    seg_args0_alpha2 <- list(aes(x = lb_alpha2, xend = ub_alpha2, 
+                          y = y_ind + shift, yend = y_ind + shift), size = 3, alpha = 0.8,
+                      na.rm = TRUE)
+    segment_args_alpha2 <- c(seg_args0_alpha2, whisker_args)
 
     point_args0 <- list(na.rm = TRUE)
     point_args <- c(point_args0, dot_args)
@@ -170,6 +193,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .15, order_vars = NULL,
                           aes(x = estimate, y = y_ind + shift, colour = model)) +
         do.call(geom_segment, segment_args) +  # Draw segments first ...
         do.call(geom_point, point_args) +
+        do.call(geom_segment, segment_args_alpha2) +
         scale_y_continuous(breaks = y_ind, labels = var_names) +
         coord_cartesian(ylim = c(.5, n_vars+.5)) +
         ylab("") + xlab("")
@@ -273,5 +297,11 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
         df$lb <- as.numeric(df$lb)
     }
 
+    if ("ub_alpha2" %in% names(df)) {
+      df$ub_alpha2 <- as.numeric(df$ub_alpha2)
+    }
+    if ("lb_alpha2" %in% names(df)) {
+      df$lb_alpha2 <- as.numeric(df$lb_alpha2)
+    }
     return(df)
 }
