@@ -105,7 +105,8 @@ In the following case, we created the `conf.low` and `conf.high` based on the `s
 ```{r}
 m1a_df <- mutate(m1_df, 
                 conf.low = estimate - qnorm(.975) * std.error,
-                conf.high = estimate + qnorm(.975) * std.error) %>% # create the lower and upper bounds
+                conf.high = estimate + qnorm(.975) * std.error) %>% 
+    # create the lower and upper bounds
                     select(-std.error) # remove the std.error
 
 dwplot(m1a_df)
@@ -174,6 +175,7 @@ Additionally, one can change the shape of the point estimate instead of using di
                         breaks=c(0, 1),
                         labels=c("Automatic", "Manual"))
 ```
+
 
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
 

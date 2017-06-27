@@ -50,8 +50,7 @@
 #' m2 <- update(m1, . ~ . - disp)
 #' dwplot(list(full = m1, nodisp = m2))
 #' # Change the appearance of dots and whiskers
-#' dwplot(m1, dot_args = list(size = 6, pch = 21, fill = "white"),
-#'      whisker_args = list(lwd = 2))
+#' dwplot(m1, dot_args = list(size = 3, pch = 21, fill = "white"))
 #' # Plot regression coefficients from multiple models in a tidy data.frame
 #' by_trans <- mtcars %>% group_by(am) %>%
 #'     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>% rename(model=am)
