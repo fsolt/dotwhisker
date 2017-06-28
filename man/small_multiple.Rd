@@ -33,7 +33,7 @@ In place of \code{std.error} one may substitute \code{lb} (the lower bounds of t
 
 Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
 
-Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desireable is to compare results across samples.  In that case, the data.frame should also include a variable \code{submodel} identifying the submodel of the results.
+Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data.frame should also include a variable \code{submodel} identifying the submodel of the results.
 }
 \examples{
 library(broom)
