@@ -132,7 +132,7 @@ small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FAL
     }
 
     # Generate lower and upper bound if not included in results
-    if ((!"lb" %in% names(df)) | (!"ub" %in% names(df))) {
+    if ((!"conf.low" %in% names(df)) | (!"conf.high" %in% names(df))) {
         ci <- 1 - alpha/2
         lb <- c(df$estimate - qnorm(ci) * df$std.error)
         ub <- c(df$estimate + qnorm(ci) * df$std.error)
@@ -159,7 +159,7 @@ small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FAL
     point_args <- c(point_args0, dot_args)
 
     # Plot
-    p <- ggplot(df,aes(y = estimate, ymin = lb,ymax = ub, x = as.factor(model), colour = submodel))+
+    p <- ggplot(df,aes(y = estimate, ymin = conf.low,ymax = conf.high, x = as.factor(model), colour = submodel))+
         do.call(geom_pointrange, point_args) +
         ylab("") + xlab("") +
         facet_grid(term ~ ., scales = "free_y")
