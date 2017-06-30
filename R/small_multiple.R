@@ -134,8 +134,8 @@ small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FAL
     # Generate lower and upper bound if not included in results
     if ((!"conf.low" %in% names(df)) | (!"conf.high" %in% names(df))) {
         ci <- 1 - alpha/2
-        lb <- c(df$estimate - qnorm(ci) * df$std.error)
-        ub <- c(df$estimate + qnorm(ci) * df$std.error)
+        conf.low <- c(df$estimate - qnorm(ci) * df$std.error)
+        conf.high <- c(df$estimate + qnorm(ci) * df$std.error)
 
         df <- cbind(as.data.frame(df), lb, ub)
     }

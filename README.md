@@ -10,7 +10,7 @@ To install:
 
 
 * the latest released version: `install.packages("dotwhisker")`.
-* the latest developing version: `devtools::install_github("fsolt/dotwhisker")`.
+* the latest developing version: `devtools::install_github("fsolt/dotwhisker", build_vignettes = TRUE)`.
 
 
 
