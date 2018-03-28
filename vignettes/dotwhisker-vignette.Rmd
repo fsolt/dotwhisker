@@ -38,7 +38,7 @@ By default, the whiskers span the 95\% confidence interval.  To change the width
 dwplot(m1, alpha = .01)  # using 99% CI
 ```
 
-Plotting the results of more than one regression model is just as easy. Just pass the model objects to `dwplot` as a list.  The `dodge_size` argument is used to adjust the space between the estimates of one variable when multiple models are presented in a single plot.  Its default value of .15 will usually be fine, but, depending on the dimensions of the desired plot, more pleasing results may be achieved by setting `dodge_size` to lower values when the plotted results include a relatively small number of predictors or to higher values when many models appear on the same plot.
+Plotting the results of more than one regression model is just as easy.  Just pass the model objects to `dwplot` as a list.  The `dodge_size` argument is used to adjust the space between the estimates of one variable when multiple models are presented in a single plot.  Its default value of .4 will usually be fine, but, depending on the dimensions of the desired plot, more pleasing results may be achieved by setting `dodge_size` to lower values when the plotted results include a relatively small number of predictors or to higher values when many models appear on the same plot.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 m2 <- update(m1, . ~ . + hp) # add another predictor
@@ -46,15 +46,6 @@ m3 <- update(m2, . ~ . + am) # and another
 
 dwplot(list(m1, m2, m3))
 ```
-
-`dwplot` also allows users to compare the result in a parallel way, as shown following. 
-
-```{r  fig.width = 7}
-dwplot(list(m1, m2, m3)) +
-    facet_grid(~model, scales="free_y")
-```
-
-
 
 Model intercepts are rarely theoretically interesting [see @Kastellec2007, 765], so they are excluded by `dwplot` by default.  They are easy to include if desired, however, by setting the `show_intercept` argument to true.
 
@@ -77,7 +68,8 @@ dwplot(list(m1, m2, m3)) %>%
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
      theme(plot.title = element_text(face="bold"),
-           legend.justification=c(0, 0), legend.position=c(0, 0),
+           legend.position = c(0.007, 0.01),
+           legend.justification = c(0, 0), 
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
 
@@ -89,7 +81,7 @@ There are many other packages (e.g., `coefplot`) that have the ability to draw d
 
 
 ## Advanced Use: Plotting Results Stored in a Tidy Data Frame 
-In addition to model objects, the input for `dwplot` may be a tidy data frame that includes three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. In place of `std.error` one may substitute `conf.low`, the lower bounds of the confidence intervals of the estimates, and `conf.high`, the corresponding upper bounds. As noted above, `broom::tidy` [@Robinson2015] produces such a data frame of estimates for many common classes of model objects (indeed, `dwplot` was written to expect a data.frame with the columns `term`, `estimate`, and `std.error` because this is the format of the output produced by `tidy`). When more than one model's results are to be plotted, an additional column `model` that identifies the two models must be added to the data frame (alternate names for this last column may be specified by using the `model_name` argument). 
+In addition to model objects, the input for `dwplot` may be a tidy data frame that includes three columns: `term`, that is, the variable name; `estimate`, the regression coefficients or other quantity of interest; and `std.error`, the standard errors associated with these estimates. In place of `std.error` one may substitute `lb`, the lower bounds of the confidence intervals of the estimates, and `ub`, the corresponding upper bounds. As noted above, `broom::tidy` [@Robinson2015] produces such a data frame of estimates for many common classes of model objects (indeed, `dwplot` was written to expect a data.frame with the columns `term`, `estimate`, and `std.error` because this is the format of the output produced by `tidy`). When more than one model's results are to be plotted, an additional column `model` that identifies the two models must be added to the data frame (alternate names for this last column may be specified by using the `model_name` argument). 
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 # regression compatible with tidy
@@ -98,27 +90,11 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 ```
 
-
-If the lower and upper bounds of the uncertainty intervals are already estimated in the model outputs (e.g., in Bayesian analyses), one can ask `dwplot` to use them by named the columns as `conf.low` and `conf.high`.
-In the following case, we created the `conf.low` and `conf.high` based on the `std.error`. Then you can see, as long as the `conf.low` and `conf.high` are defined, `dwplot` can still replicate the preceding plot when the `std.error` is removed.
-
-```{r}
-m1a_df <- mutate(m1_df, 
-                conf.low = estimate - qnorm(.975) * std.error,
-                conf.high = estimate + qnorm(.975) * std.error) %>% 
-    # create the lower and upper bounds
-                    select(-std.error) # remove the std.error
-
-dwplot(m1a_df)
-```
-
-
-
 Using `tidy` can be helpful when one wishes to omit certain model estimates from the plot.  To illustrate, we drop the intercept:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-m1_df <- tidy(m1) %>% filter(term != "gear") %>% mutate(model = "Model 1")
-m2_df <- tidy(m2) %>% filter(term != "gear") %>% mutate(model = "Model 2")
+m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
+m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2")
 
 two_models <- rbind(m1_df, m2_df)
 
@@ -159,23 +135,22 @@ Also note in the above example the additional manner of using the `relabel_predi
 Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
- dwplot(by_trans, dot_args = list(aes(colour = model, shape = model), size = .5)) +
-   theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-   geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-   ggtitle("Predicting Gas Mileage by Transmission Type") +
-   theme(plot.title = element_text(face="bold"),
-         legend.justification=c(0, 0), legend.position=c(0, 0),
-         legend.background = element_rect(colour="grey80"),
-         legend.title.align = .5) +
-   scale_colour_grey(start = .1, end = .1, # if start and end same value, use same colour for all models 
-                     name  ="Model", 
-                     breaks=c(0, 1),
-                     labels=c("Automatic", "Manual")) +
-   scale_shape_discrete(name  ="Model",
-                        breaks=c(0, 1),
-                        labels=c("Automatic", "Manual"))
+dwplot(by_trans, dot_args = list(aes(colour = model, shape = model))) +
+    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage by Transmission Type") +
+    theme(plot.title = element_text(face="bold"),
+          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.background = element_rect(colour="grey80"),
+          legend.title.align = .5) +
+    scale_colour_grey(start = .1, end = .1, # if start and end same value, use same colour for all models 
+                      name  ="Model", 
+                      breaks=c(0, 1),
+                      labels=c("Automatic", "Manual")) +
+    scale_shape_discrete(name  ="Model",
+                         breaks=c(0, 1),
+                         labels=c("Automatic", "Manual"))
 ```
-
 
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
 
@@ -309,9 +284,9 @@ m123456_df <- m123456_df %>%
 small_multiple(m123456_df) +
   theme_bw() + ylab("Coefficient Estimate") +
   geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
-  ggtitle("Predicting Gas Mileage") +
+  ggtitle("Predicting Mileage") +
   theme(plot.title = element_text(face = "bold"), legend.position = "none",
-    axis.text.x  = element_text(angle = 60, hjust = 1)) 
+    axis.text.x = element_text(angle = 60, hjust = 1)) 
 ```
 
 To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`. (We also replicate three examples in @Kastellec2007 with `dotwhisker` in a separate package document, "kl2007_examples".)
@@ -339,7 +314,7 @@ for (i in 2:5) {
 }
 
 # Relabel predictors (they will appear as facet labels)
-by_trans <- by_trans %>% dplyr::select(-submodel, everything(), submodel) %>% 
+by_trans <- by_trans %>% select(-submodel, everything(), submodel) %>% 
   relabel_predictors(c("(Intercept)" = "Intercept",
                      wt = "Weight",
                      cyl = "Cylinders",
