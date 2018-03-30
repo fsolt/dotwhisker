@@ -121,7 +121,8 @@ dwplot(by_trans) +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage by Transmission Type") +
     theme(plot.title = element_text(face="bold"),
-          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.position = c(0.007, 0.01),
+          legend.justification=c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
     scale_colour_grey(start = .3, end = .7,
@@ -140,7 +141,8 @@ dwplot(by_trans, dot_args = list(aes(colour = model, shape = model))) +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage by Transmission Type") +
     theme(plot.title = element_text(face="bold"),
-          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.position = c(0.007, 0.01),
+          legend.justification=c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
     scale_colour_grey(start = .1, end = .1, # if start and end same value, use same colour for all models 
@@ -218,9 +220,10 @@ p123 <- dwplot(m123_df) +
      geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
      ggtitle("Predicting Gas Mileage") +
      theme(plot.title = element_text(face="bold"),
-           legend.justification=c(1, 1), legend.position=c(1, 1),
+           legend.position = c(0.993, 0.99),
+           legend.justification=c(1, 1),
            legend.background = element_rect(colour="grey80"),
-           legend.title = element_blank()) 
+           legend.title = element_blank())
 
 # Create list of brackets (label, topmost included predictor, bottommost included predictor)
 three_brackets <- list(c("Overall", "Weight", "Weight"), 
@@ -231,7 +234,6 @@ g123 <- p123 %>% add_brackets(three_brackets)
 
 # to save to file (not run)
 # ggsave(file = "plot.pdf", g123)
-
 
 grid.arrange(g123)    # to display
 ```
@@ -285,11 +287,12 @@ small_multiple(m123456_df) +
   theme_bw() + ylab("Coefficient Estimate") +
   geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
   ggtitle("Predicting Mileage") +
-  theme(plot.title = element_text(face = "bold"), legend.position = "none",
-    axis.text.x = element_text(angle = 60, hjust = 1)) 
+  theme(plot.title = element_text(face = "bold"), 
+        legend.position = "none",
+        axis.text.x = element_text(angle = 60, hjust = 1)) 
 ```
 
-To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`. (We also replicate three examples in @Kastellec2007 with `dotwhisker` in a separate package document, "kl2007_examples".)
+To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`. (We also replicate three examples in @Kastellec2007 with `dotwhisker` in a separate vignette, "kl2007_examples".)
 
 ```{r fig.width = 3.5, fig.height = 8, warning = FALSE, message = FALSE}
 # Generate a tidy data.frame of regression results from five models on
@@ -297,38 +300,42 @@ To facilitate comparisons across, e.g., results generated across different sampl
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
 mod <- "mpg ~ wt"
 
-by_trans <- mtcars %>% group_by(am) %>%  # group data by transmission
-    do(tidy(lm(mod, data = .))) %>%        # run model on each group
-    rename(submodel = am) %>%              # make submodel variable
-    mutate(model = "Model 1") %>%          # make model variable
+by_trans2 <- mtcars %>%
+    group_by(am) %>%                        # group data by transmission
+    do(tidy(lm(mod, data = .))) %>%         # run model on each group
+    rename(submodel = am) %>%               # make submodel variable
+    mutate(model = "Model 1") %>%           # make model variable
     ungroup()
 
-
 for (i in 2:5) {
-  mod <- paste(mod, "+", ordered_vars[i])
-  by_trans <- rbind(by_trans, mtcars %>% group_by(am) %>%
-                   do(tidy(lm(mod, data = .))) %>%
-                   rename(submodel = am) %>%
-                   mutate(model = paste("Model", i)) %>% 
-                       ungroup())
+    mod <- paste(mod, "+", ordered_vars[i])
+    by_trans2 <- rbind(by_trans2, mtcars %>% 
+                           group_by(am) %>%
+                           do(tidy(lm(mod, data = .))) %>%
+                           rename(submodel = am) %>%
+                           mutate(model = paste("Model", i)) %>% 
+                           ungroup())
 }
 
 # Relabel predictors (they will appear as facet labels)
-by_trans <- by_trans %>% select(-submodel, everything(), submodel) %>% 
-  relabel_predictors(c("(Intercept)" = "Intercept",
-                     wt = "Weight",
-                     cyl = "Cylinders",
-                     disp = "Displacement",
-                     hp = "Horsepower",
-                     gear = "Gears"))
+by_trans2 <- by_trans2 %>%
+    select(-submodel, everything(), submodel) %>% 
+    relabel_predictors(c("(Intercept)" = "Intercept",
+                         wt = "Weight",
+                         cyl = "Cylinders",
+                         disp = "Displacement",
+                         hp = "Horsepower",
+                         gear = "Gears"))
 
-by_trans
+by_trans2
 
-small_multiple(by_trans) +
-    theme_bw() + ylab("Coefficient Estimate") +
+small_multiple(by_trans2) +
+    theme_bw() + 
+    ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
     theme(axis.text.x  = element_text(angle = 45, hjust = 1),
-          legend.position=c(0.06, 0.02), legend.justification=c(0, 0),
+          legend.position = c(0.02, 0.008), 
+          legend.justification=c(0, 0),
           legend.title = element_text(size=8),
           legend.background = element_rect(color="gray90"),
           legend.margin = unit(-4, "pt"),
