@@ -17,7 +17,8 @@ Depends:
     R (>= 3.2.0),
     ggplot2,
     gtable,
-    cowplot
+    cowplot,
+    rlang
 Imports:
     grid,
     stats,
