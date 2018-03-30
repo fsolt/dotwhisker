@@ -30,7 +30,8 @@ m1_df <- broom::tidy(m1) \%>\% # create data.frame of regression results
     relabel_predictors(c("(Intercept)" = "Intercept",
                      wt = "Weight",
                      cyl = "Cylinder",
-                     disp = "Displacement"))#'
+                     disp = "Displacement"))
+
 p <- dwplot(m1_df, include_intercept = TRUE) +
    theme_bw() + xlab("Coefficient") + ylab("") +
    geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
@@ -39,9 +40,9 @@ p <- dwplot(m1_df, include_intercept = TRUE) +
 two_brackets <- list(c("Engine", "Cylinder", "Displacement"),
 c("Not Engine", "Intercept", "Weight"))
 g <- p \%>\% add_brackets(two_brackets)
-grid.arrange(g)  # to display
+g  # to display
 
 # to save (not run)
-#ggsave(file = "plot.pdf", g)
+# ggsave(file = "plot.pdf", g)
 
 }
