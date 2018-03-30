@@ -10,13 +10,17 @@ vignette: >
   %\VignetteEncoding{ASCII}
 ---
 
-I have been a big fan of @Kastellec2007 since it came out, and [by putting their code for creating graphs from actually-published tables online](https://www.princeton.edu/~jkastell/tables2graphs.html), the authors allowed me and many others to adapt it for our own needs.  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Now (just eight-plus years later!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, makes producing effective plots of regression results nearly effortless.
+I have been a big fan of @Kastellec2007 since it came out, and [by putting their code for creating graphs from actually-published tables online](https://www.princeton.edu/~jkastell/tables2graphs.html), the authors allowed me and many others to adapt it for our own needs.  But there can be no doubt that the code is cumbersome and that it takes a lot of fiddly work to get it to produce the desired results, work that likely contributes to the continued reliance in political science on tables to present regression results.  As they acknowledged then, "it simply takes more work to produce graphs" than tables [@Kastellec2007, 757].  Just eight-plus years later(!), the `dotwhisker` package, building on many other developments in the `R` ecosystem, arrived to make producing effective plots of regression results nearly effortless.
 
 Below, I present their original code for their three examples of plotting regression results, along with similar plots done using `dotwhisker`.  I hope you'll agree that the latter plots are not only much easier to make, but also---thanks to Hadley Wickham's [-@Wickham2009] `ggplot`---better looking (and more easily further customizable).
 
 ### Figure 6: Presenting a Single Regression Model Using a Dot Plot with Error Bars.
 
-Kastellec and Leoni's original codes:
+Kastellec and Leoni's original code:
+```{r include=FALSE}
+library(gridExtra) # for grid.arrange() in KL code
+```
+
 
 ```{r fig.width=7, fig.height=7, warning=FALSE, message=FALSE}
 #Create vectors for coefficients, standard errors and variable names 
@@ -89,7 +93,7 @@ results_df %>% dwplot + theme_bw() + theme(legend.position="none") +
 
 ### Figure 7: Using Parallel Dot Plots with Error Bars to Present Two Regression Models.
 
-Kastellec and Leoni's original codes:
+Kastellec and Leoni's original code:
 
 ```{r fig.width=7, fig.height=8, warning=FALSE, message=FALSE}
 #Create Vectors for coefs and standard errors for each model, and variable names
@@ -197,8 +201,9 @@ results_df <- data.frame(term = rep(var.names, times = 2),
                          stringsAsFactors = FALSE)
 
 # Draw dot-and-whisker plot
-p <- results_df %>% dwplot + theme_bw() +
-    theme(legend.justification=c(0, 1), legend.position=c(0, 1),
+p <- dwplot(results_df) +
+    theme_bw() +
+    theme(legend.justification=c(.02, .993), legend.position=c(.02, .99),
            legend.title = element_blank(), legend.background =
               element_rect(color="gray90")) + 
     xlab("Logit Coefficients") +
@@ -206,16 +211,16 @@ p <- results_df %>% dwplot + theme_bw() +
     ggtitle("Electoral Incentives and LDP Post Allocation\nPekkanen, Nyblade, and Krause (2006)\nvia Kastellec and Leoni (2007)")
 
 # Add brackets
-grid.arrange(p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"), 
-                 c("Misc Controls", "Urban-Rural Index", "Legal Professional"),
-                 c("Seniority", "1st Term", "12th Term"))))
+p %>% add_brackets(list(c("MP Type", "Zombie", "Costa Rican in PR"), 
+                        c("Misc Controls", "Urban-Rural Index", "Legal Professional"),
+                        c("Seniority", "1st Term", "12th Term")))
 ```
 
 
 
 ### Figure 8: Using "Small Multiple" Plots to Present Regression Results from Several Models.
 
-Kastellec and Leoni's original codes:
+Kastellec and Leoni's original code:
 
 ```{r fig.width=5, fig.height=9, warning=FALSE, message=FALSE}
 library(grid)
@@ -729,7 +734,7 @@ University of Iowa,
 
 Email: <frederick-solt@uiowa.edu>
 
-Website: <http://myweb.uiowa.edu/fsolt>
+Website: <https://fsolt.org>
 
 
 ## References
