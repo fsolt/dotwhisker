@@ -42,8 +42,9 @@
 #' @export
 
 add_brackets <- function(p, brackets, face="italic") {
+  y_ind <- term <- estimate <- ymax <- ymin <- NULL # not functional, just for CRAN check
+
   pd <- left_join(p$data, layer_data(p), by = c("estimate" = "x"))
-  y_ind <- NULL # not functional, just for CRAN check
   overhang <- max(pd$y_ind)/40
   overhang <- ifelse(overhang > .4, .4, overhang)
   farout <- max(pd$xmax, na.rm = TRUE) + 100
