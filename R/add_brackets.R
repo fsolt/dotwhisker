@@ -35,8 +35,7 @@
 #' # ggsave(file = "plot.pdf", g)
 #'
 #' @import gtable
-#' @importFrom grid textGrob linesGrob gpar
-#' @importFrom cowplot plot_grid
+#' @importFrom grid textGrob linesGrob gpar unit.pmax
 #' @importFrom dplyr filter pull
 #'
 #' @export
@@ -122,7 +121,85 @@ add_brackets <- function(p, brackets, face="italic") {
           draw_bracket_bottom(brackets[[i]])
   }
 
-  g <- cowplot::plot_grid(p2, p1, align = "h", rel_widths = c(1, 8))
+  plots <- list(p2, p1)
+  grobs <- lapply(plots, function(x) ggplotGrob(x))
+  max_heights <- list(do.call(grid::unit.pmax, lapply(grobs, function(x) x$heights)))
+  grobs[[1]]$heights <- max_heights[[1]]
+  grobs[[2]]$heights <- max_heights[[1]]
 
-  return(g)
+  pp <- ggdraw() +
+      draw_grob(grobs[[1]], 0, 0, 1/9, 1, 1.0) +
+      draw_grob(grobs[[2]], 1/9, 0, 8/9, 1, 1.0)
+
+  return(pp)
+}
+
+draw_grob <- function(grob, x = 0, y = 0, width = 1, height = 1, scale = 1, clip = "inherit") {
+    layer(
+        data = data.frame(x = NA),
+        stat = StatIdentity,
+        position = PositionIdentity,
+        geom = GeomDrawGrob,
+        inherit.aes = FALSE,
+        params = list(
+            grob = grob,
+            xmin = x,
+            xmax = x + width,
+            ymin = y,
+            ymax = y + height,
+            scale = scale,
+            clip = clip
+        )
+    )
+}
+
+GeomDrawGrob <- ggproto("GeomDrawGrob", GeomCustomAnn,
+                        draw_panel = function(self, data, panel_params, coord, grob, xmin, xmax, ymin, ymax, scale = 1, clip = "inherit") {
+                            if (!inherits(coord, "CoordCartesian")) {
+                                stop("draw_grob only works with Cartesian coordinates",
+                                     call. = FALSE)
+                            }
+                            corners <- data.frame(x = c(xmin, xmax), y = c(ymin, ymax))
+                            data <- coord$transform(corners, panel_params)
+
+                            x_rng <- range(data$x, na.rm = TRUE)
+                            y_rng <- range(data$y, na.rm = TRUE)
+
+                            # set up inner and outer viewport for clipping. Unfortunately,
+                            # clipping doesn't work properly most of the time, due to
+                            # grid limitations
+                            vp_outer <- grid::viewport(x = mean(x_rng), y = mean(y_rng),
+                                                       width = diff(x_rng), height = diff(y_rng),
+                                                       just = c("center", "center"),
+                                                       clip = clip)
+
+                            vp_inner <- grid::viewport(width = scale, height = scale,
+                                                       just = c("center", "center"))
+
+                            id <- annotation_id()
+                            inner_grob <- grid::grobTree(grob, vp = vp_inner, name = paste(grob$name, id))
+                            grid::grobTree(inner_grob, vp = vp_outer, name = paste("GeomDrawGrob", id))
+                        }
+)
+
+annotation_id <- local({
+    i <- 1
+    function() {
+        i <<- i + 1
+        i
+    }
+})
+
+ggdraw <- function(plot = NULL, xlim = c(0, 1), ylim = c(0, 1)) {
+    d <- data.frame(x = 0:1, y = 0:1) # dummy data
+    p <- ggplot(d, aes_string(x = "x", y = "y")) + # empty plot
+        scale_x_continuous(limits = xlim, expand = c(0, 0)) +
+        scale_y_continuous(limits = ylim, expand = c(0, 0)) +
+        theme_void() + # with empty theme
+        labs(x = NULL, y = NULL) # and absolutely no axes
+
+    if (!is.null(plot)){
+        p <- p + draw_plot(plot)
+    }
+    p # return ggplot drawing layer
 }
