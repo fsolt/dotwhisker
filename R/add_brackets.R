@@ -127,79 +127,26 @@ add_brackets <- function(p, brackets, face="italic") {
   grobs[[1]]$heights <- max_heights[[1]]
   grobs[[2]]$heights <- max_heights[[1]]
 
-  pp <- ggdraw() +
-      draw_grob(grobs[[1]], 0, 0, 1/9, 1, 1.0) +
-      draw_grob(grobs[[2]], 1/9, 0, 8/9, 1, 1.0)
+  pp <- ggplot(data.frame(x = 0:1, y = 0:1), aes_string(x = "x", y = "y")) +
+      scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
+      scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
+      theme_void() +
+      labs(x = NULL, y = NULL) +
+      draw_grob(grobs[[1]], 0, 1/9) +
+      draw_grob(grobs[[2]], 1/9, 8/9)
 
   return(pp)
 }
 
-draw_grob <- function(grob, x = 0, y = 0, width = 1, height = 1, scale = 1, clip = "inherit") {
-    layer(
-        data = data.frame(x = NA),
-        stat = StatIdentity,
-        position = PositionIdentity,
-        geom = GeomDrawGrob,
-        inherit.aes = FALSE,
-        params = list(
-            grob = grob,
-            xmin = x,
-            xmax = x + width,
-            ymin = y,
-            ymax = y + height,
-            scale = scale,
-            clip = clip
-        )
-    )
-}
-
-GeomDrawGrob <- ggproto("GeomDrawGrob", GeomCustomAnn,
-                        draw_panel = function(self, data, panel_params, coord, grob, xmin, xmax, ymin, ymax, scale = 1, clip = "inherit") {
-                            if (!inherits(coord, "CoordCartesian")) {
-                                stop("draw_grob only works with Cartesian coordinates",
-                                     call. = FALSE)
-                            }
-                            corners <- data.frame(x = c(xmin, xmax), y = c(ymin, ymax))
-                            data <- coord$transform(corners, panel_params)
-
-                            x_rng <- range(data$x, na.rm = TRUE)
-                            y_rng <- range(data$y, na.rm = TRUE)
-
-                            # set up inner and outer viewport for clipping. Unfortunately,
-                            # clipping doesn't work properly most of the time, due to
-                            # grid limitations
-                            vp_outer <- grid::viewport(x = mean(x_rng), y = mean(y_rng),
-                                                       width = diff(x_rng), height = diff(y_rng),
-                                                       just = c("center", "center"),
-                                                       clip = clip)
-
-                            vp_inner <- grid::viewport(width = scale, height = scale,
-                                                       just = c("center", "center"))
-
-                            id <- annotation_id()
-                            inner_grob <- grid::grobTree(grob, vp = vp_inner, name = paste(grob$name, id))
-                            grid::grobTree(inner_grob, vp = vp_outer, name = paste("GeomDrawGrob", id))
-                        }
-)
-
-annotation_id <- local({
-    i <- 1
-    function() {
-        i <<- i + 1
-        i
-    }
-})
-
-ggdraw <- function(plot = NULL, xlim = c(0, 1), ylim = c(0, 1)) {
-    d <- data.frame(x = 0:1, y = 0:1) # dummy data
-    p <- ggplot(d, aes_string(x = "x", y = "y")) + # empty plot
-        scale_x_continuous(limits = xlim, expand = c(0, 0)) +
-        scale_y_continuous(limits = ylim, expand = c(0, 0)) +
-        theme_void() + # with empty theme
-        labs(x = NULL, y = NULL) # and absolutely no axes
-
-    if (!is.null(plot)){
-        p <- p + draw_plot(plot)
-    }
-    p # return ggplot drawing layer
+draw_grob <- function(grob, x, width) {
+    layer(data = data.frame(x = NA),
+          stat = StatIdentity,
+          position = PositionIdentity,
+          geom = GeomCustomAnn,
+          inherit.aes = FALSE,
+          params = list(grob = grob,
+                        xmin = x,
+                        xmax = width,
+                        ymin = 0,
+                        ymax = 1))
 }
