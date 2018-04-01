@@ -158,7 +158,7 @@ dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
 }
 
 
-dw_tidy <- function(x,...) {
+dw_tidy <- function(x, ...) {
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     process_lm <- tidy.summary.lm <- fix_data_frame <- NULL
 
@@ -167,20 +167,20 @@ dw_tidy <- function(x,...) {
             ind <- seq(length(x))
             nm <- paste("Model", ind)
             if (!is.null(nm_orig <- names(x))) {
-                setNm <- nchar(nm)>0
-                nm[setNm] <- nm_orig[setNm]
+                set_nm <- nchar(nm) > 0
+                nm[set_nm] <- nm_orig[set_nm]
             }
             names(x) <- nm
 
             df <- do.call(plyr::ldply,
                           c(list(.data=x,.fun=broom::tidy, conf.int = TRUE, .id="model"), list(...)))
 
-        } else if (class(x) == "lmerMod"){
+        } else if (class(x) == "lmerMod") {
             group <- vector() # only for avoiding the NOTE in check
             df <- broom::tidy(x, conf.int = TRUE) %>% filter(group == "fixed")
         } else {
-            if (class(x) == "polr"){
-                family.polr <- function(object,...) NULL
+            if (class(x) == "polr") {
+                family.polr <- function(object, ...) NULL
                 tidy.lm <- function(x, conf.int = FALSE, conf.level = .95,
                                     exponentiate = FALSE, quick = FALSE, ...) {
                     if (quick) {
@@ -211,7 +211,7 @@ dw_tidy <- function(x,...) {
                                exponentiate = exponentiate)
                 }
             }
-            df <- broom::tidy(x, conf.int = TRUE,...)
+            df <- broom::tidy(x, conf.int = TRUE, ...)
         }
     } else {
         df <- x
