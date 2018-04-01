@@ -338,7 +338,7 @@ small_multiple(by_trans2) +
           legend.justification=c(0, 0),
           legend.title = element_text(size=8),
           legend.background = element_rect(color="gray90"),
-          legend.margin = unit(-4, "pt"),
+          legend.spacing = unit(-4, "pt"),
           legend.key.size = unit(10, "pt")) +
     scale_colour_hue(name = "Transmission",
                      breaks = c(0, 1),
