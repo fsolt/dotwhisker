@@ -139,18 +139,19 @@ dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
         var_names <- unique(var_names)
     }
 
-    point_args0 <- list(na.rm = TRUE, position=ggstance::position_dodgev(height = dodge_size))
+    point_args0 <- list(na.rm = TRUE, position = ggstance::position_dodgev(height = dodge_size))
     point_args <- c(point_args0, dot_args)
 
 
     # Make the plot
 
-    p <- ggplot(df,aes(x = estimate, xmin = conf.low,xmax = conf.high, y = stats::reorder(term, y_ind), colour = model))+
+    p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = stats::reorder(term, y_ind), colour = model))+
         do.call(ggstance::geom_pointrangeh, point_args) +
         ylab("") + xlab("")
 
+
     # Omit the legend if there is only one model
-    if (!"model" %in% names(df) | length(mod_names) == 1){
+    if (n_models == 1) {
         p <- p + theme(legend.position="none")
     }
 
