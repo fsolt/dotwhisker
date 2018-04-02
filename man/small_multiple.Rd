@@ -8,7 +8,7 @@ small_multiple(x, dodge_size = 0.4, alpha = 0.05, show_intercept = FALSE,
   dot_args = list(size = 0.3))
 }
 \arguments{
-\item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
+\item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
 
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
@@ -25,21 +25,20 @@ The function returns a \code{ggplot} object.
 \code{small_multiple} is a function for plotting regression results of multiple models as a 'small multiple' plot
 }
 \details{
-Kastellec and Leoni (2007)
-\code{small_multiple} takes a tidy data.frame of regression results or a list of model objects and generates a dot-and-whisker plot of the results of a single variable across the multiple models.
+\code{small_multiple}, following \href{Kastellec and Leoni (2007)}{https://doi.org/10.1017/S1537592707072209}, provides a compact means of representing numerous regression models in a single plot.
 
-Tidy data.frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
+Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 
 Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
 
-Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data.frame should also include a variable \code{submodel} identifying the submodel of the results.
+Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data frame should also include a variable \code{submodel} identifying the submodel of the results.
 }
 \examples{
 library(broom)
 library(dplyr)
 
-# Generate a tidy data.frame of regression results from six models
+# Generate a tidy data frame of regression results from six models
 
 m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
@@ -58,7 +57,7 @@ small_multiple(m123456_df)
 
 
 ## Using submodels to compare results across different samples
-# Generate a tidy data.frame of regression results from five models on
+# Generate a tidy data frame of regression results from five models on
 # the mtcars data subset by transmission type (am)
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
 mod <- "mpg ~ wt"
@@ -90,4 +89,7 @@ theme_bw() + ylab("Coefficient Estimate") +
     breaks = c(0, 1),
     labels = c("Automatic", "Manual"))
 
+}
+\references{
+Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
 }

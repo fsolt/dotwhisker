@@ -4,19 +4,14 @@
 \alias{secret_weapon}
 \title{Generate a 'Secret Weapon' Plot of Regression Results from Multiple Models}
 \usage{
-secret_weapon(x, var = NULL, alpha = 0.05, dot_args = NULL,
-  whisker_args = NULL)
+secret_weapon(x, var = NULL, ...)
 }
 \arguments{
-\item{x}{Either a tidy data.frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
+\item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
 
 \item{var}{The predictor whose results are to be shown in the 'secret weapon' plot}
 
-\item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
-
-\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link{geom_point}}.}
-
-\item{whisker_args}{A list of arguments specifying the appearance of the whiskers representing confidence intervals.  For supported arguments, see \code{\link{geom_segment}}.}
+\item{\dots}{Arguments to pass to \code{\link[dotwhisker]{dwplot}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -26,9 +21,9 @@ The function returns a \code{ggplot} object.
 }
 \details{
 Andrew Gelman has coined the term \href{http://andrewgelman.com/2005/03/07/the_secret_weap/}{"the secret weapon"} for dot-and-whisker plots that compare the estimated coefficients for a single predictor across many models or datasets.
-\code{secret_weapon} takes a tidy data.frame of regression results or a list of model objects and generates a dot-and-whisker plot of the results of a single variable across the multiple models.
+\code{secret_weapon} takes a tidy data frame of regression results or a list of model objects and generates a dot-and-whisker plot of the results of a single variable across the multiple models.
 
-Tidy data.frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
+Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
 
 Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
@@ -37,10 +32,10 @@ Alternately, \code{secret_weapon} accepts as input a list of model objects that 
 library(broom)
 library(dplyr)
 
-# Estimate models across many samples, put results in a tidy data.frame
+# Estimate models across many samples, put results in a tidy data frame
 by_clarity <- diamonds \%>\% group_by(clarity) \%>\%
  do(broom::tidy(lm(price ~ carat + cut + color, data = .))) \%>\%
- ungroup \%>\% rename(model=clarity)
+ ungroup \%>\% rename(model = clarity)
 
 # Generate a 'secret weapon' plot of the results of diamond size
 secret_weapon(by_clarity, "carat")
