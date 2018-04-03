@@ -20,11 +20,11 @@ Imports:
     grid,
     stats,
     broom,
-    plyr,
     dplyr,
     stringr,
     ggstance,
     rlang,
+    purrr,
     gtable
 Suggests:
     mfx,

@@ -34,7 +34,7 @@
 #' @importFrom stats reorder
 #' @importFrom ggstance geom_pointrangeh
 #' @importFrom ggstance position_dodgev
-#' @importFrom plyr ldply
+#' @importFrom purrr map_df
 #'
 #' @examples
 #' library(broom)
@@ -173,8 +173,7 @@ dw_tidy <- function(x, ...) {
             }
             names(x) <- nm
 
-            df <- do.call(plyr::ldply,
-                          c(list(.data=x,.fun=broom::tidy, conf.int = TRUE, .id="model"), list(...)))
+            df <- purrr::map_df(x, .id = "model", function(m) broom::tidy(m, conf.int = TRUE, ...))
 
         } else if (class(x) == "lmerMod") {
             group <- vector() # only for avoiding the NOTE in check
@@ -196,8 +195,7 @@ dw_tidy <- function(x, ...) {
                         nn <- c("estimate", "std.error", "statistic", "p.value")
                         if (inherits(co, "listof")) {
                             # multiple response variables
-                            ret <- plyr::ldply(co, fix_data_frame, nn[1:ncol(co[[1]])],
-                                               .id = "response")
+                            ret <- purrr::map_df(co, .id = "reponse", function(c) broom::fix_data_frame(c, nn[1:ncol(c[[1]])], ...))
                             ret$response <- stringr::str_replace(ret$response, "Response ", "")
                         } else {
                             ret <- fix_data_frame(co, nn[1:ncol(co)])
