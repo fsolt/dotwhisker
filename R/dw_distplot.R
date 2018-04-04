@@ -6,8 +6,8 @@
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
-#' @param polygon_args A list of arguments specifying the appearance of the polygon representing the normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot]{geom_polygon}}.
-#' @param line_args A list of arguments specifying the appearance of the line beneath the normal distribution.  For supported arguments, see \code{\link[ggstance::geom_linerangeh]{geom_linerangeh}}.
+#' @param dist_args A list of arguments specifying the appearance of the normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.
+#' @param line_args A list of arguments specifying the appearance of the line beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.
 #' @param \dots Extra arguments to pass to \code{\link[broom]{tidy}}.
 #'
 #' @details \code{dw_distplot} visualizes regression model objects or regression results saved in tidy data frames by, e.g., \code{\link[broom]{tidy}} as plots of standardized normally distributed regression estimates, rescaled by twice the standard deviation of their respective variables in the analyzed dataset.  A line marking the width of the chosen confidence interval underlies the distribution.
@@ -28,12 +28,13 @@
 #'
 #' @import ggplot2
 #' @importFrom broom tidy
-#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows
+#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by n mutate if_else
 #' @importFrom stats qnorm
 #' @importFrom stats reorder
 #' @importFrom ggstance geom_pointrangeh
 #' @importFrom ggstance position_dodgev
 #' @importFrom purrr map_df
+#' @importFrom stats dnorm model.frame
 #'
 #' @examples
 #' library(broom)
@@ -82,7 +83,7 @@ dw_distplot <- function(x,
                         ...) {
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- model <- conf.low <- conf.high <- term <- std.error <- NULL
+    estimate <- model <- conf.low <- conf.high <- term <- std.error <- n <- loc <- dens <- conf.low <- conf.high <- NULL
 
     df <- dw_tidy(x, ...)
 
@@ -137,7 +138,6 @@ dw_distplot <- function(x,
                       dens = dnorm(loc, mean = estimate, sd = std.error) + y_ind) %>%
         filter(!is.na(estimate))
 
-
     line_args0 <- list(y = df1$y_ind)
     line_args1 <- c(line_args0, line_args)
 
@@ -150,7 +150,7 @@ dw_distplot <- function(x,
 
     # Omit the legend if there is only one model
     if (n_models == 1) {
-        p <- p + theme(legend.position="none")
+        p <- p + theme(legend.position = "none")
     }
 
     return(p)

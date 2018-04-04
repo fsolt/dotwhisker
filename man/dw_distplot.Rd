@@ -17,11 +17,11 @@ dw_distplot(x, order_vars = NULL, show_intercept = FALSE,
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
 
-\item{line_args}{A list of arguments specifying the appearance of the line beneath the normal distribution.  For supported arguments, see \code{\link[ggstance::geom_linerangeh]{geom_linerangeh}}.}
+\item{dist_args}{A list of arguments specifying the appearance of the normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.}
+
+\item{line_args}{A list of arguments specifying the appearance of the line beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
 
 \item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
-
-\item{polygon_args}{A list of arguments specifying the appearance of the polygon representing the normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot]{geom_polygon}}.}
 }
 \value{
 The function returns a \code{ggplot} object.

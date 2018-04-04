@@ -144,6 +144,9 @@ dwplot <- function(x, dodge_size = .4, order_vars = NULL,
 }
 
 dw_tidy <- function(x, ...) {
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
+    estimate <- model <- std.error <- conf.high <- conf.low <- NULL
+
     if (!is.data.frame(x)) {
         if (!"coefficients" %in% names(x)) {
             df <- purrr::map_df(x, .id = "model", function(y) {
