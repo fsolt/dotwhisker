@@ -3,7 +3,6 @@
 #' \code{dwplot} is a function for quickly and easily generating dot-and-whisker plots of regression models saved in tidy data frames.
 #'
 #' @param x Either a tidy data frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.
-#' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #' @param dodge_size A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
@@ -17,6 +16,8 @@
 #' In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 #'
 #' For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}}, or a list of such model objects.
+#'
+#' By default, the plot will display 95-percent confidence intervals.  To display a different interval when passing a model object or objects, specify a \code{conf.level} argument to pass to \code{\link[broom]{tidy}}.  When passing a data frame of results, include the variables \code{conf.low} and \code{conf.high} describing the bounds of the desired interval.
 #'
 #' Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{\link[broom]{tidy}}.
 #' And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
@@ -43,9 +44,10 @@
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
 #' dwplot(m1) +
-#'     xlab("Coefficient") + ylab("") +
-#'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
-#'     theme(legend.position="none")
+#'     xlab("Coefficient") +
+#'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2)
+#' # using 99% confidence interval
+#' dwplot(m1, conf.level = .99)
 #' # Plot regression coefficients from multiple models on the fly
 #' m2 <- update(m1, . ~ . - disp)
 #' dwplot(list(full = m1, nodisp = m2))
@@ -53,7 +55,8 @@
 #' dwplot(m1, dot_args = list(size = 3, pch = 21, fill = "white"))
 #' # Plot regression coefficients from multiple models in a tidy data frame
 #' by_trans <- mtcars %>% group_by(am) %>%
-#'     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>% rename(model=am)
+#'     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>% rename(model=am) %>%
+#'     relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement"))
 #' dwplot(by_trans) +
 #'     theme_bw() + xlab("Coefficient") + ylab("") +
 #'     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
@@ -69,9 +72,10 @@
 #'
 #' @export
 
-dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
+dwplot <- function(x, dodge_size = .4, order_vars = NULL,
                    show_intercept = FALSE, model_name = "model",
                    dot_args = list(size = .3), ...) {
+
     # If x is model object(s), convert to a tidy data frame
     df <- dw_tidy(x, ...)
 
@@ -117,23 +121,6 @@ dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
     y_ind <- rep(seq(n_vars, 1), n_models)
     df$y_ind <- y_ind
 
-    # Confirm alpha within bounds
-    if (alpha < 0 | alpha > 1) {
-        stop("Value of alpha for the confidence intervals should be between 0 and 1.")
-    }
-
-    # Generate lower and upper bound if not included in results
-    if ((!"conf.low" %in% names(df)) || (!"conf.high" %in% names(df))) {
-        if ("std.error" %in% names(df)) {
-            ci <- 1 - alpha/2
-            df <- transform(df,
-                            conf.low = estimate - stats::qnorm(ci) * std.error,
-                            conf.high = estimate + stats::qnorm(ci) * df$std.error)
-        } else {
-            df <- transform(df, conf.low=NA, conf.high=NA)
-        }
-    }
-
     # Catch difference between single and multiple models
     if (length(y_ind) != length(var_names)) {
         var_names <- unique(var_names)
@@ -144,11 +131,9 @@ dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
 
 
     # Make the plot
-
     p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = stats::reorder(term, y_ind), colour = model))+
         do.call(ggstance::geom_pointrangeh, point_args) +
         ylab("") + xlab("")
-
 
     # Omit the legend if there is only one model
     if (n_models == 1) {
@@ -158,61 +143,29 @@ dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
     return(p)
 }
 
-
 dw_tidy <- function(x, ...) {
-    # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    process_lm <- tidy.summary.lm <- fix_data_frame <- NULL
-
     if (!is.data.frame(x)) {
-        if (class(x)=="list") {
-            ind <- seq(length(x))
-            nm <- paste("Model", ind)
-            if (!is.null(nm_orig <- names(x))) {
-                set_nm <- nchar(nm) > 0
-                nm[set_nm] <- nm_orig[set_nm]
-            }
-            names(x) <- nm
-
-            df <- purrr::map_df(x, .id = "model", function(m) broom::tidy(m, conf.int = TRUE, ...))
-
-        } else if (class(x) == "lmerMod") {
-            df <- broom::tidy(x, conf.int = TRUE, effects = "fixed")
+        if (!"coefficients" %in% names(x)) {
+            df <- purrr::map_df(x, .id = "model", function(y) {
+                broom::tidy(y, conf.int = TRUE, ...) %>%
+                    by_2sd(model.frame(y))
+            }) %>%
+                mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))), paste("Model", model), model))
         } else {
-            if (class(x) == "polr") {
-                family.polr <- function(object, ...) NULL
-                tidy.lm <- function(x, conf.int = FALSE, conf.level = .95,
-                                    exponentiate = FALSE, quick = FALSE, ...) {
-                    if (quick) {
-                        co <- stats::coef(x)
-                        ret <- data.frame(term = names(co), estimate = unname(co))
-                        return(process_lm(ret, x, conf.int = FALSE, exponentiate = exponentiate))
-                    }
-                    s <- summary(x)
-
-                    tidy.summary.lm <- function(x, ...) {
-                        co <- stats::coef(x)
-                        nn <- c("estimate", "std.error", "statistic", "p.value")
-                        if (inherits(co, "listof")) {
-                            # multiple response variables
-                            ret <- purrr::map_df(co, .id = "reponse", function(c) broom::fix_data_frame(c, nn[1:ncol(c[[1]])], ...))
-                            ret$response <- stringr::str_replace(ret$response, "Response ", "")
-                        } else {
-                            ret <- fix_data_frame(co, nn[1:ncol(co)])
-                        }
-
-                        ret
-                    }
-
-                    ret <- tidy.summary.lm(s)
-
-                    process_lm(ret, x, conf.int = conf.int, conf.level = conf.level,
-                               exponentiate = exponentiate)
-                }
-            }
-            df <- broom::tidy(x, conf.int = TRUE, ...)
+            df <- broom::tidy(x, conf.int = TRUE, ...) %>%
+                by_2sd(model.frame(x))
         }
     } else {
         df <- x
+        if ((!"conf.low" %in% names(df)) || (!"conf.high" %in% names(df))) {
+            if ("std.error" %in% names(df)) {
+                df <- transform(df,
+                                conf.low = estimate - stats::qnorm(.975) * std.error,
+                                conf.high = estimate + stats::qnorm(.975) * df$std.error)
+            } else {
+                df <- transform(df, conf.low=NA, conf.high=NA)
+            }
+        }
     }
     return(df)
 }

@@ -4,19 +4,19 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, dodge_size = 0.4, alpha = 0.05, show_intercept = FALSE,
-  dot_args = list(size = 0.3))
+small_multiple(x, dodge_size = 0.4, show_intercept = FALSE,
+  dot_args = list(size = 0.3), ...)
 }
 \arguments{
 \item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
 
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
-\item{alpha}{A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.}
-
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
 
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
+
+\item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
 }
 \value{
 The function returns a \code{ggplot} object.

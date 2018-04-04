@@ -32,10 +32,10 @@ m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
 dwplot(m1)
 ```
 
-By default, the whiskers span the 95\% confidence interval.  To change the width of the confidence interval, use the `alpha` argument:
+By default, the whiskers span the 95\% confidence interval.  To change the width of the confidence interval, specify a `conf.level` argument to pass to `broom::tidy()`:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-dwplot(m1, alpha = .01)  # using 99% CI
+dwplot(m1, conf.level = .99)  # using 99% CI
 ```
 
 Plotting the results of more than one regression model is just as easy.  Just pass the model objects to `dwplot` as a list.  The `dodge_size` argument is used to adjust the space between the estimates of one variable when multiple models are presented in a single plot.  Its default value of .4 will usually be fine, but, depending on the dimensions of the desired plot, more pleasing results may be achieved by setting `dodge_size` to lower values when the plotted results include a relatively small number of predictors or to higher values when many models appear on the same plot.
@@ -110,7 +110,7 @@ by_trans <- mtcars %>%
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
     rename(model=am) %>%                                     # make model variable
     relabel_predictors(c(wt = "Weight",                      # relabel predictors
-                     cyl = "Cylinder",
+                     cyl = "Cylinders",
                      disp = "Displacement",
                      gear = "Gear"))
 
@@ -240,18 +240,18 @@ g123    # to display
 
 
 ## Advanced Use: The 'Secret Weapon' and 'Small Multiple' Plots 
-A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](http://andrewgelman.com/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input, and the size of the confidence intervals can be adjusted with the `alpha` argument.  The `var` argument is used to specify the predictor for which results are to be plotted.
+A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](http://andrewgelman.com/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input. The `var` argument is used to specify the predictor for which results are to be plotted.
 
 ```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
 data(diamonds)
 
 # Estimate models for many subsets of data, put results in a tidy data.frame
 by_clarity <- diamonds %>% group_by(clarity) %>%
- do(tidy(lm(price ~ carat + cut + color, data = .))) %>%
+ do(tidy(lm(price ~ carat + cut + color, data = .), conf.int = .99)) %>%
  ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
-secret_weapon(by_clarity, var = "carat", alpha = .01) + 
+secret_weapon(by_clarity, var = "carat") + 
     xlab("Estimated Coefficient (Dollars)") + ylab("Diamond Clarity") +
     ggtitle("Estimated Coefficients for Diamond Size Across Clarity Grades") +
     theme(plot.title = element_text(face="bold"))

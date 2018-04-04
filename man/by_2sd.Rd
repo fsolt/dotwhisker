@@ -7,12 +7,12 @@
 by_2sd(df, dataset)
 }
 \arguments{
-\item{df}{A data.frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{tidy}}.}
+\item{df}{A data frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{tidy}}.}
 
 \item{dataset}{The data analyzed in the models whose results are recorded in df}
 }
 \value{
-A tidy data.frame
+A tidy data frame
 }
 \description{
 \code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dotwhisker]{dwplot}}.
@@ -20,7 +20,7 @@ A tidy data.frame
 \details{
 \code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed. Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dotwhisker]{dwplot}}. Note that the current version of \code{by_2sd} does not subtract the mean (in contrast to Gelman's (2008) formula). However, all estimates and standard errors of the independent variables are the same as if the mean was subtracted. The only difference to Gelman (2008) is that for all variables in the model the intercept is shifted by the coefficient times the mean of the variable.
 
-An alternative available in some circumstances is to pass a model object to \code{\link[arm]{standardize}} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data.frame and so is not restricted to only those model objects that \code{standardize} accepts.
+An alternative available in some circumstances is to pass a model object to \code{\link[arm]{standardize}} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data frame and so is not restricted to only those model objects that \code{standardize} accepts.
 }
 \examples{
 library(broom)
@@ -28,7 +28,7 @@ library(dplyr)
 
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-m1_df <- tidy(m1) \%>\% by_2sd(mtcars) # create data.frame of rescaled regression results
+m1_df <- tidy(m1) \%>\% by_2sd(mtcars) # create data frame of rescaled regression results
 
 }
 \references{

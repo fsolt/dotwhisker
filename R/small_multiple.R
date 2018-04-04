@@ -3,10 +3,10 @@
 #' \code{small_multiple} is a function for plotting regression results of multiple models as a 'small multiple' plot
 #'
 #' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
-#' @param alpha A number setting the criterion of the confidence intervals. The default value is .05, corresponding to 95-percent confidence intervals.
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted
 #' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
+#' @param \dots Extra arguments to pass to \code{\link[broom]{tidy}}.
 #'
 #' @details
 #' \code{small_multiple}, following \href{Kastellec and Leoni (2007)}{https://doi.org/10.1017/S1537592707072209}, provides a compact means of representing numerous regression models in a single plot.
@@ -83,10 +83,10 @@
 #'
 #' @export
 
-small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FALSE,
-                           dot_args = list(size = .3)) {
+small_multiple <- function(x, dodge_size = .4, show_intercept = FALSE,
+                           dot_args = list(size = .3), ...) {
     # If x is list of model objects, convert to a tidy data frame
-    df <- dw_tidy(x)
+    df <- dw_tidy(x, ...)
 
     # Drop intercept if show_intercept = FALSE
     if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
@@ -128,20 +128,6 @@ small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FAL
         n_models <- length(mod_names)
     }
 
-    # Confirm alpha within bounds
-    if (alpha < 0 | alpha > 1) {
-        stop("Value of alpha for the confidential intervals should be between 0 and 1.")
-    }
-
-    # Generate lower and upper bound if not included in results
-    if ((!"conf.low" %in% names(df)) | (!"conf.high" %in% names(df))) {
-        ci <- 1 - alpha/2
-        conf.low <- c(df$estimate - qnorm(ci) * df$std.error)
-        conf.high <- c(df$estimate + qnorm(ci) * df$std.error)
-
-        df <- cbind(as.data.frame(df), conf.low, conf.high)
-    }
-
     # Calculate x-axis shift for plotting multiple submodels, generate x index
     if (n_sub == 1) {
         df$shift <- 0
@@ -161,7 +147,7 @@ small_multiple <- function(x, dodge_size = .4, alpha = .05, show_intercept = FAL
     point_args <- c(point_args0, dot_args)
 
     # Plot
-    p <- ggplot(df,aes(y = estimate, ymin = conf.low,ymax = conf.high, x = as.factor(model), colour = submodel))+
+    p <- ggplot(df, aes(y = estimate, ymin = conf.low, ymax = conf.high, x = as.factor(model), colour = submodel))+
         do.call(geom_pointrange, point_args) +
         ylab("") + xlab("") +
         facet_grid(term ~ ., scales = "free_y")
