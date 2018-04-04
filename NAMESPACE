@@ -2,6 +2,8 @@
 
 export(add_brackets)
 export(by_2sd)
+export(dw_distplot)
+export(dw_plot)
 export(dwplot)
 export(relabel_predictors)
 export(relabel_y_axis)
