@@ -51,15 +51,15 @@
 #' dw_distplot(m1, alpha = .1, line_args = list(size = 2, colour = "yellow"))
 #' # Plot regression coefficients from multiple models in a tidy data frame
 #' by_trans <- mtcars %>% group_by(am) %>%
-#'     do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>%
+#'     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>%
 #'     by_2sd(mtcars) %>% rename(model=am) %>%
-#'     relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement"))
+#'     relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement", gear = "Gears"))
 #' dw_distplot(by_trans) +
 #'     theme_bw() + xlab("Coefficient") + ylab("") +
 #'     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
 #'     ggtitle("Predicting Gas Mileage, OLS Estimates") +
 #'     theme(plot.title = element_text(face = "bold"),
-#'           legend.position=c(.01, .1), legend.justification=c(0, 0),
+#'           legend.position=c(.01, .05), legend.justification=c(0, 0),
 #'           legend.background = element_rect(colour="grey80"),
 #'           legend.title.align = .5) +
 #'     scale_colour_grey(start = .4, end = .8,
