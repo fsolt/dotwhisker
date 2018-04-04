@@ -18,7 +18,7 @@
 #'
 #' For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}}, or a list of such model objects.
 #'
-#' Because the function takes a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{\link[broom]{tidy}}.
+#' Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{\link[broom]{tidy}}.
 #' And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #' Together, these two features make \code{dwplot} extremely flexible.
 #'
