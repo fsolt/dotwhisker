@@ -176,8 +176,7 @@ dw_tidy <- function(x, ...) {
             df <- purrr::map_df(x, .id = "model", function(m) broom::tidy(m, conf.int = TRUE, ...))
 
         } else if (class(x) == "lmerMod") {
-            group <- vector() # only for avoiding the NOTE in check
-            df <- broom::tidy(x, conf.int = TRUE) %>% filter(group == "fixed")
+            df <- broom::tidy(x, conf.int = TRUE, effects = "fixed")
         } else {
             if (class(x) == "polr") {
                 family.polr <- function(object, ...) NULL
@@ -266,3 +265,7 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
 
     return(df)
 }
+
+#' @export
+#' @rdname dwplot
+dw_plot <- dwplot
