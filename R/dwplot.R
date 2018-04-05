@@ -7,7 +7,7 @@
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
-#' @param style
+#' @param style dotwhisker or distribution MORE
 #' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that if x is a tidy data frame, See \code{\link[dotwhisker]{by_2sd}}
 #' @param dot_args When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
 #' @param dist_args When specifying style = "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.
@@ -36,7 +36,7 @@
 #'
 #' @import ggplot2
 #' @importFrom broom tidy
-#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows
+#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else
 #' @importFrom stats qnorm
 #' @importFrom stats reorder
 #' @importFrom ggstance geom_pointrangeh
@@ -63,7 +63,7 @@
 #' # Plot regression coefficients from multiple models on the fly
 #' mtcars %>%
 #'     split(.$am) %>%
-#'     map(~ lm(mpg ~ wt + cyl + disp, data = .x)) %>%
+#'     purrr::map(~ lm(mpg ~ wt + cyl + disp, data = .x)) %>%
 #'     dwplot() %>%
 #'     relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement")) +
 #'     theme_bw() + xlab("Coefficient") + ylab("") +
