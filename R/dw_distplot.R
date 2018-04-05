@@ -90,7 +90,7 @@ dw_distplot <- function(x,
     if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- model <- conf.low <- conf.high <- term <- std.error <- n <- loc <- dens <- conf.low <- conf.high <- NULL
+    estimate <- model <- conf.low <- conf.high <- term <- std.error <- n <- loc <- dens <- NULL
 
     n_vars <- length(unique(df$term))
     dodge_size <- dodge_size
