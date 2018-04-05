@@ -42,6 +42,7 @@
 #' @importFrom ggstance geom_pointrangeh
 #' @importFrom ggstance position_dodgev
 #' @importFrom purrr map_df
+#' @importFrom stats dnorm model.frame
 #'
 #' @examples
 #' library(broom)
