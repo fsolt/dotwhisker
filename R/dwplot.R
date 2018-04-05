@@ -41,7 +41,7 @@
 #' @importFrom stats reorder
 #' @importFrom ggstance geom_pointrangeh
 #' @importFrom ggstance position_dodgev
-#' @importFrom purrr map_df
+#' @importFrom purrr map_df map
 #' @importFrom stats dnorm model.frame
 #'
 #' @examples
