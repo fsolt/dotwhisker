@@ -75,27 +75,25 @@
 #' @export
 
 dw_distplot <- function(x,
+						dodge_size = .4,
                         order_vars = NULL,
                         show_intercept = FALSE,
                         model_name = "model",
+                        dot_args = list(size = .3),
                         dist_args = list(alpha = .5),
                         line_args = list(alpha = .05, size = 1),
                         ...) {
 
-    # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- model <- conf.low <- conf.high <- term <- std.error <- n <- loc <- dens <- conf.low <- conf.high <- NULL
-
+    # If x is model object(s), convert to a tidy data frame
     df <- dw_tidy(x, ...)
 
     if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
-    # Specify order of variables if an order is provided
-    if (!is.null(order_vars)) {
-        df$term <- factor(df$term, levels = order_vars)
-        df <- df[match(order_vars, df$term),] %>% stats::na.omit()
-    }
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
+    estimate <- model <- conf.low <- conf.high <- term <- std.error <- n <- loc <- dens <- conf.low <- conf.high <- NULL
 
     n_vars <- length(unique(df$term))
+    dodge_size <- dodge_size
 
     # Confirm number of models, get model names
     if (model_name %in% names(df)) {
@@ -113,6 +111,12 @@ dw_distplot <- function(x,
         }
     }
     mod_names <- unique(df[[model_name]])
+
+    # Specify order of variables if an order is provided
+    if (!is.null(order_vars)) {
+        df$term <- factor(df$term, levels = order_vars)
+        df <- df[match(order_vars, df$term),] %>% stats::na.omit()
+    }
 
     # Add rows of NAs for variables not included in a particular model
     if (n_models > 1) {
@@ -152,6 +156,15 @@ dw_distplot <- function(x,
     if (n_models == 1) {
         p <- p + theme(legend.position = "none")
     }
+
+    p$args <- list(dodge_size = dodge_size,
+                   order_vars = order_vars,
+                   show_intercept = show_intercept,
+                   model_name = model_name,
+                   dot_args = list(size = .3),
+                   dist_args = dist_args,
+                   line_args = line_args,
+                   list(...))
 
     return(p)
 }

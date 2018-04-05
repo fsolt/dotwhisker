@@ -72,9 +72,15 @@
 #'
 #' @export
 
-dwplot <- function(x, dodge_size = .4, order_vars = NULL,
-                   show_intercept = FALSE, model_name = "model",
-                   dot_args = list(size = .3), ...) {
+dwplot <- function(x,
+                   dodge_size = .4,
+                   order_vars = NULL,
+                   show_intercept = FALSE,
+                   model_name = "model",
+                   dot_args = list(size = .3),
+                   dist_args = list(alpha = .5),
+                   line_args = list(alpha = .05, size = 1),
+                   ...) {
 
     # If x is model object(s), convert to a tidy data frame
     df <- dw_tidy(x, ...)
@@ -137,8 +143,17 @@ dwplot <- function(x, dodge_size = .4, order_vars = NULL,
 
     # Omit the legend if there is only one model
     if (n_models == 1) {
-        p <- p + theme(legend.position="none")
+        p <- p + theme(legend.position = "none")
     }
+
+    p$args <- list(dodge_size = dodge_size,
+                   order_vars = order_vars,
+                   show_intercept = show_intercept,
+                   model_name = model_name,
+                   dot_args = list(size = .3),
+                   dist_args = dist_args,
+                   line_args = line_args,
+                   list(...))
 
     return(p)
 }
