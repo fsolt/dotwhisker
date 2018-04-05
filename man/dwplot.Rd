@@ -6,13 +6,19 @@
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
 dwplot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
-  model_name = "model", dot_args = list(size = 0.3), ...)
+  model_name = "model", style = c("dotwhisker", "distribution",
+  "fivethirtyeight"), by_2sd = TRUE, dot_args = list(size = 0.3),
+  dist_args = list(alpha = 0.5), line_args = list(alpha = 0.05, size = 1),
+  ...)
 
 dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
-  model_name = "model", dot_args = list(size = 0.3), ...)
+  model_name = "model", style = c("dotwhisker", "distribution",
+  "fivethirtyeight"), by_2sd = TRUE, dot_args = list(size = 0.3),
+  dist_args = list(alpha = 0.5), line_args = list(alpha = 0.05, size = 1),
+  ...)
 }
 \arguments{
-\item{x}{Either a tidy data frame (see 'Details'), a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects.}
+\item{x}{Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').}
 
 \item{dodge_size}{A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.}
 
@@ -22,7 +28,13 @@ dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
 
-\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
+\item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that if x is a tidy data frame, See \code{\link[dotwhisker]{by_2sd}}}
+
+\item{dot_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
+
+\item{dist_args}{When specifying style = "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.}
+
+\item{line_args}{A list of arguments specifying the appearance of the line beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
 
 \item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
 }
@@ -57,29 +69,33 @@ dwplot(m1) +
     geom_vline(xintercept = 0, colour = "grey50", linetype = 2)
 # using 99\% confidence interval
 dwplot(m1, conf.level = .99)
-# Plot regression coefficients from multiple models on the fly
+# Plot regression coefficients from multiple models
 m2 <- update(m1, . ~ . - disp)
 dwplot(list(full = m1, nodisp = m2))
 # Change the appearance of dots and whiskers
 dwplot(m1, dot_args = list(size = 3, pch = 21, fill = "white"))
-# Plot regression coefficients from multiple models in a tidy data frame
-by_trans <- mtcars \%>\% group_by(am) \%>\%
-    do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) \%>\% rename(model=am) \%>\%
-    relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement"))
-dwplot(by_trans) +
+# Plot regression coefficients from multiple models on the fly
+mtcars \%>\%
+    split(.$am) \%>\%
+    map(~ lm(mpg ~ wt + cyl + disp, data = .x)) \%>\%
+    dwplot() \%>\%
+    relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement")) +
     theme_bw() + xlab("Coefficient") + ylab("") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage, OLS Estimates") +
     theme(plot.title = element_text(face = "bold"),
-          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.position = c(.995, .99),
+          legend.justification = c(1, 1),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
     scale_colour_grey(start = .4, end = .8,
                       name = "Transmission",
-                      breaks = c(0, 1),
+                      breaks = c("Model 0", "Model 1"),
                       labels = c("Automatic", "Manual"))
 
 }
 \references{
 Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
+
+Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865-2873.
 }
