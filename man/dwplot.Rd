@@ -28,6 +28,8 @@ dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
 
+\item{style}{dotwhisker or distribution MORE}
+
 \item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that if x is a tidy data frame, See \code{\link[dotwhisker]{by_2sd}}}
 
 \item{dot_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
