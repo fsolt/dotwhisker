@@ -79,7 +79,7 @@ dwplot(m1, dot_args = list(size = 3, pch = 21, fill = "white"))
 # Plot regression coefficients from multiple models on the fly
 mtcars \%>\%
     split(.$am) \%>\%
-    map(~ lm(mpg ~ wt + cyl + disp, data = .x)) \%>\%
+    purrr::map(~ lm(mpg ~ wt + cyl + disp, data = .x)) \%>\%
     dwplot() \%>\%
     relabel_predictors(c(wt = "Weight", cyl = "Cylinders", disp = "Displacement")) +
     theme_bw() + xlab("Coefficient") + ylab("") +
