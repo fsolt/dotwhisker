@@ -185,7 +185,7 @@ dwplot <- function(x,
                    model_name = model_name,
                    style = style,
                    by_2sd = by_2sd,
-                   dot_args = list(size = .3),
+                   dot_args = dot_args,
                    dist_args = dist_args,
                    line_args = line_args,
                    list(...))
