@@ -16,15 +16,15 @@
 #' m1_df <- broom::tidy(m1) %>%
 #'          relabel_predictors("(Intercept)" = "Intercept",
 #'                               wt = "Weight",
-#'                               cyl = "Cylinder",
-#'                               disp = "Displacement")
+#'                               disp = "Displacement",
+#'                               cyl = "Cylinder")
 #' dwplot(m1_df)
 #'
 #' dwplot(m1, show_intercept = TRUE) %>%
 #'     relabel_predictors("(Intercept)" = "Intercept",
 #'                               wt = "Weight",
-#'                               cyl = "Cylinder",
-#'                               disp = "Displacement")
+#'                               disp = "Displacement",
+#'                               cyl = "Cylinder")
 #'
 #'
 #' @importFrom dplyr select one_of arrange
