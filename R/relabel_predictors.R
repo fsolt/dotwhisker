@@ -28,14 +28,17 @@
 #'
 #'
 #' @importFrom dplyr select one_of arrange
-#' @import rlang
+#' @importFrom rlang exprs
+#' @importFrom stats setNames
 #'
 #' @export
 
 relabel_predictors <- function(x, ...) {
+    model <- term <- y_ind <- NULL # Set to NULL to make R CMD check happy
+
     dots <- rlang::exprs(...)
     if (is.language(dots[[1]])) {                   # if a named vector is passed,
-        dots <- setNames(as.list(...), names(...))      # convert it to a list
+        dots <- stats::setNames(as.list(...), names(...))      # convert it to a list
     }
 
     if (is.data.frame(x)) {
