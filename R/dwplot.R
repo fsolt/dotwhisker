@@ -7,7 +7,7 @@
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
-#' @param style dotwhisker or distribution MORE
+#' @param style Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.
 #' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param dot_args When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
 #' @param dist_args When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.
@@ -86,7 +86,7 @@ dwplot <- function(x,
                    order_vars = NULL,
                    show_intercept = FALSE,
                    model_name = "model",
-                   style = c("dotwhisker", "distribution", "fivethirtyeight"),
+                   style = c("dotwhisker", "distribution"),
                    by_2sd = TRUE,
                    dot_args = list(size = .3),
                    dist_args = list(alpha = .5),
@@ -94,7 +94,7 @@ dwplot <- function(x,
                    ...) {
     # argument checks
     if (length(style) > 1) style <- style[[1]]
-    if (!style %in% c("dotwhisker", "distribution", "fivethirtyeight")) stop("style must be dotwhisker, distribution, or fivethirtyeight")
+    if (!style %in% c("dotwhisker", "distribution")) stop("style must be dotwhisker or distribution")
 
     # If x is model object(s), convert to a tidy data frame
     df <- dw_tidy(x, by_2sd, ...)
