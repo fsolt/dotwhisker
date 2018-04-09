@@ -6,16 +6,14 @@
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
 dwplot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
-  model_name = "model", style = c("dotwhisker", "distribution",
-  "fivethirtyeight"), by_2sd = TRUE, dot_args = list(size = 0.3),
-  dist_args = list(alpha = 0.5), line_args = list(alpha = 0.05, size = 1),
-  ...)
+  model_name = "model", style = c("dotwhisker", "distribution"),
+  by_2sd = TRUE, dot_args = list(size = 0.3), dist_args = list(alpha =
+  0.5), line_args = list(alpha = 0.05, size = 1), ...)
 
 dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
-  model_name = "model", style = c("dotwhisker", "distribution",
-  "fivethirtyeight"), by_2sd = TRUE, dot_args = list(size = 0.3),
-  dist_args = list(alpha = 0.5), line_args = list(alpha = 0.05, size = 1),
-  ...)
+  model_name = "model", style = c("dotwhisker", "distribution"),
+  by_2sd = TRUE, dot_args = list(size = 0.3), dist_args = list(alpha =
+  0.5), line_args = list(alpha = 0.05, size = 1), ...)
 }
 \arguments{
 \item{x}{Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').}
@@ -28,7 +26,7 @@ dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
 
-\item{style}{dotwhisker or distribution MORE}
+\item{style}{Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.}
 
 \item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
 
