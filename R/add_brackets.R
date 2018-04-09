@@ -40,7 +40,7 @@
 #'
 #' @export
 
-add_brackets <- function(p, brackets, face="italic") {
+add_brackets <- function(p, brackets, face = "italic") {
   y_ind <- term <- estimate <- ymax <- ymin <- NULL # not functional, just for CRAN check
 
   pd <- left_join(p$data, layer_data(p), by = c("estimate" = "x"))
@@ -65,8 +65,8 @@ add_brackets <- function(p, brackets, face="italic") {
   }
 
   draw_bracket_vert <- function(x, oh = overhang) {
-      top <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymax) %>% max()
+      bottom <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymin) %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
@@ -75,8 +75,8 @@ add_brackets <- function(p, brackets, face="italic") {
   }
 
   draw_bracket_top <- function(x, oh = overhang) {
-      top <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymax) %>% max()
+      bottom <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymin) %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
@@ -85,8 +85,8 @@ add_brackets <- function(p, brackets, face="italic") {
   }
 
   draw_bracket_bottom <- function(x, oh = overhang) {
-      top <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymax) %>% max()
+      bottom <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymin) %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
