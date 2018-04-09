@@ -143,15 +143,15 @@ dwplot <- function(x,
 
     y_ind <- df %>% pull(y_ind)
 
-    # Catch difference between single and multiple models
-    if (length(y_ind) != length(var_names)) {
-        var_names <- unique(var_names)
-    }
-
     # Make the plot
     if (style == "distribution") {
 
-        if (nrow(df) <= n_models * n_vars) {
+        if (nrow(df) > n_models * n_vars) { # reset df if it was passed by relabel_predictors
+            df <- df %>%
+                select(-n, -loc, -dens) %>%
+                distinct()
+        }
+
         df1 <- purrr::map_df(1:101, function(x) df) %>%
             arrange(term, model) %>%
             group_by(term, model) %>%
@@ -159,9 +159,6 @@ dwplot <- function(x,
                           loc = estimate - 3 * std.error + (6 * std.error)/100 * (n - 1),
                           dens = dnorm(loc, mean = estimate, sd = std.error) + y_ind) %>%
             filter(!is.na(estimate))
-        } else {
-            df1 <- df
-        }
 
         line_args0 <- list(y = df1$y_ind)
         line_args1 <- c(line_args0, line_args)
@@ -170,13 +167,15 @@ dwplot <- function(x,
                              fill = model, color = model, group = interaction(model, term))) +
             do.call(geom_polygon, dist_args) +
             do.call(ggstance::geom_linerangeh, line_args1) +
-            scale_y_continuous(breaks = unique(y_ind), labels = var_names) +
+            scale_y_continuous(breaks = unique(df$y_ind), labels = var_names) +
             ylab("") + xlab("")
+
     } else { # style == "dotwhisker"
         point_args0 <- list(na.rm = TRUE, position = ggstance::position_dodgev(height = dodge_size))
         point_args <- c(point_args0, dot_args)
 
-        p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = stats::reorder(term, y_ind), colour = model))+
+        p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high,
+                            y = stats::reorder(term, unique(df$y_ind)), colour = model)) +
             do.call(ggstance::geom_pointrangeh, point_args) +
             ylab("") + xlab("")
     }
