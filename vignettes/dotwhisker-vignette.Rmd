@@ -90,7 +90,7 @@ m1_df # a tidy data.frame available for dwplot
 dwplot(m1_df) #same as dwplot(m1)
 ```
 
-Using `tidy` can be helpful when one wishes to omit certain model estimates from the plot.  To illustrate, we drop the intercept:
+Using `tidy` can be helpful when one wishes to omit certain model estimates from the plot.  To illustrate, we drop the intercept (although this is in fact done by `dwplot` automatically by default):
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
@@ -188,54 +188,37 @@ m5_margin <- data.frame(m5$mfxest) %>%
   tibble::rownames_to_column("term") %>% 
   rename(estimate = dF.dx, std.error = Std..Err.)
 m5_margin
+
 dwplot(m5_margin)
 ```
 
 
 ## Advanced Use: Grouping Predictors 
-It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function.  
+It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function. To pass the finalized plot to `add_brackets` without creating an intermediate object, simply wrap the code that generates it in braces (`{` and `}`): 
 
 ```{r fig.width = 7, fig.height = 5, warning = FALSE, message = FALSE}
-# Define order for predictors that can be grouped
-reordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
-
-# Generate a tidy data frame
-m123_df <- rbind(tidy(m1) %>% mutate(model = "Model 1"),      # tidy results &
-                 tidy(m2) %>% mutate(model = "Model 2"),      # add a variable to
-                 tidy(m3) %>% mutate(model = "Model 3")) %>%  # identify model.
-    filter(term != "(Intercept)") %>%                         # remove intercepts
-    by_2sd(mtcars) %>%                                        # rescale coefficients
-    mutate(term = factor(term, levels = reordered_vars)) %>%  # make term a factor &
-    group_by(model) %>% arrange(term) %>%                     # reorder
-    relabel_predictors(c(wt = "Weight",                       # relabel predictors
-                         cyl = "Cylinders", 
-                         disp = "Displacement", 
-                         hp = "Horsepower", 
-                         gear = "Gears", 
-                         am = "Manual"))
-
-# Save finalized plot to an object 
-p123 <- dwplot(m123_df) +
-     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
-     ggtitle("Predicting Gas Mileage") +
-     theme(plot.title = element_text(face="bold"),
-           legend.position = c(0.993, 0.99),
-           legend.justification=c(1, 1),
-           legend.background = element_rect(colour="grey80"),
-           legend.title = element_blank())
-
 # Create list of brackets (label, topmost included predictor, bottommost included predictor)
 three_brackets <- list(c("Overall", "Weight", "Weight"), 
                        c("Engine", "Cylinders", "Horsepower"),
                        c("Transmission", "Gears", "Manual"))
 
-g123 <- p123 %>% add_brackets(three_brackets)
+{dwplot(list(m1, m2, m3)) %>% 
+    relabel_predictors(c(wt = "Weight",                       # relabel predictors
+                         cyl = "Cylinders", 
+                         disp = "Displacement", 
+                         hp = "Horsepower", 
+                         gear = "Gears", 
+                         am = "Manual")) +
+    theme_bw() + xlab("Coefficient Estimate") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage") +
+    theme(plot.title = element_text(face="bold"),
+          legend.position = c(0.993, 0.99),
+          legend.justification=c(1, 1),
+          legend.background = element_rect(colour="grey80"),
+          legend.title = element_blank())} %>% 
+    add_brackets(three_brackets)
 
-# to save to file (not run)
-# ggsave(file = "plot.pdf", g123)
-
-g123    # to display
 ```
 
 
@@ -382,7 +365,7 @@ University of Iowa,
 
 Email: <yue-hu-1@uiowa.edu>
 
-Website: <http://clas.uiowa.edu/polisci/people/yue-hu>
+Website: <https://sammo3182.github.io>
 
 ## References
 
