@@ -13,6 +13,9 @@
 #' library(dplyr)
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
+#' two_brackets <- list(c("Engine", "Cylinder", "Displacement"),
+#'                      c("Not Engine", "Intercept", "Weight"))
+#'
 #' {dwplot(m1, show_intercept = TRUE) %>%
 #'        relabel_predictors("(Intercept)" = "Intercept",
 #'                           wt = "Weight",
