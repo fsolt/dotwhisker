@@ -175,7 +175,7 @@ dwplot <- function(x,
         point_args <- c(point_args0, dot_args)
 
         p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high,
-                            y = stats::reorder(term, unique(df$y_ind)), colour = model)) +
+                            y = stats::reorder(term, y_ind), colour = model)) +
             do.call(ggstance::geom_pointrangeh, point_args) +
             ylab("") + xlab("")
     }
