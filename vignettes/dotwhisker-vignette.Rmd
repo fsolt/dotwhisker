@@ -258,7 +258,6 @@ by_transmission_brackets <- list(c("Overall", "Weight", "Weight"),
     ggtitle("Predicting Gas Mileage by Transmission Type") +
     theme(plot.title = element_text(face = "bold", hjust = 0.5))
 
-
 ```
 
 ## Advanced Use: The 'Secret Weapon' and 'Small Multiple' Plots 
