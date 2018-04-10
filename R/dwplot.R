@@ -166,7 +166,7 @@ dwplot <- function(x,
         p <- ggplot(df1, aes(x = loc, y = dens, xmin = conf.low, xmax = conf.high,
                              fill = model, color = model, group = interaction(model, term))) +
             do.call(geom_polygon, dist_args) +
-            do.call(ggstance::geom_linerangeh, line_args1) +
+            #do.call(ggstance::geom_linerangeh, line_args1) +
             scale_y_continuous(breaks = unique(df$y_ind), labels = var_names) +
             ylab("") + xlab("")
 
