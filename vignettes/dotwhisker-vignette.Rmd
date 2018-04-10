@@ -221,6 +221,45 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 
 ```
 
+## Advanced Use: Presenting Regression Results as Normal Distributions
+
+[Inspired by](https://twitter.com/BenJamesEdwards/status/979751070254747650) the way [Edwards, Jacobs, and Forrest](https://bjedwards.github.io/assets/papers/EdwardsRisky.pdf) [-@Edwards2016, 5] displayed regression coefficients as normal distributions, `dotwhisker` now provides an easy way to make similar plots.  To create such plots, call `dwplot` as always but include the argument `style = "distribution"`, then customize with other `dotwhisker` functions and `ggplot` additions as usual:
+
+```{r fig.width = 6, fig.height = 9, warning = FALSE, message = FALSE}
+
+by_transmission_brackets <- list(c("Overall", "Weight", "Weight"), 
+                       c("Engine", "Cylinders", "Horsepower"),
+                       c("Transmission", "Gears", "Gears"))
+        
+{mtcars %>%
+    split(.$am) %>%
+    purrr::map(~ lm(mpg ~ wt + cyl + disp + hp + gear, data = .x)) %>%
+    dwplot(style = "distribution") %>%
+    relabel_predictors(c(wt = "Weight", 
+                         cyl = "Cylinders",
+                         disp = "Displacement",
+                         hp = "Horsepower",
+                         gear = "Gears")) +
+    theme_bw() + xlab("Coefficient") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    theme(legend.position = c(.995, .99),
+          legend.justification = c(1, 1),
+          legend.background = element_rect(colour="grey80"),
+          legend.title.align = .5) +
+    scale_colour_grey(start = .8, end = .4,
+                      name = "Transmission",
+                      breaks = c("Model 0", "Model 1"),
+                      labels = c("Automatic", "Manual")) +
+    scale_fill_grey(start = .8, end = .4,
+                    name = "Transmission",
+                    breaks = c("Model 0", "Model 1"),
+                    labels = c("Automatic", "Manual"))} %>% 
+    add_brackets(by_transmission_brackets) +
+    ggtitle("Predicting Gas Mileage by Transmission Type") +
+    theme(plot.title = element_text(face = "bold", hjust = 0.5))
+
+
+```
 
 ## Advanced Use: The 'Secret Weapon' and 'Small Multiple' Plots 
 A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](http://andrewgelman.com/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input. The `var` argument is used to specify the predictor for which results are to be plotted.
