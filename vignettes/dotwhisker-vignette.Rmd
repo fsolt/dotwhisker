@@ -234,7 +234,7 @@ by_transmission_brackets <- list(c("Overall", "Weight", "Weight"),
 {mtcars %>%
     split(.$am) %>%
     purrr::map(~ lm(mpg ~ wt + cyl + disp + hp + gear, data = .x)) %>%
-    dwplot(style = "distribution")} %>%
+    dwplot(style = "distribution")} #%>%
     # relabel_predictors(wt = "Weight", 
     #                      cyl = "Cylinders",
     #                      disp = "Displacement",
