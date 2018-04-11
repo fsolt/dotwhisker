@@ -285,6 +285,9 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
 }
 
 geom_dwdist <- function(data = NULL, df1, line_args, dist_args) {
+    # Set variables to NULL to make R CMD check happy
+    loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- NULL
+
     l1 <- layer(data = df1,
                 mapping = aes(x = loc, y = dens, group = interaction(model, term), color = model, fill = model),
                 stat = "identity", position = "identity", geom = GeomPolygon,
