@@ -37,10 +37,8 @@
 #' @import ggplot2
 #' @importFrom broom tidy
 #' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct
-#' @importFrom stats qnorm
-#' @importFrom stats reorder
-#' @importFrom ggstance geom_pointrangeh
-#' @importFrom ggstance position_dodgev
+#' @importFrom stats qnorm reorder
+#' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
 #' @importFrom purrr map_df map
 #' @importFrom stats dnorm model.frame
 #'
@@ -90,7 +88,7 @@ dwplot <- function(x,
                    by_2sd = TRUE,
                    dot_args = list(size = .3),
                    dist_args = list(alpha = .5),
-                   line_args = list(alpha = .05, size = 1),
+                   line_args = list(alpha = .75, size = 1),
                    ...) {
     # argument checks
     if (length(style) > 1) style <- style[[1]]
@@ -160,10 +158,8 @@ dwplot <- function(x,
                           dens = dnorm(loc, mean = estimate, sd = std.error) + y_ind) %>%
             filter(!is.na(estimate))
 
-        p <- ggplot(df1, aes(x = loc, y = dens, xmin = conf.low, xmax = conf.high,
-                             fill = model, color = model, group = interaction(model, term))) +
-            do.call(geom_polygon, dist_args) +
-            do.call(ggstance::geom_linerangeh, c(aes(y = df1$y_ind), line_args)) +
+        p <- ggplot(data = df) +
+            geom_dwdist(df1 = df1, line_args = line_args, dist_args = dist_args) +
             scale_y_continuous(breaks = unique(df$y_ind), labels = var_names) +
             ylab("") + xlab("")
 
@@ -286,6 +282,18 @@ add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
     }
 
     return(df)
+}
+
+geom_dwdist <- function(data = NULL, df1, line_args, dist_args) {
+    l1 <- layer(data = df1,
+                mapping = aes(x = loc, y = dens, group = interaction(model, term), color = model, fill = model),
+                stat = "identity", position = "identity", geom = GeomPolygon,
+                params = dist_args)
+    l2 <- layer(data = data, mapping = aes(y = y_ind, xmin = conf.low, xmax = conf.high, color = model),
+                stat = "identity", position = "identity", geom = ggstance::GeomLinerangeh,
+                show.legend = FALSE,
+                params = line_args)
+    return(list(l1, l2))
 }
 
 #' @export
