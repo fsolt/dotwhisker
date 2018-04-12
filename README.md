@@ -8,9 +8,8 @@ dotwhisker
 
 To install:
 
-
-* the latest released version: `install.packages("dotwhisker")`.
-* the latest developing version: `devtools::install_github("fsolt/dotwhisker", build_vignettes = TRUE)`.
+* the latest release version: `install.packages("dotwhisker")`.
+* the latest development version: `if (!require("remotes")) install.packages("remotes"); remotes::install_github("fsolt/dotwhisker")`.
 
 
 
