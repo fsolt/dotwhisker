@@ -28,7 +28,6 @@
 #'
 #' @import gtable
 #' @importFrom grid textGrob linesGrob gpar unit.pmax
-#' @importFrom dplyr filter pull
 #'
 #' @export
 
