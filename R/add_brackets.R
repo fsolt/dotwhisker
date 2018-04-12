@@ -32,7 +32,7 @@
 #' @export
 
 add_brackets <- function(p, brackets, face = "italic") {
-  y_ind <- term <- estimate <- ymax <- ymin <- NULL # not functional, just for CRAN check
+  y_ind <- term <- estimate <- ymax <- ymin <- x <- NULL # not functional, just for CRAN check
 
   pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
                   layer_data(p) %>% mutate(xx = signif(x, 9)), by = "xx")
