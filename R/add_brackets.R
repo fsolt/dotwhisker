@@ -35,7 +35,8 @@
 add_brackets <- function(p, brackets, face = "italic") {
   y_ind <- term <- estimate <- ymax <- ymin <- NULL # not functional, just for CRAN check
 
-  pd <- left_join(p$data, layer_data(p), by = c("estimate" = "x"))
+  pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
+                  layer_data(p) %>% mutate(xx = signif(x, 9)), by = "xx")
   if (p$args$style == "distribution") {
       pd <- pd %>%
           mutate(ymin = y_ind,
@@ -43,14 +44,14 @@ add_brackets <- function(p, brackets, face = "italic") {
   }
   overhang <- max(pd$y_ind)/40
   overhang <- ifelse(overhang > .4, .4, overhang)
-  farout <- max(pd$xmax, na.rm = TRUE) + 100
+  farout <- ifelse(p$args$style == "distribution", max(pd$x, na.rm = TRUE) + 100, max(pd$xmax, na.rm = TRUE) + 100)
   p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 
   if (!is.list(brackets)) stop('Error: argument "brackets" is not a list')
 
   draw_bracket_label <- function(x, f = face) {
-      top <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter(term == x[2] | term == x[3] & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
+      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
@@ -62,8 +63,8 @@ add_brackets <- function(p, brackets, face = "italic") {
   }
 
   draw_bracket_vert <- function(x, oh = overhang) {
-      top <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
+      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
@@ -72,8 +73,8 @@ add_brackets <- function(p, brackets, face = "italic") {
   }
 
   draw_bracket_top <- function(x, oh = overhang) {
-      top <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
+      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
@@ -82,8 +83,8 @@ add_brackets <- function(p, brackets, face = "italic") {
   }
 
   draw_bracket_bottom <- function(x, oh = overhang) {
-      top <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymax) %>% max()
-      bottom <- pd %>% filter((term == x[2] | term == x[3]) & !is.na(estimate)) %>% pull(ymin) %>% min()
+      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
+      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
       top <- round(top) + shift
       bottom <- round(bottom) - shift
