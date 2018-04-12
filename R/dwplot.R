@@ -36,7 +36,7 @@
 #'
 #' @import ggplot2
 #' @importFrom broom tidy
-#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct
+#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct pull
 #' @importFrom stats qnorm reorder
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
 #' @importFrom purrr map_df map
