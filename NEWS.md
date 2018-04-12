@@ -1,5 +1,20 @@
-## Version 0.3.0.9999
-1. Fixed the error that `small_multiple` can't directly reading ci info from the model.
+## Version 0.4.0
+#### New features
+1. A new plot style!  Specifying `style = "distribution"` in the arguments to `dwplot()` presents regression coefficients as normal distributions, underscored with a line representing the desired confidence interval.
+2. `relabel_predictors()` now conveniently _reorders_ the predictors as well.
+3. `add_brackets()` can now be added directly to the end of a chain of commands that generate a dotwhisker plot; the intermediate object necessary in past versions is no longer needed.  Just wrap the plotting commands in braces (`{` and `}`) before piping them to `add_brackets()`!
+
+#### Syntax changes
+1. The `alpha` argument to `dwplot()` should no longer be used to change the width of confidence intervals; use `conf.int` (to be passed to `broom::tidy` via `...`) instead.
+2. When `dwplot()` is passed model objects rather than a tidy data frame, the regression coefficients are now rescaled by two standard deviations of their respective variables in the analysed data (per `by_2sd()`)  by default.  This may be changed by setting `by_2sd = FALSE`.
+
+#### Bug fixes
+1. Fixed a bug in `add_brackets()` that [de-centered the brackets](https://twitter.com/stevenvmiller/status/954379043058659328) 
+1. Fixed a bug that caused `dot_args` [to be ignored](https://github.com/fsolt/dotwhisker/issues/74) after plots were passed to `relabel_predictors()` 
+1. Fixed a bug that prevented `small_multiple()` from directly reading confidence intervals from a model.
+1. Fixed a bug in `by_2sd()` now adjusts, if present, any confidence intervals in tidy data frames passed to the function.
+
+Thanks to [Steven V. Miller](https://github.com/svmiller) and [Ryan Burge](https://github.com/ryanburge) for bug reports, and to Ben Edwards and Jay Jacobs [for inspiring `style = "distribution"`](https://twitter.com/BenJamesEdwards/status/979751070254747650)!
 
 ## Version 0.3.0
 1. Rewrote the plotting functions based on the `ggstance` functions. The new `dwplot` allows cooperating with more `ggplot` functions, such as `facet_*`. 
