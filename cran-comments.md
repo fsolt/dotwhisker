@@ -1,62 +1,8 @@
 ## Test environments
-* OS X, R 3.2.1
-* Win 10, R 3.2.1
-
+* Local OS X install, R 3.4.4
+* Ubuntu 14.04.5 LTS (on travis-ci), R 3.4.4
+* win-builder (R version 3.5.0 beta (2018-04-10 r74581))
 
 ## R CMD check results
-
-### V 0.1.0.1
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.0.0
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.0.1
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.0.2
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.0.3
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.0.4
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.0.5
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.1
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.2
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.3
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.4
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.5
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.2.6
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
-
-### v 0.3.0
-There were no ERRORs or WARNINGs. 
-R CMD check succeeded
+### V 0.4.0
+0 errors | 0 warnings | 0 notes
