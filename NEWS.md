@@ -1,3 +1,7 @@
+## Version 0.4.1
+#### Bug fixes
+1. Fixed a bug in `add_brackets()` that caused brackets to overlap in large models or when many models were included in a single plot.
+
 ## Version 0.4.0
 #### New features
 1. A new plot style!  Specifying `style = "distribution"` in the arguments to `dwplot()` presents regression coefficients as normal distributions, underscored with a line representing the desired confidence interval.
