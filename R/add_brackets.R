@@ -42,7 +42,7 @@ add_brackets <- function(p, brackets, face = "italic") {
                  ymax = y_ind)
   }
   overhang <- max(pd$y_ind)/40
-  overhang <- ifelse(overhang > .4, .4, overhang)
+  overhang <- ifelse(overhang > .2, .2, overhang)
   farout <- ifelse(p$args$style == "distribution", max(pd$x, na.rm = TRUE) + 100, max(pd$xmax, na.rm = TRUE) + 100)
   p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 
@@ -64,31 +64,31 @@ add_brackets <- function(p, brackets, face = "italic") {
   draw_bracket_vert <- function(x, oh = overhang) {
       top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
       bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
+      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, .45)
       top <- round(top) + shift
       bottom <- round(bottom) - shift
 
-      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, xmax = farout + 0.5, ymin = bottom - oh, ymax = top + oh)
+      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, xmax = farout + 0.5, ymin = bottom, ymax = top)
   }
 
   draw_bracket_top <- function(x, oh = overhang) {
       top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
       bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
+      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, .45)
       top <- round(top) + shift
       bottom <- round(bottom) - shift
 
-      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, farout + 1, ymin = top + oh, ymax = top + oh)
+      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, farout + 1, ymin = top, ymax = top)
   }
 
   draw_bracket_bottom <- function(x, oh = overhang) {
       top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
       bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
+      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, .45)
       top <- round(top) + shift
       bottom <- round(bottom) - shift
 
-      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, xmax = farout + 1, ymin = bottom - oh, ymax = bottom - oh)
+      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, xmax = farout + 1, ymin = bottom, ymax = bottom)
   }
 
   p2 <- p1 +
