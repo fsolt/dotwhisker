@@ -1,15 +1,15 @@
 Package: dotwhisker
 Type: Package
 Title: Dot-and-Whisker Plots of Regression Results
-Version: 0.4.0
-Date: 2018-04-14
+Version: 0.4.1
+Date: 2018-04-16
 Authors@R: c(
-    person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
-    person("Yue", "Hu", role = c("aut", "cre"), email = "yue-hu-1@uiowa.edu"),
+    person("Frederick", "Solt", role = c("aut", "cre"), email = "frederick-solt@uiowa.edu"),
+    person("Yue", "Hu", role = c("aut"), email = "yue-hu-1@uiowa.edu"),
     person("Oliver", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
     person("Ben", "Bolker", role = "ctb", email = "bbolker@gmail.com"),
     person("Stefan", "Müller", role = "ctb", email = "mullers@tcd.ie"))
-Maintainer: Yue Hu <yue-hu-1@uiowa.edu>
+Maintainer: Frederick Solt <frederick-solt@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression results.
 Encoding: UTF-8
 BugReports: https://github.com/fsolt/dotwhisker/issues
