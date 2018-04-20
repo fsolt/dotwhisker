@@ -36,7 +36,7 @@
 #'
 #' @import ggplot2
 #' @importFrom broom tidy
-#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct pull
+#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct
 #' @importFrom stats qnorm reorder
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
 #' @importFrom purrr map_df map
@@ -139,7 +139,7 @@ dwplot <- function(x,
     df <- df %>%
         mutate(y_ind = n_vars - as.numeric(factor(term, levels = var_names)) + 1)
 
-    y_ind <- df %>% pull(y_ind)
+    y_ind <- df$y_ind
 
     # Make the plot
     if (style == "distribution") {
