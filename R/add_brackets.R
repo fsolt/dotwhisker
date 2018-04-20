@@ -41,8 +41,8 @@ add_brackets <- function(p, brackets, face = "italic") {
           mutate(ymin = y_ind,
                  ymax = y_ind)
   }
-  overhang <- max(pd$y_ind)/40
-  overhang <- ifelse(overhang > .2, .2, overhang)
+  overhang <- max(pd$y_ind)/30
+  overhang <- ifelse(overhang > .23, .23, overhang)
   farout <- ifelse(p$args$style == "distribution", max(pd$x, na.rm = TRUE) + 100, max(pd$xmax, na.rm = TRUE) + 100)
   p1 <- p + theme(plot.margin = unit(c(1, 1, 1, -1), "lines")) + ylab("")
 
@@ -56,9 +56,9 @@ add_brackets <- function(p, brackets, face = "italic") {
       bottom <- round(bottom) - shift
 
       annotation_custom(
-          grob = textGrob(label = x[1], gp = gpar(cex = .7, fontface = f), rot = 90),
-          ymin = (top + bottom)/2, ymax = (top + bottom)/2,
-          xmin = farout, xmax = farout)
+          grob = grid::textGrob(label = x[1], gp = grid::gpar(cex = .7, fontface = f), rot = 90),
+          xmin = farout, xmax = farout,
+          ymin = (top + bottom)/2, ymax = (top + bottom)/2)
   }
 
   draw_bracket_vert <- function(x, oh = overhang) {
@@ -68,7 +68,9 @@ add_brackets <- function(p, brackets, face = "italic") {
       top <- round(top) + shift
       bottom <- round(bottom) - shift
 
-      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, xmax = farout + 0.5, ymin = bottom, ymax = top)
+      annotation_custom(grob = grid::linesGrob(),
+                        xmin = farout + 0.5, xmax = farout + 0.5,
+                        ymin = bottom, ymax = top)
   }
 
   draw_bracket_top <- function(x, oh = overhang) {
@@ -78,7 +80,9 @@ add_brackets <- function(p, brackets, face = "italic") {
       top <- round(top) + shift
       bottom <- round(bottom) - shift
 
-      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, farout + 1, ymin = top, ymax = top)
+      annotation_custom(grob = grid::linesGrob(),
+                        xmin = farout + 0.5, farout + 1,
+                        ymin = top, ymax = top)
   }
 
   draw_bracket_bottom <- function(x, oh = overhang) {
@@ -88,10 +92,12 @@ add_brackets <- function(p, brackets, face = "italic") {
       top <- round(top) + shift
       bottom <- round(bottom) - shift
 
-      annotation_custom(grob = linesGrob(), xmin = farout + 0.5, xmax = farout + 1, ymin = bottom, ymax = bottom)
+      annotation_custom(grob = grid::linesGrob(), xmin = farout + 0.5, xmax = farout + 1,
+                        ymin = bottom, ymax = bottom)
   }
 
   p2 <- p1 +
+      theme_bw() +
       theme(plot.title = element_text(colour = NA),
             axis.title.y = element_blank(),
             axis.title.x = element_text(colour = NA),
