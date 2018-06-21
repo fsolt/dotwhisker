@@ -37,7 +37,7 @@
 #' @import ggplot2
 #' @importFrom broom tidy
 #' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct
-#' @importFrom stats qnorm reorder
+#' @importFrom stats qnorm reorder model.matrix
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
 #' @importFrom purrr map_df map
 #' @importFrom stats dnorm model.frame
@@ -196,26 +196,37 @@ dw_tidy <- function(x, by_2sd, ...) {
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     estimate <- model <- std.error <- conf.high <- conf.low <- NULL
 
+    ## return model matrix *or* model frame
+    get_dat <- function(x) {
+        tryCatch(as.data.frame(model.matrix(x)),
+                 error=function(e) model.frame(x))
+    }
+    ## prepend "Model" to numeric-convertable model labels
+    mk_model <- function(x) {
+        if (!is.na(suppressWarnings(as.numeric(x)))) {
+            paste("Model",x)
+        } else x
+    }
+    
     if (!is.data.frame(x)) {
-        if ("coefficients" %in% names(x)) { # single model
+        if (!inherits(x,"list")) {
+            df <- broom::tidy(x, conf.int = TRUE, ...)
             if (by_2sd) {
-                df <- broom::tidy(x, conf.int = TRUE, ...) %>%
-                    by_2sd(model.frame(x))
-            } else {
-                df <- broom::tidy(x, conf.int = TRUE, ...)
+                df <- df %>% by_2sd(get_dat(x))
             }
         } else {    # list of models
             if (by_2sd) {
-                df <- purrr::map_df(x, .id = "model", function(y) {
-                    broom::tidy(y, conf.int = TRUE, ...) %>%
-                        by_2sd(model.frame(y))
-                    }) %>%
-                    mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))),
-                                           paste("Model", model), model))
+                df <- purrr::map_dfr(x, .id = "model",
+                                     ## . has special semantics, can't use
+                                     ## it here ...
+                                     function(x) {
+                                 broom::tidy(x, conf.int = TRUE, ...) %>%
+                                     dotwhisker::by_2sd(dataset=get_dat(x))
+                                 }) %>%
+                    mutate(model = mk_model(model))
             } else {
-                df <- purrr::map_df(x, .id = "model", function(y) {
-                    broom::tidy(y, conf.int = TRUE, ...)
-                    }) %>%
+                df <- purrr::map_dfr(x, .id = "model",
+                    ~broom::tidy(., conf.int = TRUE, ...)) %>%
                     mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))),
                                            paste("Model", model), model))
             }
@@ -226,7 +237,7 @@ dw_tidy <- function(x, by_2sd, ...) {
             if ("std.error" %in% names(df)) {
                 df <- transform(df,
                                 conf.low = estimate - stats::qnorm(.975) * std.error,
-                                conf.high = estimate + stats::qnorm(.975) * df$std.error)
+                                conf.high = estimate + stats::qnorm(.975) * std.error)
             } else {
                 df <- transform(df, conf.low=NA, conf.high=NA)
             }

@@ -9,7 +9,7 @@ by_2sd(df, dataset)
 \arguments{
 \item{df}{A data frame including the variables \code{term} (names of independent variables), \code{estimate} (corresponding coefficient estimates), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot) such as generated those by \code{\link[broom]{tidy}}.}
 
-\item{dataset}{The data analyzed in the models whose results are recorded in df}
+\item{dataset}{The data analyzed in the models whose results are recorded in \code{df}, or (preferably) the \emph{model matrix} used by the models in \code{df}; the information required for complex models can more easily be generated from the model matrix than from the original data set. In many cases the model matrix can be extracted from the original model via \code{\link{model.matrix}}.}
 }
 \value{
 A tidy data frame
@@ -18,9 +18,9 @@ A tidy data frame
 \code{by_2sd} rescales regression results to facilitate making dot-and-whisker plots using \code{\link[dotwhisker]{dwplot}}.
 }
 \details{
-\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed. Standardizing in this way yields coefficients that are directly comparable to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dotwhisker]{dwplot}}. Note that the current version of \code{by_2sd} does not subtract the mean (in contrast to Gelman's (2008) formula). However, all estimates and standard errors of the independent variables are the same as if the mean was subtracted. The only difference to Gelman (2008) is that for all variables in the model the intercept is shifted by the coefficient times the mean of the variable.
+\code{by_2sd} multiplies the results from regression models saved as tidy data frames for predictors that are not binary by twice the standard deviation of these variables in the dataset analyzed. Standardizing in this way yields coefficients that are directly comparable to each other and to those for untransformed binary predictors (Gelman 2008) and so facilitates plotting using \code{\link[dotwhisker]{dwplot}}. Note that the current version of \code{by_2sd} does not subtract the mean (in contrast to Gelman's (2008) formula). However, all estimates and standard errors of the independent variables are the same as if the mean was subtracted. The only difference from Gelman (2008) is that for all variables in the model the intercept is shifted by the coefficient times the mean of the variable.
 
-An alternative available in some circumstances is to pass a model object to \code{arm::standardize} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantage of \code{by_2sd} is that it takes as its input is a tidy data frame and so is not restricted to only those model objects that \code{standardize} accepts.
+An alternative available in some circumstances is to pass a model object to \code{arm::standardize} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantages of \code{by_2sd} are that (1) it takes a tidy data frame as its input and so is not restricted to only those model objects that \code{standardize} accepts and (2) it is much more efficient because it operates on the parameters rather than refitting the original model with scaled data.
 }
 \examples{
 library(broom)
