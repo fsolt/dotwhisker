@@ -9,6 +9,7 @@
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
 #' @param style Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.
 #' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
+#' @param vline A \code{geom_vline()} object, typically with \code{xintercept = 0}, to be drawn behind the coefficients.
 #' @param dot_args When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
 #' @param dist_args When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.
 #' @param line_args When \code{style} is "distribution", a list of arguments specifying the appearance of the line marking the confidence interval beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.
@@ -48,9 +49,8 @@
 #' # Plot regression coefficients from a single model object
 #' data(mtcars)
 #' m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-#' dwplot(m1) +
-#'     xlab("Coefficient") +
-#'     geom_vline(xintercept = 0, colour = "grey50", linetype = 2)
+#' dwplot(m1, vline = geom_vline(xintercept = 0, colour = "grey50", linetype = 2)) +
+#'     xlab("Coefficient")
 #' # using 99% confidence interval
 #' dwplot(m1, conf.level = .99)
 #' # Plot regression coefficients from multiple models
@@ -86,6 +86,7 @@ dwplot <- function(x,
                    model_name = "model",
                    style = c("dotwhisker", "distribution"),
                    by_2sd = TRUE,
+                   vline = NULL,
                    dot_args = list(size = .3),
                    dist_args = list(alpha = .5),
                    line_args = list(alpha = .75, size = 1),
@@ -159,6 +160,7 @@ dwplot <- function(x,
             filter(!is.na(estimate))
 
         p <- ggplot(data = df) +
+            vline +
             geom_dwdist(df1 = df1, line_args = line_args, dist_args = dist_args) +
             scale_y_continuous(breaks = unique(df$y_ind), labels = var_names) +
             ylab("") + xlab("")
@@ -169,6 +171,7 @@ dwplot <- function(x,
 
         p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high,
                             y = stats::reorder(term, y_ind), colour = model)) +
+            vline +
             do.call(ggstance::geom_pointrangeh, point_args) +
             ylab("") + xlab("")
     }
@@ -207,7 +210,7 @@ dw_tidy <- function(x, by_2sd, ...) {
             paste("Model",x)
         } else x
     }
-    
+
     if (!is.data.frame(x)) {
         if (!inherits(x,"list")) {
             df <- broom::tidy(x, conf.int = TRUE, ...)
