@@ -87,7 +87,8 @@ dwplot <- function(x,
                    style = c("dotwhisker", "distribution"),
                    by_2sd = TRUE,
                    vline = NULL,
-                   dot_args = list(size = .3),
+                   dot_args = list(size = 1.2),
+                   whisker_args = list(size = .5),
                    dist_args = list(alpha = .5),
                    line_args = list(alpha = .75, size = 1),
                    ...) {
@@ -166,13 +167,14 @@ dwplot <- function(x,
             ylab("") + xlab("")
 
     } else { # style == "dotwhisker"
-        point_args0 <- list(na.rm = TRUE, position = ggstance::position_dodgev(height = dodge_size))
+        point_args0 <- list(na.rm = TRUE)
         point_args <- c(point_args0, dot_args)
+        segment_args0 <- list(na.rm = TRUE)
+        segment_args <- c(segment_args0, whisker_args)
 
-        p <- ggplot(df, aes(x = estimate, xmin = conf.low, xmax = conf.high,
-                            y = stats::reorder(term, y_ind), colour = model)) +
+        p <- ggplot(data = df) +
             vline +
-            do.call(ggstance::geom_pointrangeh, point_args) +
+            geom_dw(df = df, point_args = point_args, segment_args = segment_args, dodge_size = dodge_size) +
             ylab("") + xlab("")
     }
 
@@ -189,6 +191,7 @@ dwplot <- function(x,
                    by_2sd = FALSE,
                    vline = vline,
                    dot_args = dot_args,
+                   whisker_args = whisker_args,
                    dist_args = dist_args,
                    line_args = line_args,
                    list(...))
@@ -207,7 +210,7 @@ dw_tidy <- function(x, by_2sd, ...) {
     }
     ## prepend "Model" to numeric-convertable model labels
     mk_model <- function(x) {
-        if (!is.na(suppressWarnings(as.numeric(x)))) {
+        if (all(!is.na(suppressWarnings(as.numeric(x))))) {
             paste("Model",x)
         } else x
     }
@@ -307,11 +310,28 @@ geom_dwdist <- function(data = NULL, df1, line_args, dist_args) {
                 mapping = aes(x = loc, y = dens, group = interaction(model, term), color = model, fill = model),
                 stat = "identity", position = "identity", geom = GeomPolygon,
                 params = dist_args)
-    l2 <- layer(data = data, mapping = aes(y = y_ind, xmin = conf.low, xmax = conf.high, color = model),
+    l2 <- layer(data = data,
+                mapping = aes(y = y_ind, xmin = conf.low, xmax = conf.high, color = model),
                 stat = "identity", position = "identity", geom = ggstance::GeomLinerangeh,
                 show.legend = FALSE,
                 params = line_args)
     return(list(l1, l2))
+}
+
+geom_dw <- function(df, point_args, segment_args, dodge_size) {
+    # Set variables to NULL to make R CMD check happy
+    loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- NULL
+
+    l1 <- layer(data = df,
+                mapping = aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model),
+                stat = "identity", position = ggstance::position_dodgev(height = dodge_size), geom = "point",
+                params = point_args)
+    l2 <- layer(data = df,
+                mapping = aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model),
+                stat = "identity", position = ggstance::position_dodgev(height = dodge_size), geom = ggstance::GeomLinerangeh,
+                show.legend = FALSE,
+                params = segment_args)
+    return(list(l2, l1))
 }
 
 #' @export
