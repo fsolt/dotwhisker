@@ -8,7 +8,8 @@ Authors@R: c(
     person("Yue", "Hu", role = c("aut"), email = "yue-hu-1@uiowa.edu"),
     person("Oliver", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
     person("Ben", "Bolker", role = "ctb", email = "bolker@mcmaster.ca"),
-    person("Stefan", "Müller", role = "ctb", email = "mullers@tcd.ie"))
+    person("Stefan", "Müller", role = "ctb", email = "mullers@tcd.ie"),
+    person("Thomas", "Leeper", role = "ctb", email = "thosjleeper@gmail.com"))
 Maintainer: Frederick Solt <frederick-solt@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression results.
 Encoding: UTF-8
