@@ -7,13 +7,15 @@
 \usage{
 dwplot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
   model_name = "model", style = c("dotwhisker", "distribution"),
-  by_2sd = TRUE, dot_args = list(size = 0.3), dist_args = list(alpha =
-  0.5), line_args = list(alpha = 0.75, size = 1), ...)
+  by_2sd = TRUE, vline = NULL, dot_args = list(size = 0.3),
+  dist_args = list(alpha = 0.5), line_args = list(alpha = 0.75, size = 1),
+  ...)
 
 dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
   model_name = "model", style = c("dotwhisker", "distribution"),
-  by_2sd = TRUE, dot_args = list(size = 0.3), dist_args = list(alpha =
-  0.5), line_args = list(alpha = 0.75, size = 1), ...)
+  by_2sd = TRUE, vline = NULL, dot_args = list(size = 0.3),
+  dist_args = list(alpha = 0.5), line_args = list(alpha = 0.75, size = 1),
+  ...)
 }
 \arguments{
 \item{x}{Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').}
@@ -29,6 +31,8 @@ dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
 \item{style}{Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.}
 
 \item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
+
+\item{vline}{A \code{geom_vline()} object, typically with \code{xintercept = 0}, to be drawn behind the coefficients.}
 
 \item{dot_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
 
@@ -64,9 +68,8 @@ library(dplyr)
 # Plot regression coefficients from a single model object
 data(mtcars)
 m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
-dwplot(m1) +
-    xlab("Coefficient") +
-    geom_vline(xintercept = 0, colour = "grey50", linetype = 2)
+dwplot(m1, vline = geom_vline(xintercept = 0, colour = "grey50", linetype = 2)) +
+    xlab("Coefficient")
 # using 99\% confidence interval
 dwplot(m1, conf.level = .99)
 # Plot regression coefficients from multiple models
