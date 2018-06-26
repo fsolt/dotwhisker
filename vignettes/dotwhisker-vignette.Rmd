@@ -73,7 +73,7 @@ dwplot(list(m1, m2, m3)) %>%
            legend.background = element_rect(colour="grey80"),
            legend.title = element_blank()) 
 
-```
+```f
 
 Note that providing a named character vector to `relabel_predictors`, a `dotwhisker` function, conveniently renames the predictors.
 
@@ -99,6 +99,22 @@ m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2"
 two_models <- rbind(m1_df, m2_df)
 
 dwplot(two_models)
+```
+
+You can also filter by regular expressions. This can be helfpul, for instance, if a model contains a factor with many levels (e.g. a dummy variable for each country) which you might not want to include in your plot.
+
+```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
+# Transform cyl to factor variable
+mtcars <- mtcars %>% 
+  mutate(cyl = factor(cyl))
+
+m_factor <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+
+# Remove all model estimates that start with cyl*
+m_factor_df <- tidy(m_factor) %>% 
+  filter(!grepl('cyl*', term))
+
+dwplot(m_factor_df)
 ```
 
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
