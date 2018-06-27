@@ -322,15 +322,36 @@ geom_dw <- function(df, point_args, segment_args, dodge_size) {
     # Set variables to NULL to make R CMD check happy
     loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- NULL
 
+    point_arguments <- tryCatch({added_point_aes <- point_args[names(point_args) == ""][[1]]
+    point_mapping <- ggplot2:::rename_aes(modifyList(aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model), added_point_aes))
+    point_arguments <- point_args[names(point_args) != ""]
+    list(point_mapping, point_arguments)
+    },
+    error = function(e) {
+        point_mapping <- aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model)
+        return(list(point_mapping, point_args))
+    })
+
+    segment_arguments <- tryCatch({added_segment_aes <- segment_args[names(segment_args) == ""][[1]]
+    segment_mapping <- ggplot2:::rename_aes(modifyList(aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model), added_segment_aes))
+    segment_arguments <- segment_args[names(segment_args) != ""]
+    list(segment_mapping, segment_arguments)
+    },
+    error = function(e) {
+        segment_mapping <- aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model)
+        return(list(segment_mapping, segment_args))
+    })
+
+
     l1 <- layer(data = df,
-                mapping = aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model),
+                mapping = point_arguments[[1]],
                 stat = "identity", position = ggstance::position_dodgev(height = dodge_size), geom = "point",
-                params = point_args)
+                params = point_arguments[[2]])
     l2 <- layer(data = df,
-                mapping = aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model),
+                mapping = segment_arguments[[1]],
                 stat = "identity", position = ggstance::position_dodgev(height = dodge_size), geom = ggstance::GeomLinerangeh,
                 show.legend = FALSE,
-                params = segment_args)
+                params = segment_arguments[[2]])
     return(list(l2, l1))
 }
 
