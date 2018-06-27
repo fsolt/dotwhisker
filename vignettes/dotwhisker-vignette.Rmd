@@ -100,25 +100,17 @@ two_models <- rbind(m1_df, m2_df)
 dwplot(two_models)
 ```
 
-You can also filter by regular expressions. This can be helpful, for instance, if a model contains a factor with many levels (e.g. a dummy variable for each country) which you might not want to include in your plot.
+You can also filter by regular expressions. This can be helpful, for instance, if a model contains a factor with many levels (e.g., a dummy variable for each country) which you might not want to include in your plot.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-# Transform cyl to factor variable
-mtcars <- mtcars %>% 
-  mutate(cyl = factor(cyl))
-
-m_factor <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+# Transform cyl to factor variable in the data
+m_factor <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars %>% mutate(cyl = factor(cyl)))
 
 # Remove all model estimates that start with cyl*
 m_factor_df <- tidy(m_factor) %>% 
   filter(!grepl('cyl*', term))
 
 dwplot(m_factor_df)
-```
-
-```{r include = FALSE}
-mtcars <- mtcars %>% 
-  mutate(cyl = as.numeric(cyl))
 ```
 
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
