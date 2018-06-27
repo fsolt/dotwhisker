@@ -5,6 +5,7 @@
 #' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted
+#' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
 #' @param \dots Extra arguments to pass to \code{\link[broom]{tidy}}.
 #'
@@ -83,10 +84,14 @@
 #'
 #' @export
 
-small_multiple <- function(x, dodge_size = .4, show_intercept = FALSE,
-                           dot_args = list(size = .3), ...) {
+small_multiple <- function(x,
+                           dodge_size = .4,
+                           show_intercept = FALSE,
+                           by_2sd = TRUE,
+                           dot_args = list(size = .3),
+                           ...) {
     # If x is list of model objects, convert to a tidy data frame
-    df <- dw_tidy(x, ...)
+    df <- dw_tidy(x, by_2sd = by_2sd, ...)
 
     # Drop intercept if show_intercept = FALSE
     if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects

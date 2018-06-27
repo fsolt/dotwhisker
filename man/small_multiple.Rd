@@ -4,7 +4,7 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, dodge_size = 0.4, show_intercept = FALSE,
+small_multiple(x, dodge_size = 0.4, show_intercept = FALSE, by_2sd = TRUE,
   dot_args = list(size = 0.3), ...)
 }
 \arguments{
@@ -13,6 +13,8 @@ small_multiple(x, dodge_size = 0.4, show_intercept = FALSE,
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
+
+\item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
 
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
 
