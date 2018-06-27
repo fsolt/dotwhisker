@@ -56,7 +56,8 @@ dwplot(list(m1, m2, m3), show_intercept = TRUE)
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-dwplot(list(m1, m2, m3)) %>% 
+dwplot(list(m1, m2, m3),
+       vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) %>% # plot line at zero _behind_ coefs
     relabel_predictors(c(wt = "Weight",                       
                          cyl = "Cylinders", 
                          disp = "Displacement", 
@@ -99,7 +100,7 @@ two_models <- rbind(m1_df, m2_df)
 dwplot(two_models)
 ```
 
-You can also filter by regular expressions. This can be helfpul, for instance, if a model contains a factor with many levels (e.g. a dummy variable for each country) which you might not want to include in your plot.
+You can also filter by regular expressions. This can be helpful, for instance, if a model contains a factor with many levels (e.g. a dummy variable for each country) which you might not want to include in your plot.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 # Transform cyl to factor variable
@@ -115,6 +116,11 @@ m_factor_df <- tidy(m_factor) %>%
 dwplot(m_factor_df)
 ```
 
+```{r include = FALSE}
+mtcars <- mtcars %>% 
+  mutate(cyl = as.numeric(cyl))
+```
+
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
@@ -124,19 +130,19 @@ by_trans <- mtcars %>%
     do(tidy(lm(mpg ~ wt + cyl + disp + gear, data = .))) %>% # run model on each grp
     rename(model=am) %>%                                     # make model variable
     relabel_predictors(c(wt = "Weight",                      # relabel predictors
-                     cyl = "Cylinders",
+                     cyl = "Cylinders",          
                      disp = "Displacement",
                      gear = "Gear"))
 
 by_trans
 
-dwplot(by_trans) +
+dwplot(by_trans, 
+       vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) + # plot line at zero _behind_ coefs
     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage by Transmission Type") +
     theme(plot.title = element_text(face="bold"),
           legend.position = c(0.007, 0.01),
-          legend.justification=c(0, 0),
+          legend.justification = c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
     scale_colour_grey(start = .3, end = .7,
@@ -150,22 +156,23 @@ Also note in the above example the additional manner of using the `relabel_predi
 Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
-dwplot(by_trans, dot_args = list(aes(colour = model, shape = model))) +
+dwplot(by_trans,
+       vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2), # plot line at zero _behind_ coefs
+       dot_args = list(aes(shape = model))) +
     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage by Transmission Type") +
     theme(plot.title = element_text(face="bold"),
           legend.position = c(0.007, 0.01),
-          legend.justification=c(0, 0),
+          legend.justification = c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
     scale_colour_grey(start = .1, end = .1, # if start and end same value, use same colour for all models 
-                      name  ="Model", 
-                      breaks=c(0, 1),
-                      labels=c("Automatic", "Manual")) +
-    scale_shape_discrete(name  ="Model",
-                         breaks=c(0, 1),
-                         labels=c("Automatic", "Manual"))
+                      name = "Model", 
+                      breaks = c(0, 1),
+                      labels = c("Automatic", "Manual")) +
+    scale_shape_discrete(name = "Model",
+                         breaks = c(0, 1),
+                         labels = c("Automatic", "Manual"))
 ```
 
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.
@@ -216,15 +223,15 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
                        c("Engine", "Cylinders", "Horsepower"),
                        c("Transmission", "Gears", "Manual"))
 
-{dwplot(list(m1, m2, m3)) %>% 
+{dwplot(list(m1, m2, m3), 
+        vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) %>% # plot line at zero _behind_ coefs
     relabel_predictors(c(wt = "Weight",                       # relabel predictors
-                         cyl = "Cylinders", 
+                         cyl = "Cylinders",
                          disp = "Displacement", 
                          hp = "Horsepower", 
                          gear = "Gears", 
                          am = "Manual")) +
     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
-    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     ggtitle("Predicting Gas Mileage") +
     theme(plot.title = element_text(face="bold"),
           legend.position = c(0.993, 0.99),
@@ -232,7 +239,6 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
           legend.background = element_rect(colour="grey80"),
           legend.title = element_blank())} %>% 
     add_brackets(three_brackets)
-
 ```
 
 ## Advanced Use: Presenting Regression Results as Normal Distributions
@@ -281,9 +287,10 @@ A variation of dot-and-whisker plot is used to compare the estimated coefficient
 data(diamonds)
 
 # Estimate models for many subsets of data, put results in a tidy data.frame
-by_clarity <- diamonds %>% group_by(clarity) %>%
- do(tidy(lm(price ~ carat + cut + color, data = .), conf.int = .99)) %>%
- ungroup %>% rename(model = clarity)
+by_clarity <- diamonds %>% 
+    group_by(clarity) %>%
+    do(tidy(lm(price ~ carat + cut + color, data = .), conf.int = .99)) %>%
+    ungroup %>% rename(model = clarity)
 
 # Deploy the secret weapon
 secret_weapon(by_clarity, var = "carat") + 
@@ -295,16 +302,20 @@ secret_weapon(by_clarity, var = "carat") +
 A final means of presenting many models' results at once in a particularly compact format is the "small multiple" plot of regression results [see @Kastellec2007, 766]. Small-multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots.  The `small_multiple` function makes generating these plots simple.  Here, we pass a tidy data frame of six models to the function so we can to rescale the coefficients first, but the function can accept a list of model objects as well.
 
 ```{r fig.width = 2.5, fig.height = 7.5, warning = FALSE, message = FALSE}
-# Generate a tidy data.frame of regression results from six models
+# Generate a tidy data frame of regression results from six models
 m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
 m[[1]] <- lm(mpg ~ wt, data = mtcars) 
-m123456_df <- m[[1]] %>% tidy %>% by_2sd(mtcars) %>%
-  mutate(model = "Model 1")
+m123456_df <- m[[1]] %>% 
+    tidy() %>%
+    by_2sd(mtcars) %>%
+    mutate(model = "Model 1")
 for (i in 2:6) {
-  m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
-  m123456_df <- rbind(m123456_df, m[[i]] %>% tidy %>% by_2sd(mtcars) %>%
-    mutate(model = paste("Model", i)))
+    m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
+    m123456_df <- rbind(m123456_df, m[[i]] %>%
+                            tidy() %>%
+                            by_2sd(mtcars) %>%
+                            mutate(model = paste("Model", i)))
 }
 
 # Relabel predictors (they will appear as facet labels)
@@ -330,7 +341,7 @@ small_multiple(m123456_df) +
 To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`. (We also replicate three examples in @Kastellec2007 with `dotwhisker` in a separate vignette, "kl2007_examples".)
 
 ```{r fig.width = 3.5, fig.height = 8, warning = FALSE, message = FALSE}
-# Generate a tidy data.frame of regression results from five models on
+# Generate a tidy data frame of regression results from five models on
 # the mtcars data subset by transmission type
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
 mod <- "mpg ~ wt"
