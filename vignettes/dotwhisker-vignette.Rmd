@@ -145,12 +145,13 @@ dwplot(by_trans,
 
 Also note in the above example the additional manner of using the `relabel_predictors` function: in addition to being used on the `ggplot` object created by `dwplot` before further customization, it may also be used on a tidy data frame before it is passed to `dwplot`.
 
-Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.
+Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.  Here we also vary the linetype of the whiskers.
 
 ```{r fig.width = 7, fig.height = 4, warning = FALSE, message = FALSE}
 dwplot(by_trans,
        vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2), # plot line at zero _behind_ coefs
-       dot_args = list(aes(shape = model))) +
+       dot_args = list(aes(shape = model)),
+       whisker_args = list(aes(linetype = model))) +
     theme_bw() + xlab("Coefficient Estimate") + ylab("") +
     ggtitle("Predicting Gas Mileage by Transmission Type") +
     theme(plot.title = element_text(face="bold"),
