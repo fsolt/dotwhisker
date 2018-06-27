@@ -43,6 +43,7 @@
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
 #' @importFrom purrr map_df map
 #' @importFrom stats dnorm model.frame
+#' @importFrom utils modifyList
 #'
 #' @examples
 #' library(broom)
@@ -321,10 +322,10 @@ geom_dwdist <- function(data = NULL, df1, line_args, dist_args) {
 
 geom_dw <- function(df, point_args, segment_args, dodge_size) {
     # Set variables to NULL to make R CMD check happy
-    loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- NULL
+    loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- estimate <- NULL
 
     point_arguments <- tryCatch({added_point_aes <- point_args[names(point_args) == ""][[1]]
-    point_mapping <- ggplot2:::rename_aes(modifyList(aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model), added_point_aes))
+    point_mapping <- modifyList(aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model), added_point_aes)
     point_arguments <- point_args[names(point_args) != ""]
     list(point_mapping, point_arguments)
     },
@@ -334,7 +335,7 @@ geom_dw <- function(df, point_args, segment_args, dodge_size) {
     })
 
     segment_arguments <- tryCatch({added_segment_aes <- segment_args[names(segment_args) == ""][[1]]
-    segment_mapping <- ggplot2:::rename_aes(modifyList(aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model), added_segment_aes))
+    segment_mapping <- modifyList(aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model), added_segment_aes)
     segment_arguments <- segment_args[names(segment_args) != ""]
     list(segment_mapping, segment_arguments)
     },
