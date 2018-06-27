@@ -34,9 +34,20 @@
 add_brackets <- function(p, brackets, face = "italic") {
   y_ind <- term <- estimate <- ymax <- ymin <- x <- NULL # not functional, just for CRAN check
 
-  pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
-                  layer_data(p) %>% mutate(xx = signif(x, 9)), by = "xx")
-  if (p$args$style == "distribution") {
+  coef_layer <- 0
+  repeat {
+      coef_layer <- coef_layer + 1
+      if ("x" %in% names(layer_data(p, i = coef_layer))) break
+  }
+
+  if (p$args$style == "dotwhisker") {
+      pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
+                      layer_data(p, i = coef_layer) %>% mutate(xx = signif(x, 9)), by = "xx") %>%
+          left_join(layer_data(p, i = coef_layer - 1),
+                    by = c("colour", "y", "group", "PANEL", "ymin", "ymax", "xmax", "size", "alpha"))
+  } else {
+      pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
+                      layer_data(p, i = coef_layer) %>% mutate(xx = signif(x, 9)), by = "xx")
       pd <- pd %>%
           mutate(ymin = y_ind,
                  ymax = y_ind)
