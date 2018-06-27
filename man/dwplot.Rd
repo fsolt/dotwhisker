@@ -34,7 +34,9 @@ dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
 
 \item{vline}{A \code{geom_vline()} object, typically with \code{xintercept = 0}, to be drawn behind the coefficients.}
 
-\item{dot_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates and whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
+\item{dot_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_point}}.}
+
+\item{whisker_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
 
 \item{dist_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.}
 
