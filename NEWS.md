@@ -1,3 +1,33 @@
+## Version 0.5.0
+#### New features
+1. The `vline` argument is now available for `dwplot()`.  Passing a `geom_vline()` object to this argument, typically one with `xintercept = 0`, will [plot this line _behind_ the plotted coefficients](https://github.com/fsolt/dotwhisker/issues/84), which most will find aesthetically preferable.  The default for this argument is `NULL`, so if you prefer not to include such lines or just like them plotted last and foremost, there's no need to change your code.
+
+2. `dwplot()` now again accepts the `whisker_arg` argument to change the appearance of the whiskers representing the confidence intervals that has been lost since v0.3.0.  This means you can, for example, [specify different colors for the dots and the whiskers](https://github.com/fsolt/dotwhisker/issues/81):
+
+``` r
+# load the library
+library(dotwhisker)
+#> Loading required package: ggplot2
+
+# linear model of interest
+lm_object <- stats::lm(formula = wt ~ am * cyl, data = mtcars)
+
+# creating the plot with dwplot
+dwplot(x = lm_object,
+       dot_args = list(color = "red"), # color for the dot
+       whisker_args = list(color = "black"),   # color for the whisker
+       vline = ggplot2::geom_vline(xintercept = 0,  # put vline _behind_ coefs
+                                   colour = "grey60",
+                                   linetype = 2,
+                                   size = 1))
+```
+
+![](https://i.imgur.com/Hr3ZOzF.png)
+
+Created on 2018-06-27 by the [reprex
+package](http://reprex.tidyverse.org) (v0.2.0).
+
+
 ## Version 0.4.1
 #### Bug fixes
 1. Fixed a bug in `add_brackets()` that caused brackets to overlap in large models or when many models were included in a single plot.
@@ -48,7 +78,6 @@ Thanks to [Steven V. Miller](https://github.com/svmiller) and [Ryan Burge](https
 2. Fixing the errors in vignette.
 3. Adding the `show_intercept` argument. 
 4. Shorten the version number to three digits as `devtools` suggests.
-
 
 ## Version 0.2.0.5
 1. Fixed the error due to the update of `gridExtra`.
