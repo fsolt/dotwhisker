@@ -72,7 +72,7 @@
 #'           legend.position=c(0, 0), legend.justification=c(0, 0),
 #'           legend.title = element_text(size=9),
 #'           legend.background = element_rect(color="gray90"),
-#'           legend.margin = unit(-3, "pt"),
+#'           legend.spacing = unit(-3, "pt"),
 #'           legend.key.size = unit(10, "pt")) +
 #'     scale_colour_hue(name = "Transmission",
 #'     breaks = c(0, 1),
