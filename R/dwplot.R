@@ -129,7 +129,7 @@ dwplot <- function(x,
     # Specify order of variables if an order is provided
     if (!is.null(order_vars)) {
         df$term <- factor(df$term, levels = order_vars)
-        df <- df[order(df$term), ] %>% stats::na.omit()
+        df <- df[order(df$term), ] %>% filter(!is.na(term))
     }
 
     # Add rows of NAs for variables not included in a particular model
