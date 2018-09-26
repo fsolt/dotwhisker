@@ -235,7 +235,8 @@ dw_tidy <- function(x, by_2sd, ...) {
                     mutate(model = mk_model(model))
             } else {
                 df <- purrr::map_dfr(x, .id = "model",
-                    ~broom::tidy(., conf.int = TRUE, ...)) %>%
+                          function(x) {
+                              broom::tidy(x, conf.int = TRUE, ...) }) %>%
                     mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))),
                                            paste("Model", model), model))
             }
