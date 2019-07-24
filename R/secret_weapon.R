@@ -36,9 +36,13 @@
 #'
 #' @export
 
-secret_weapon <- function(x, var = NULL, ...) {
+secret_weapon <- function(x, var = NULL, by_2sd = TRUE, ...) {
     # If x is list of model objects, convert to a tidy data frame
-    df <- dw_tidy(x)
+    if (!"data.frame" %in% class(x)) {
+        df <- dotwhisker:::dw_tidy(x, by_2sd = by_2sd)
+    } else {
+        df <- x
+    }
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     term <- model <- NULL
