@@ -4,6 +4,7 @@
 #'
 #' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
+#' @param by_2sd When x is a list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param \dots Arguments to pass to \code{\link[dotwhisker]{dwplot}}.
 #'
 #' @details

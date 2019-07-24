@@ -11,6 +11,8 @@ secret_weapon(x, var = NULL, by_2sd = TRUE, ...)
 
 \item{var}{The predictor whose results are to be shown in the 'secret weapon' plot}
 
+\item{by_2sd}{When x is a list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
+
 \item{\dots}{Arguments to pass to \code{\link[dotwhisker]{dwplot}}.}
 }
 \value{
