@@ -4,8 +4,8 @@
 \alias{small_multiple}
 \title{Generate a 'Small Multiple' Plot of Regression Results}
 \usage{
-small_multiple(x, dodge_size = 0.4, show_intercept = FALSE, by_2sd = TRUE,
-  dot_args = list(size = 0.3), ...)
+small_multiple(x, dodge_size = 0.4, show_intercept = FALSE,
+  by_2sd = TRUE, dot_args = list(size = 0.3), ...)
 }
 \arguments{
 \item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}

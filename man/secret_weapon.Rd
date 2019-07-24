@@ -4,7 +4,7 @@
 \alias{secret_weapon}
 \title{Generate a 'Secret Weapon' Plot of Regression Results from Multiple Models}
 \usage{
-secret_weapon(x, var = NULL, ...)
+secret_weapon(x, var = NULL, by_2sd = TRUE, ...)
 }
 \arguments{
 \item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}

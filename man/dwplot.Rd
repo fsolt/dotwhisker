@@ -5,17 +5,19 @@
 \alias{dw_plot}
 \title{Dot-and-Whisker Plots of Regression Results}
 \usage{
-dwplot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
-  model_name = "model", style = c("dotwhisker", "distribution"),
-  by_2sd = TRUE, vline = NULL, dot_args = list(size = 1.2),
-  whisker_args = list(size = 0.5), dist_args = list(alpha = 0.5),
-  line_args = list(alpha = 0.75, size = 1), ...)
+dwplot(x, dodge_size = 0.4, order_vars = NULL,
+  show_intercept = FALSE, model_name = "model",
+  style = c("dotwhisker", "distribution"), by_2sd = TRUE,
+  vline = NULL, dot_args = list(size = 1.2), whisker_args = list(size
+  = 0.5), dist_args = list(alpha = 0.5), line_args = list(alpha = 0.75,
+  size = 1), ...)
 
-dw_plot(x, dodge_size = 0.4, order_vars = NULL, show_intercept = FALSE,
-  model_name = "model", style = c("dotwhisker", "distribution"),
-  by_2sd = TRUE, vline = NULL, dot_args = list(size = 1.2),
-  whisker_args = list(size = 0.5), dist_args = list(alpha = 0.5),
-  line_args = list(alpha = 0.75, size = 1), ...)
+dw_plot(x, dodge_size = 0.4, order_vars = NULL,
+  show_intercept = FALSE, model_name = "model",
+  style = c("dotwhisker", "distribution"), by_2sd = TRUE,
+  vline = NULL, dot_args = list(size = 1.2), whisker_args = list(size
+  = 0.5), dist_args = list(alpha = 0.5), line_args = list(alpha = 0.75,
+  size = 1), ...)
 }
 \arguments{
 \item{x}{Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').}
