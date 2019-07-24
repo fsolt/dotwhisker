@@ -11,3 +11,4 @@
 ^README.md$
 ^\.travis\.yml$
 ^CONDUCT\.md$
+^dev$
