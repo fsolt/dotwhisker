@@ -1,16 +1,17 @@
 Package: dotwhisker
 Type: Package
 Title: Dot-and-Whisker Plots of Regression Results
-Version: 0.5.0.9000
-Date: 2018-06-27
+Version: 0.5.1
+Date: 2020-02-14
 Authors@R: c(
     person("Frederick", "Solt", role = c("aut", "cre"), email = "frederick-solt@uiowa.edu"),
-    person("Yue", "Hu", role = c("aut"), email = "yue-hu-1@uiowa.edu"),
-    person("Oliver", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
+    person("Yue", "Hu", role = "aut", email = "yuehu@tsinghua.edu.cn"),
+    person("Os", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
     person("Ben", "Bolker", role = "ctb", email = "bolker@mcmaster.ca"),
-    person("Stefan", "Müller", role = "ctb", email = "mullers@tcd.ie"),
+    person("Stefan", "Müller", role = "ctb", email = "stefan.mueller@ucd.ie"),
     person("Thomas", "Leeper", role = "ctb", email = "thosjleeper@gmail.com"),
-    person("Chris", "Wallace", role = "ctb", email = "cew54@cam.ac.uk"))
+    person("Chris", "Wallace", role = "ctb", email = "cew54@cam.ac.uk"),
+    person("Christopher", "Warshaw", role = "ctb", email = "warshaw@email.gwu.edu"))
 Maintainer: Frederick Solt <frederick-solt@uiowa.edu>
 Description: Quick and easy dot-and-whisker plots of regression results.
 Encoding: UTF-8
@@ -38,4 +39,4 @@ Suggests:
 License: MIT + file LICENSE
 LazyData: TRUE
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0
