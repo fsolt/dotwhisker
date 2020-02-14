@@ -40,7 +40,7 @@
 secret_weapon <- function(x, var = NULL, by_2sd = TRUE, ...) {
     # If x is list of model objects, convert to a tidy data frame
     if (!"data.frame" %in% class(x)) {
-        df <- dotwhisker:::dw_tidy(x, by_2sd = by_2sd)
+        df <- dw_tidy(x, by_2sd = by_2sd)
     } else {
         df <- x
     }
