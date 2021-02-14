@@ -1,9 +1,9 @@
 ## Version 0.6.0
 
-In this version, we changed the data processing function to Indrajeet Patil's [`broomExtra::tidy_parapmeter`](https://indrajeetpatil.github.io/broomExtra/).
-
 ### New features
 
+1. Adding changing the `dw_tidy` engine to `broomExtra::tidy_parapmeter`. Thanks for Indrajeet Patil's amazing [package](https://indrajeetpatil.github.io/broomExtra/).
+1. Adding the function to plot AME based on [`margins::margins`](https://cloud.r-project.org/web/packages/margins/index.html).
 
 ### Bug fixed
 
@@ -52,7 +52,7 @@ package](http://reprex.tidyverse.org) (v0.2.0).
 
 #### Syntax changes
 1. The `alpha` argument to `dwplot()` should no longer be used to change the width of confidence intervals; use `conf.int` (to be passed to `broom::tidy` via `...`) instead.
-2. When `dwplot()` is passed model objects rather than a tidy data frame, the regression coefficients are now rescaled by two standard deviations of their respective variables in the analysed data (per `by_2sd()`)  by default.  This may be changed by setting `by_2sd = FALSE`.
+2. When `dwplot()` is passed model objects rather than a tidy data frame, the regression coefficients are now rescaled by two standard deviations of their respective variables in the analyzed data (per `by_2sd()`)  by default.  This may be changed by setting `by_2sd = FALSE`.
 
 #### Bug fixes
 1. Fixed a bug in `add_brackets()` that [de-centered the brackets](https://twitter.com/stevenvmiller/status/954379043058659328) 

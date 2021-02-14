@@ -23,7 +23,7 @@ A tidy data frame
 An alternative available in some circumstances is to pass a model object to \code{arm::standardize} before passing the results to \code{\link[broom]{tidy}} and then on to \code{\link[dotwhisker]{dwplot}}.  The advantages of \code{by_2sd} are that (1) it takes a tidy data frame as its input and so is not restricted to only those model objects that \code{standardize} accepts and (2) it is much more efficient because it operates on the parameters rather than refitting the original model with scaled data.
 }
 \examples{
-library(broom)
+library(broomExtra)
 library(dplyr)
 
 data(mtcars)

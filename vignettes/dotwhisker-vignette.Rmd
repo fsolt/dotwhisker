@@ -195,7 +195,7 @@ m4_df
 dwplot(m4_df)
 ```
 
-Working with a tidy data frame, it is similarly straightforward to plot just a subset of results or to rescale or reorder coefficients.  One often desireable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this can of course be done before model estimation, it can be more convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
+Working with a tidy data frame, it is similarly straightforward to plot just a subset of results or to rescale or reorder coefficients. One often desirable manipulation is to standardize the scales of variables. @Gelman2008, for example, suggests rescaling ordinal and continuous predictors by two standard deviations to facilitate comparison with dichotomous predictors. Although this can of course be done before model estimation, it can be more convenient to simply rescale the coefficients afterwards; the `by_2sd` function, which takes as arguments a data frame of estimates along with the original data frame upon which the model was based, automates this calculation.
 
 ```{r by2sd, out.width="100%"}
 # Customize the input data frame
@@ -445,11 +445,11 @@ Yue Hu
 
 Department of Political Science,
 
-University of Iowa, 
+Tsinghua University, 
 
-313 Schaeffer Hall,
+Mingzhai 414, 
 
-20 E Washington St, Iowa City, IA, 52242
+Zhongguacun Avenue, Haidian, Beijing 100084
 
 Email: <yuehu@tsinghua.edu.cn>
 
