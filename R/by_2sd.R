@@ -24,8 +24,6 @@
 #'
 #' @importFrom dplyr "%>%"
 #' @importFrom stats sd
-#' @importFrom stringr str_detect
-#' @importFrom stringr str_replace
 #'
 #' @export
 
@@ -37,16 +35,16 @@ by_2sd <- function(df, dataset) {
                 ## FIXME: meaningful error message if names not found?
                 ## (e.g. some kind of model object for which model.matrix()
                 ## is not available, and we have non-standard contrasts+interactions) ?
-                if(str_detect(x, ":") && !x %in% names(dataset)) {
+                if(any(grep(":", x)) && !x %in% names(dataset)) {
                     ## find interactions; create interaction column if necessary
-                    first <- str_replace(x, ":.*", "")
-                    second <- str_replace(x, ".*:", "")
+                    first <- gsub(":.*", "", x)
+                    second <- gsub(".*:", "", x)
                     dataset[[paste0(first,":",second)]] <- dataset[[first]]*dataset[[second]]
                 }
                 unmatched <- !x %in% names(dataset)
                 dx <- dataset[[x]]
                 ## dichotomous/unmatched variable?
-                dich <- (unmatched || 
+                dich <- (unmatched ||
                          stats::na.omit(unique(dx)) %>% sort() %>% identical(c(0,1)))
                 if (dich) 1 else 2*stats::sd(dataset[[x]], na.rm=TRUE)
             }) %>%

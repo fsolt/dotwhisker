@@ -37,11 +37,11 @@
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @import ggplot2
-#' @importFrom broom tidy
+#' @importFrom broomExtra tidy_parameters
 #' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct
 #' @importFrom stats qnorm reorder model.matrix
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
-#' @importFrom purrr map_df map
+#' @importFrom purrr map_dfr map
 #' @importFrom stats dnorm model.frame
 #' @importFrom utils modifyList
 #'
@@ -87,7 +87,7 @@ dwplot <- function(x,
                    show_intercept = FALSE,
                    model_name = "model",
                    style = c("dotwhisker", "distribution"),
-                   by_2sd = TRUE,
+                   by_2sd = FALSE,
                    vline = NULL,
                    dot_args = list(size = 1.2),
                    whisker_args = list(size = .5),
@@ -154,7 +154,7 @@ dwplot <- function(x,
                 distinct()
         }
 
-        df1 <- purrr::map_df(1:101, function(x) df) %>%
+        df1 <- purrr::map_dfr(1:101, function(x) df) %>%
             arrange(term, model) %>%
             group_by(term, model) %>%
             dplyr::mutate(n = 1:n(),
@@ -219,7 +219,7 @@ dw_tidy <- function(x, by_2sd, ...) {
 
     if (!is.data.frame(x)) {
         if (!inherits(x,"list")) {
-            df <- broom::tidy(x, conf.int = TRUE, ...)
+            df <- broomExtra::tidy_parameters(x, conf.int = TRUE, ...)
             if (by_2sd) {
                 df <- df %>% by_2sd(get_dat(x))
             }
@@ -229,14 +229,14 @@ dw_tidy <- function(x, by_2sd, ...) {
                                      ## . has special semantics, can't use
                                      ## it here ...
                                      function(x) {
-                                 broom::tidy(x, conf.int = TRUE, ...) %>%
+                                 broomExtra::tidy_parameters(x, conf.int = TRUE, ...) %>%
                                      dotwhisker::by_2sd(dataset=get_dat(x))
                                  }) %>%
                     mutate(model = mk_model(model))
             } else {
                 df <- purrr::map_dfr(x, .id = "model",
                           function(x) {
-                              broom::tidy(x, conf.int = TRUE, ...) }) %>%
+                              broomExtra::tidy_parameters(x, conf.int = TRUE, ...) }) %>%
                     mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))),
                                            paste("Model", model), model))
             }
@@ -358,6 +358,6 @@ geom_dw <- function(df, point_args, segment_args, dodge_size) {
     return(list(l2, l1))
 }
 
-#' @export
+
 #' @rdname dwplot
 dw_plot <- dwplot
