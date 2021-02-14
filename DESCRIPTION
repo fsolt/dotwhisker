@@ -22,7 +22,7 @@ Depends:
 Imports:
     grid,
     stats,
-    broom,
+    broomExtra,
     dplyr,
     stringr,
     ggstance,

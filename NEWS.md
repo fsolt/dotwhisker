@@ -1,3 +1,15 @@
+## Version 0.6.0
+
+In this version, we changed the data processing function to Indrajeet Patil's [`broomExtra::tidy_parapmeter`](https://indrajeetpatil.github.io/broomExtra/).
+
+### New features
+
+
+### Bug fixed
+
+1. Allowing the data.frame output varying based on confidence intervals.
+1. Setting the default value of `by_2sd` to FALSE.
+
 ## Version 0.5.0
 #### New features
 1. The `vline` argument is now available for `dwplot()`.  Passing a `geom_vline()` object to this argument, typically one with `xintercept = 0`, will [plot this line _behind_ the plotted coefficients](https://github.com/fsolt/dotwhisker/issues/84), which most will find aesthetically preferable.  The default for this argument is `NULL`, so if you prefer not to include such lines or just like them plotted last and foremost, there's no need to change your code.

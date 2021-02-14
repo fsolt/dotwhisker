@@ -3,6 +3,7 @@
 #' \code{secret_weapon} is a function for plotting regression results of multiple models as a 'secret weapon' plot
 #'
 #' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
+#' @param ci A number indicating the level of confidence intervals; the default is .95.
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
 #' @param by_2sd When x is a list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param \dots Arguments to pass to \code{\link[dotwhisker]{dwplot}}.
@@ -19,7 +20,7 @@
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @examples
-#' library(broom)
+#'
 #' library(dplyr)
 #'
 #' # Estimate models across many samples, put results in a tidy data frame
@@ -32,15 +33,14 @@
 #'
 #'
 #' @importFrom dplyr "%>%" filter select rename
-#' @importFrom broom tidy
 #' @importFrom utils globalVariables
 #'
 #' @export
 
-secret_weapon <- function(x, var = NULL, by_2sd = TRUE, ...) {
+secret_weapon <- function(x, var = NULL, ci = .95, by_2sd = FALSE, ...) {
     # If x is list of model objects, convert to a tidy data frame
     if (!"data.frame" %in% class(x)) {
-        df <- dw_tidy(x, by_2sd = by_2sd)
+        df <- dw_tidy(x, ci, by_2sd)
     } else {
         df <- x
     }
