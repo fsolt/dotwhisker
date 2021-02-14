@@ -7,6 +7,7 @@
 small_multiple(
   x,
   ci = 0.95,
+  margins = FALSE,
   dodge_size = 0.4,
   show_intercept = FALSE,
   by_2sd = FALSE,
@@ -15,9 +16,11 @@ small_multiple(
 )
 }
 \arguments{
-\item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}}
+\item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broomExtra]{tidy_parameters}}}
 
 \item{ci}{A number indicating the level of confidence intervals; the default is .95.}
+
+\item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
 
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
@@ -27,7 +30,7 @@ small_multiple(
 
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
 
-\item{\dots}{Extra arguments to pass to \code{\link[broom]{tidy}}.}
+\item{\dots}{Extra arguments to pass to \code{\link[broomExtra]{tidy_parameters}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -41,7 +44,7 @@ The function returns a \code{ggplot} object.
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 
-Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
+Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broomExtra]{tidy_parameters}}.
 
 Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data frame should also include a variable \code{submodel} identifying the submodel of the results.
 }

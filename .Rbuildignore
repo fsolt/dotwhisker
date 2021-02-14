@@ -12,3 +12,5 @@
 ^\.travis\.yml$
 ^CONDUCT\.md$
 ^dev$
+^doc$
+^Meta$

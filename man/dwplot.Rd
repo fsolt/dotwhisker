@@ -11,6 +11,7 @@ dwplot(
   dodge_size = 0.4,
   order_vars = NULL,
   show_intercept = FALSE,
+  margins = FALSE,
   model_name = "model",
   style = c("dotwhisker", "distribution"),
   by_2sd = FALSE,
@@ -28,6 +29,7 @@ dw_plot(
   dodge_size = 0.4,
   order_vars = NULL,
   show_intercept = FALSE,
+  margins = FALSE,
   model_name = "model",
   style = c("dotwhisker", "distribution"),
   by_2sd = FALSE,
@@ -49,6 +51,8 @@ dw_plot(
 \item{order_vars}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.}
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
+
+\item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
 
@@ -87,6 +91,8 @@ By default, the plot will display 95-percent confidence intervals.  To display a
 Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{\link[broomExtra]{tidy_parameters}}.
 And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 Together, these two features make \code{dwplot} extremely flexible.
+
+\code{dwplot} provides an option to present the average marginal effect directly based on \code{\link[margins]{margins}}. Users can alter the confidence intervals of the margins through the \code{ci} argument. See the full list of supported functions in the document of the package \code{\link{margins}}. The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
 }
 \examples{
 library(dplyr)
@@ -123,7 +129,7 @@ mtcars \%>\%
 
 }
 \references{
-Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
+Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
 
-Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865-2873.
+Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." *Statistics in Medicine*, 27:2865-2873.
 }

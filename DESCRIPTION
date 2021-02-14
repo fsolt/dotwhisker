@@ -23,6 +23,7 @@ Imports:
     grid,
     stats,
     broomExtra,
+    margins,
     dplyr,
     stringr,
     ggstance,
@@ -30,7 +31,6 @@ Imports:
     purrr,
     gtable
 Suggests:
-    mfx,
     ordinal,
     tibble,
     gridExtra,

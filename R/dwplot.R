@@ -7,6 +7,7 @@
 #' @param dodge_size A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.
 #' @param order_vars A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
+#' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
 #' @param style Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.
 #' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{FALSE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
@@ -30,10 +31,12 @@
 #' And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #' Together, these two features make \code{dwplot} extremely flexible.
 #'
-#' @references
-#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
+#' \code{dwplot} provides an option to present the average marginal effect directly based on \code{\link[margins]{margins}}. Users can alter the confidence intervals of the margins through the \code{ci} argument. See the full list of supported functions in the document of the package \code{\link{margins}}. The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
 #'
-#' Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." Statistics in Medicine, 27:2865-2873.
+#' @references
+#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
+#'
+#' Gelman, Andrew. 2008. "Scaling Regression Inputs by Dividing by Two Standard Deviations." *Statistics in Medicine*, 27:2865-2873.
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
@@ -45,6 +48,7 @@
 #' @importFrom purrr map_dfr map
 #' @importFrom stats dnorm model.frame
 #' @importFrom utils modifyList
+#' @importFrom utils globalVariables
 #'
 #' @examples
 #' library(dplyr)
@@ -86,6 +90,7 @@ dwplot <- function(x,
                    dodge_size = .4,
                    order_vars = NULL,
                    show_intercept = FALSE,
+                   margins = FALSE,
                    model_name = "model",
                    style = c("dotwhisker", "distribution"),
                    by_2sd = FALSE,
@@ -96,16 +101,23 @@ dwplot <- function(x,
                    line_args = list(alpha = .75, size = 1),
                    ...) {
     # argument checks
-    if (length(style) > 1) style <- style[[1]]
-    if (!style %in% c("dotwhisker", "distribution")) stop("style must be dotwhisker or distribution")
+    if (length(style) > 1)
+        style <- style[[1]]
+    if (!style %in% c("dotwhisker", "distribution"))
+        stop("style must be dotwhisker or distribution")
 
     # If x is model object(s), convert to a tidy data frame
-    df <- dw_tidy(x, ci, by_2sd, ...)
+    df <- dw_tidy(x, ci, by_2sd, margins, ...)
 
-    if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
+    if (!show_intercept)
+        df <-
+        df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- model <- conf.low <- conf.high <- term <- std.error <- n <- loc <- dens <- NULL
+    estimate <-
+        model <-
+        conf.low <-
+        conf.high <- term <- std.error <- n <- loc <- dens <- NULL
 
     n_vars <- length(unique(df$term))
     dodge_size <- dodge_size
@@ -121,8 +133,11 @@ dwplot <- function(x,
             df[[model_name]] <- factor("one")
             n_models <- 1
         } else {
-            stop("Please add a variable named '",
-                 model_name,"' to distinguish different models")
+            stop(
+                "Please add a variable named '",
+                model_name,
+                "' to distinguish different models"
+            )
         }
     }
     mod_names <- unique(df[[model_name]])
@@ -130,7 +145,7 @@ dwplot <- function(x,
     # Specify order of variables if an order is provided
     if (!is.null(order_vars)) {
         df$term <- factor(df$term, levels = order_vars)
-        df <- df[order(df$term), ] %>% filter(!is.na(term))
+        df <- df[order(df$term),] %>% filter(!is.na(term))
     }
 
     # Add rows of NAs for variables not included in a particular model
@@ -148,28 +163,35 @@ dwplot <- function(x,
 
     # Make the plot
     if (style == "distribution") {
-
-        if (nrow(df) > n_models * n_vars) { # reset df if it was passed by relabel_predictors
+        if (nrow(df) > n_models * n_vars) {
+            # reset df if it was passed by relabel_predictors
             df <- df %>%
-                select(-n, -loc, -dens) %>%
+                select(-n,-loc,-dens) %>%
                 distinct()
         }
 
-        df1 <- purrr::map_dfr(1:101, function(x) df) %>%
+        df1 <- purrr::map_dfr(1:101, function(x)
+            df) %>%
             arrange(term, model) %>%
             group_by(term, model) %>%
-            dplyr::mutate(n = 1:n(),
-                          loc = estimate - 3 * std.error + (6 * std.error)/100 * (n - 1),
-                          dens = dnorm(loc, mean = estimate, sd = std.error) + y_ind) %>%
+            dplyr::mutate(
+                n = 1:n(),
+                loc = estimate - 3 * std.error + (6 * std.error) /
+                    100 * (n - 1),
+                dens = dnorm(loc, mean = estimate, sd = std.error) + y_ind
+            ) %>%
             filter(!is.na(estimate))
 
         p <- ggplot(data = df) +
             vline +
-            geom_dwdist(df1 = df1, line_args = line_args, dist_args = dist_args) +
+            geom_dwdist(df1 = df1,
+                        line_args = line_args,
+                        dist_args = dist_args) +
             scale_y_continuous(breaks = unique(df$y_ind), labels = var_names) +
             ylab("") + xlab("")
 
-    } else { # style == "dotwhisker"
+    } else {
+        # style == "dotwhisker"
         point_args0 <- list(na.rm = TRUE)
         point_args <- c(point_args0, dot_args)
         segment_args0 <- list(na.rm = TRUE)
@@ -177,7 +199,12 @@ dwplot <- function(x,
 
         p <- ggplot(data = df) +
             vline +
-            geom_dw(df = df, point_args = point_args, segment_args = segment_args, dodge_size = dodge_size) +
+            geom_dw(
+                df = df,
+                point_args = point_args,
+                segment_args = segment_args,
+                dodge_size = dodge_size
+            ) +
             ylab("") + xlab("")
     }
 
@@ -186,176 +213,308 @@ dwplot <- function(x,
         p <- p + theme(legend.position = "none")
     }
 
-    p$args <- list(dodge_size = dodge_size,
-                   order_vars = order_vars,
-                   show_intercept = show_intercept,
-                   model_name = model_name,
-                   style = style,
-                   by_2sd = FALSE,
-                   vline = vline,
-                   dot_args = dot_args,
-                   whisker_args = whisker_args,
-                   dist_args = dist_args,
-                   line_args = line_args,
-                   list(...))
+    p$args <- list(
+        dodge_size = dodge_size,
+        order_vars = order_vars,
+        show_intercept = show_intercept,
+        model_name = model_name,
+        style = style,
+        by_2sd = FALSE,
+        vline = vline,
+        dot_args = dot_args,
+        whisker_args = whisker_args,
+        dist_args = dist_args,
+        line_args = line_args,
+        list(...)
+    )
 
     return(p)
 }
 
-dw_tidy <- function(x, ci, by_2sd, ...) {
+dw_tidy <- function(x, ci, by_2sd, margins,...) {
     # Set variables that will appear in pipelines to NULL to make R CMD check happy
     estimate <- model <- std.error <- conf.high <- conf.low <- NULL
 
+    AME <- SE <- lower <- p <- upper <- z <- NULL
+
     ## return model matrix *or* model frame
     get_dat <- function(x) {
-        tryCatch(as.data.frame(model.matrix(x)),
-                 error=function(e) model.frame(x))
+        tryCatch(
+            as.data.frame(model.matrix(x)),
+            error = function(e)
+                model.frame(x)
+        )
     }
     ## prepend "Model" to numeric-convertable model labels
     mk_model <- function(x) {
         if (all(!is.na(suppressWarnings(as.numeric(x))))) {
-            paste("Model",x)
-        } else x
+            paste("Model", x)
+        } else
+            x
     }
 
     if (!is.data.frame(x)) {
-        if (!inherits(x,"list")) {
-            df <- broomExtra::tidy_parameters(x, conf.int = TRUE, ...)
+        if (!inherits(x, "list")) {
+            if(margins){
+                df <- margins::margins(x) %>%
+                    summary(level = ci) %>%
+                    rename(term = factor,
+                           estimate = AME,
+                           std.error = SE,
+                           conf.low = lower,
+                           conf.high = upper,
+                           statistic = z,
+                           p.value = p)
+            }else{
+                df <- broomExtra::tidy_parameters(x, conf.int = TRUE, ...)
+            }
+
             if (by_2sd) {
                 df <- df %>% by_2sd(get_dat(x))
             }
-        } else {    # list of models
+        } else {
+            # list of models
             if (by_2sd) {
                 df <- purrr::map_dfr(x, .id = "model",
                                      ## . has special semantics, can't use
                                      ## it here ...
                                      function(x) {
-                                 broomExtra::tidy_parameters(x, conf.int = TRUE, ...) %>%
-                                     dotwhisker::by_2sd(dataset=get_dat(x))
-                                 }) %>%
+                                         if(margins){
+                                             df <- margins::margins(x) %>%
+                                                 summary(level = ci) %>%
+                                                 rename(term = factor,
+                                                        estimate = AME,
+                                                        std.error = SE,
+                                                        conf.low = lower,
+                                                        conf.high = upper,
+                                                        statistic = z,
+                                                        p.value = p)
+                                         }else{
+                                             df <- broomExtra::tidy_parameters(x, conf.int = TRUE, ...)
+                                         }
+                                         dotwhisker::by_2sd(df, dataset = get_dat(x))
+                                     }) %>%
                     mutate(model = mk_model(model))
             } else {
                 df <- purrr::map_dfr(x, .id = "model",
-                          function(x) {
-                              broomExtra::tidy_parameters(x, conf.int = TRUE, ...) }) %>%
-                    mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))),
-                                           paste("Model", model), model))
+                                     function(x) {
+                                         if(margins){
+                                             df <- margins::margins(x) %>%
+                                                 summary(level = ci) %>%
+                                                 rename(term = factor,
+                                                        estimate = AME,
+                                                        std.error = SE,
+                                                        conf.low = lower,
+                                                        conf.high = upper,
+                                                        statistic = z,
+                                                        p.value = p)
+                                         }else{
+                                             df <- broomExtra::tidy_parameters(x, conf.int = TRUE, ...)
+                                         }
+                                     }) %>%
+                    mutate(model = if_else(
+                        !is.na(suppressWarnings(as.numeric(
+                            model
+                        ))),
+                        paste("Model", model),
+                        model
+                    ))
             }
         }
-    } else { # x is a dataframe
+    } else {
+        # x is a dataframe
         df <- x
-        if ((!"conf.low" %in% names(df)) || (!"conf.high" %in% names(df))) {
+        if ((!"conf.low" %in% names(df)) ||
+            (!"conf.high" %in% names(df))) {
             if ("std.error" %in% names(df)) {
+                df <- transform(
+                    df,
+                    conf.low = estimate - stats::qnorm(1 - (1 - ci) /
+                                                           2) * std.error,
+                    conf.high = estimate + stats::qnorm(1 - (1 - ci) /
+                                                            2) * std.error
+                )
+            } else {
                 df <- transform(df,
-                                conf.low = estimate - stats::qnorm(1 - (1 - ci)/2) * std.error,
-                                conf.high = estimate + stats::qnorm(1 - (1 - ci)/2) * std.error)
-            } else {
-                df <- transform(df, conf.low=NA, conf.high=NA)
+                                conf.low = NA,
+                                conf.high = NA)
             }
         }
     }
     return(df)
 }
 
-add_NAs <- function(df = df, n_models = n_models, mod_names = mod_names,
-                    model_name = "model") {
-    # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    term <- model <- NULL
+add_NAs <-
+    function(df = df,
+             n_models = n_models,
+             mod_names = mod_names,
+             model_name = "model") {
+        # Set variables that will appear in pipelines to NULL to make R CMD check happy
+        term <- model <- NULL
 
-    if (!is.factor(df$term)) {
-        df$term <- factor(df$term, levels = unique(df$term))
-    }
-    if (!is.factor(dfmod <- df[[model_name]])) {
-        df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
-    }
-    for (i in seq(n_models)) {
-        m <- df %>% filter(model==factor(mod_names[[i]], levels = mod_names))
-        not_in <- setdiff(unique(df$term), m$term)
-        for (j in seq(not_in)) {
-            t <- data.frame(term = factor(not_in[j], levels = levels(df$term)),
-                            model = factor(mod_names[[i]], levels = mod_names))
-            if ("submodel" %in% names(m)) {
-                t$submodel <- m$submodel[1]
+        if (!is.factor(df$term)) {
+            df$term <- factor(df$term, levels = unique(df$term))
+        }
+        if (!is.factor(dfmod <- df[[model_name]])) {
+            df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
+        }
+        for (i in seq(n_models)) {
+            m <-
+                df %>% filter(model == factor(mod_names[[i]], levels = mod_names))
+            not_in <- setdiff(unique(df$term), m$term)
+            for (j in seq(not_in)) {
+                t <- data.frame(
+                    term = factor(not_in[j], levels = levels(df$term)),
+                    model = factor(mod_names[[i]], levels = mod_names)
+                )
+                if ("submodel" %in% names(m)) {
+                    t$submodel <- m$submodel[1]
+                }
+                if ("submodel" %in% names(m)) {
+                    m <- full_join(m, t, by = c("term", "model", "submodel"))
+                } else {
+                    m <- full_join(m, t, by = c("term", "model"))
+                }
             }
-            if ("submodel" %in% names(m)) {
-                m <- full_join(m, t, by = c("term", "model", "submodel"))
+            if (i == 1) {
+                dft <- m %>% arrange(term)
             } else {
-                m <- full_join(m, t, by = c("term", "model"))
+                dft <- bind_rows(dft, m %>% arrange(term))
             }
         }
-        if (i==1) {
-            dft <- m %>% arrange(term)
-        } else {
-            dft <- bind_rows(dft, m %>% arrange(term))
+
+        df <- dft
+
+        df$estimate <- as.numeric(df$estimate)
+        if ("std.error" %in% names(df)) {
+            df$std.error <- as.numeric(df$std.error)
         }
-    }
+        if ("conf.high" %in% names(df)) {
+            df$conf.high <- as.numeric(df$conf.high)
+        }
+        if ("conf.low" %in% names(df)) {
+            df$conf.low <- as.numeric(df$conf.low)
+        }
 
-    df <- dft
-
-    df$estimate <- as.numeric(df$estimate)
-    if ("std.error" %in% names(df)) {
-        df$std.error <- as.numeric(df$std.error)
+        return(df)
     }
-    if ("conf.high" %in% names(df)) {
-        df$conf.high <- as.numeric(df$conf.high)
-    }
-    if ("conf.low" %in% names(df)) {
-        df$conf.low <- as.numeric(df$conf.low)
-    }
-
-    return(df)
-}
 
 geom_dwdist <- function(data = NULL, df1, line_args, dist_args) {
     # Set variables to NULL to make R CMD check happy
-    loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- NULL
+    loc <-
+        dens <- model <- term <- y_ind <- conf.high <- conf.low <- NULL
 
-    l1 <- layer(data = df1,
-                mapping = aes(x = loc, y = dens, group = interaction(model, term), color = model, fill = model),
-                stat = "identity", position = "identity", geom = GeomPolygon,
-                params = dist_args)
-    l2 <- layer(data = data,
-                mapping = aes(y = y_ind, xmin = conf.low, xmax = conf.high, color = model),
-                stat = "identity", position = "identity", geom = ggstance::GeomLinerangeh,
-                show.legend = FALSE,
-                params = line_args)
+    l1 <- layer(
+        data = df1,
+        mapping = aes(
+            x = loc,
+            y = dens,
+            group = interaction(model, term),
+            color = model,
+            fill = model
+        ),
+        stat = "identity",
+        position = "identity",
+        geom = GeomPolygon,
+        params = dist_args
+    )
+    l2 <- layer(
+        data = data,
+        mapping = aes(
+            y = y_ind,
+            xmin = conf.low,
+            xmax = conf.high,
+            color = model
+        ),
+        stat = "identity",
+        position = "identity",
+        geom = ggstance::GeomLinerangeh,
+        show.legend = FALSE,
+        params = line_args
+    )
     return(list(l1, l2))
 }
 
 geom_dw <- function(df, point_args, segment_args, dodge_size) {
     # Set variables to NULL to make R CMD check happy
-    loc <- dens <- model <- term <- y_ind <- conf.high <- conf.low <- estimate <- NULL
+    loc <-
+        dens <-
+        model <- term <- y_ind <- conf.high <- conf.low <- estimate <- NULL
 
-    point_arguments <- tryCatch({added_point_aes <- point_args[names(point_args) == ""][[1]]
-    point_mapping <- modifyList(aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model), added_point_aes)
-    point_arguments <- point_args[names(point_args) != ""]
-    list(point_mapping, point_arguments)
-    },
-    error = function(e) {
-        point_mapping <- aes(y = stats::reorder(term, y_ind), x = estimate, group = interaction(model, term), color = model)
-        return(list(point_mapping, point_args))
-    })
+    point_arguments <-
+        tryCatch({
+            added_point_aes <- point_args[names(point_args) == ""][[1]]
+            point_mapping <-
+                modifyList(
+                    aes(
+                        y = stats::reorder(term, y_ind),
+                        x = estimate,
+                        group = interaction(model, term),
+                        color = model
+                    ),
+                    added_point_aes
+                )
+            point_arguments <- point_args[names(point_args) != ""]
+            list(point_mapping, point_arguments)
+        },
+        error = function(e) {
+            point_mapping <-
+                aes(
+                    y = stats::reorder(term, y_ind),
+                    x = estimate,
+                    group = interaction(model, term),
+                    color = model
+                )
+            return(list(point_mapping, point_args))
+        })
 
-    segment_arguments <- tryCatch({added_segment_aes <- segment_args[names(segment_args) == ""][[1]]
-    segment_mapping <- modifyList(aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model), added_segment_aes)
-    segment_arguments <- segment_args[names(segment_args) != ""]
-    list(segment_mapping, segment_arguments)
-    },
-    error = function(e) {
-        segment_mapping <- aes(y = stats::reorder(term, y_ind), xmin = conf.low, xmax = conf.high, group = interaction(model, term), color = model)
-        return(list(segment_mapping, segment_args))
-    })
+    segment_arguments <-
+        tryCatch({
+            added_segment_aes <- segment_args[names(segment_args) == ""][[1]]
+            segment_mapping <-
+                modifyList(
+                    aes(
+                        y = stats::reorder(term, y_ind),
+                        xmin = conf.low,
+                        xmax = conf.high,
+                        group = interaction(model, term),
+                        color = model
+                    ),
+                    added_segment_aes
+                )
+            segment_arguments <- segment_args[names(segment_args) != ""]
+            list(segment_mapping, segment_arguments)
+        },
+        error = function(e) {
+            segment_mapping <-
+                aes(
+                    y = stats::reorder(term, y_ind),
+                    xmin = conf.low,
+                    xmax = conf.high,
+                    group = interaction(model, term),
+                    color = model
+                )
+            return(list(segment_mapping, segment_args))
+        })
 
 
-    l1 <- layer(data = df,
-                mapping = point_arguments[[1]],
-                stat = "identity", position = ggstance::position_dodgev(height = dodge_size), geom = "point",
-                params = point_arguments[[2]])
-    l2 <- layer(data = df,
-                mapping = segment_arguments[[1]],
-                stat = "identity", position = ggstance::position_dodgev(height = dodge_size), geom = ggstance::GeomLinerangeh,
-                show.legend = FALSE,
-                params = segment_arguments[[2]])
+    l1 <- layer(
+        data = df,
+        mapping = point_arguments[[1]],
+        stat = "identity",
+        position = ggstance::position_dodgev(height = dodge_size),
+        geom = "point",
+        params = point_arguments[[2]]
+    )
+    l2 <- layer(
+        data = df,
+        mapping = segment_arguments[[1]],
+        stat = "identity",
+        position = ggstance::position_dodgev(height = dodge_size),
+        geom = ggstance::GeomLinerangeh,
+        show.legend = FALSE,
+        params = segment_arguments[[2]]
+    )
     return(list(l2, l1))
 }
 

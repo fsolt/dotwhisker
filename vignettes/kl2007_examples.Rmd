@@ -711,7 +711,7 @@ small_multiple(results_df) +
           legend.position=c(.97, .99), legend.justification=c(1, 1), 
           legend.title = element_text(size=8),
           legend.background = element_rect(color="gray90"),
-          legend.margin = unit(-3, "pt"),
+          legend.spacing = unit(-3, "pt"),
           legend.key.size = unit(10, "pt")) +
     scale_colour_hue(name = "Law Change\nDummy") +
     ggtitle("Registration Effects on Turnout\nAnsolabehere and Konisky (2006)\nvia Kastellec and Leoni (2007)")

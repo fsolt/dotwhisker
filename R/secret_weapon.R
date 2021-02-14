@@ -2,8 +2,9 @@
 #'
 #' \code{secret_weapon} is a function for plotting regression results of multiple models as a 'secret weapon' plot
 #'
-#' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broom]{tidy}}
+#' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broomExtra]{tidy_parameters}}
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
+#' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
 #' @param by_2sd When x is a list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param \dots Arguments to pass to \code{\link[dotwhisker]{dwplot}}.
@@ -15,17 +16,18 @@
 #' Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 #' In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
 #'
-#' Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}}.
+#' Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broomExtra]{tidy_parameters}}.
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @examples
 #'
 #' library(dplyr)
+#' library(broomExtra)
 #'
 #' # Estimate models across many samples, put results in a tidy data frame
 #' by_clarity <- diamonds %>% group_by(clarity) %>%
-#'  do(broom::tidy(lm(price ~ carat + cut + color, data = .))) %>%
+#'  do(tidy(lm(price ~ carat + cut + color, data = .))) %>%
 #'  ungroup %>% rename(model = clarity)
 #'
 #' # Generate a 'secret weapon' plot of the results of diamond size
@@ -37,7 +39,7 @@
 #'
 #' @export
 
-secret_weapon <- function(x, var = NULL, ci = .95, by_2sd = FALSE, ...) {
+secret_weapon <- function(x, var = NULL, ci = .95, margins = FALSE, by_2sd = FALSE, ...) {
     # If x is list of model objects, convert to a tidy data frame
     if (!"data.frame" %in% class(x)) {
         df <- dw_tidy(x, ci, by_2sd)
