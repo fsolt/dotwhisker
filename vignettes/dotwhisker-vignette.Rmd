@@ -67,7 +67,7 @@ dwplot(list(m1, m2, m3), show_intercept = TRUE)
 
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
 
-```{r ggplot, out.width="100%"}
+```{r ggplot, fig.width=4}
 dwplot(list(m1, m2, m3),
        vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) %>% # plot line at zero _behind_ coefs
     relabel_predictors(c(wt = "Weight",                       
@@ -129,7 +129,7 @@ dwplot(m_factor_df)
 
 It can also be convenient to build a tidy data frame of regression results directly, that is, without first creating model objects:
 
-```{r relabel, out.width="100%"}
+```{r relabel, fig.width=4}
 # Run model on subsets of data, save results as tidy df, make a model variable, and relabel predictors
 by_trans <- mtcars %>% 
     group_by(am) %>%                                         # group data by trans
@@ -161,7 +161,7 @@ Also note in the above example the additional manner of using the `relabel_predi
 
 Additionally, one can change the shape of the point estimate instead of using different colors. This can be useful, for example, when a plot needs to be printed in black and white.  Here we also vary the linetype of the whiskers.
 
-```{r custom, out.width="100%"}
+```{r custom, fig.width=4}
 dwplot(by_trans,
        vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2), # plot line at zero _behind_ coefs
        dot_args = list(aes(shape = model)),
@@ -242,7 +242,7 @@ dwplot(m5, margins = TRUE, ci = .8)
 ## Grouping Predictors 
 It is frequently desirable to convey that the predictors in a model depicted in a dot-and-whisker plot form groups of some sort.  This can be achieved by passing the finalized plot to the `add_brackets` function. To pass the finalized plot to `add_brackets` without creating an intermediate object, simply wrap the code that generates it in braces (`{` and `}`): 
 
-```{r brackets, out.width="100%"}
+```{r brackets, fig.width=4.5}
 # Create list of brackets (label, topmost included predictor, bottommost included predictor)
 three_brackets <- list(c("Overall", "Weight", "Weight"), 
                        c("Engine", "Cylinders", "Horsepower"),
@@ -268,9 +268,9 @@ three_brackets <- list(c("Overall", "Weight", "Weight"),
 
 ## Presenting Regression Results as Normal Distributions
 
-[Inspired by](https://twitter.com/BenJamesEdwards/status/979751070254747650) the way [Edwards, Jacobs, and Forrest](https://bjedwards.github.io/assets/papers/EdwardsRisky.pdf) [-@Edwards2016, 5] displayed regression coefficients as normal distributions, `dotwhisker` now provides an easy way to make similar plots.  To create such plots, call `dwplot` as always but include the argument `style = "distribution"`, then customize with other `dotwhisker` functions and `ggplot` additions as usual:
+[Inspired by](https://twitter.com/BenJamesEdwards/status/979751070254747650) the way @Edwards2016 [p.5] displayed regression coefficients as normal distributions, `dotwhisker` now provides an easy way to make similar plots.  To create such plots, call `dwplot` as always but include the argument `style = "distribution"`, then customize with other `dotwhisker` functions and `ggplot` additions as usual:
 
-```{r distribution, out.width="100%"}
+```{r distribution, fig.height=5, fig.width=5}
 
 by_transmission_brackets <- list(c("Overall", "Weight", "Weight"), 
                        c("Engine", "Cylinders", "Horsepower"),
@@ -306,9 +306,9 @@ by_transmission_brackets <- list(c("Overall", "Weight", "Weight"),
 ```
 
 ## The 'Secret Weapon' and 'Small Multiple' Plots 
-A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](http://andrewgelman.com/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input. The `var` argument is used to specify the predictor for which results are to be plotted.
+A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](https://statmodeling.stat.columbia.edu/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input. The `var` argument is used to specify the predictor for which results are to be plotted.
 
-```{r secretWeapon, out.width="100%"}
+```{r secretWeapon, fig.width=5}
 data(diamonds)
 
 # Estimate models for many subsets of data, put results in a tidy data.frame
@@ -326,7 +326,7 @@ secret_weapon(by_clarity, var = "carat") +
 
 A final means of presenting many models' results at once in a particularly compact format is the "small multiple" plot of regression results [see @Kastellec2007, 766]. Small-multiple plots present estimates in multiple panels, one for each variable: they are similar to a stack of secret weapon plots.  The `small_multiple` function makes generating these plots simple.  Here, we pass a tidy data frame of six models to the function so we can to rescale the coefficients first, but the function can accept a list of model objects as well.
 
-```{r smallMultiple, out.width="100%"}
+```{r smallMultiple, fig.height=7}
 # Generate a tidy data frame of regression results from six models
 m <- list()
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
@@ -365,7 +365,7 @@ small_multiple(m123456_df) +
 
 To facilitate comparisons across, e.g., results generated across different samples, one can cluster the results presented in a small multiple plot.  To do so, results that should be clustered should have the same value of `model`, but should be assigned different values of an additional `submodel` variable included in the tidy data frame passed to `small_multiple`. (We also replicate three examples in @Kastellec2007 with `dotwhisker` in a separate vignette, "kl2007_examples".)
 
-```{r smallMultiple2, out.width="100%"}
+```{r smallMultiple2, fig.width=4, fig.height=6}
 # Generate a tidy data frame of regression results from five models on
 # the mtcars data subset by transmission type
 ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
@@ -437,7 +437,7 @@ University of Iowa,
 
 Email: <frederick-solt@uiowa.edu>
 
-Website: <http://fsolt.org>
+Website: <https://fsolt.org>
 
 <br></br>
 

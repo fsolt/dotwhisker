@@ -39,7 +39,7 @@ The function returns a \code{ggplot} object.
 \code{small_multiple} is a function for plotting regression results of multiple models as a 'small multiple' plot
 }
 \details{
-\code{small_multiple}, following \href{Kastellec and Leoni (2007)}{https://doi.org/10.1017/S1537592707072209}, provides a compact means of representing numerous regression models in a single plot.
+\code{small_multiple}, following \href{Kastellec and Leoni (2007)}{https://www.cambridge.org/core/journals/perspectives-on-politics/article/using-graphs-instead-of-tables-in-political-science/9FD63E9EE686AF046732191EE8A68034}, provides a compact means of representing numerous regression models in a single plot.
 
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).

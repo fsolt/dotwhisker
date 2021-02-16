@@ -26,7 +26,7 @@ The function returns a \code{ggplot} object.
 \code{secret_weapon} is a function for plotting regression results of multiple models as a 'secret weapon' plot
 }
 \details{
-Andrew Gelman has coined the term \href{http://andrewgelman.com/2005/03/07/the_secret_weap/}{"the secret weapon"} for dot-and-whisker plots that compare the estimated coefficients for a single predictor across many models or datasets.
+Andrew Gelman has coined the term \href{https://statmodeling.stat.columbia.edu/2005/03/07/the_secret_weap/}{"the secret weapon"} for dot-and-whisker plots that compare the estimated coefficients for a single predictor across many models or datasets.
 \code{secret_weapon} takes a tidy data frame of regression results or a list of model objects and generates a dot-and-whisker plot of the results of a single variable across the multiple models.
 
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
