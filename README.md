@@ -1,3 +1,5 @@
+<img src="https://user-images.githubusercontent.com/58319029/113226393-a7b68700-92c2-11eb-9221-a4a10fcd7112.png" align="right" alt="" width="120" />
+
 [![CRAN version](http://www.r-pkg.org/badges/version/dotwhisker)](https://cran.r-project.org/web/packages/dotwhisker/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/dotwhisker) [![Travis-CI Build Status](https://travis-ci.org/fsolt/dotwhisker.svg?branch=master)](https://travis-ci.org/fsolt/dotwhisker)
 
 ------------------------------------------------------------------------
