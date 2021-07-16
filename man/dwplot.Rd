@@ -13,6 +13,7 @@ dwplot(
   show_intercept = FALSE,
   margins = FALSE,
   model_name = "model",
+  model_order = NULL,
   style = c("dotwhisker", "distribution"),
   by_2sd = FALSE,
   vline = NULL,
@@ -31,6 +32,7 @@ dw_plot(
   show_intercept = FALSE,
   margins = FALSE,
   model_name = "model",
+  model_order = NULL,
   style = c("dotwhisker", "distribution"),
   by_2sd = FALSE,
   vline = NULL,
@@ -55,6 +57,8 @@ dw_plot(
 \item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
+
+\item{model_order}{A character vector defining the order of the models when multiple models are involved.}
 
 \item{style}{Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.}
 
