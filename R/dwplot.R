@@ -9,6 +9,7 @@
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
+#' @param model_order A character vector defining the order of the models when multiple models are involved.
 #' @param style Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.
 #' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{FALSE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param vline A \code{geom_vline()} object, typically with \code{xintercept = 0}, to be drawn behind the coefficients.
@@ -92,6 +93,7 @@ dwplot <- function(x,
                    show_intercept = FALSE,
                    margins = FALSE,
                    model_name = "model",
+                   model_order = NULL,
                    style = c("dotwhisker", "distribution"),
                    by_2sd = FALSE,
                    vline = NULL,
@@ -126,8 +128,9 @@ dwplot <- function(x,
     if (model_name %in% names(df)) {
         dfmod <- df[[model_name]]
         n_models <- length(unique(dfmod))
+        l_models <- if(is.null(model_order)) unique(dfmod) else model_order
         ## re-order/restore levels by order in data set
-        df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
+        df[[model_name]] <- factor(dfmod, levels = rev(l_models))
     } else {
         if (length(df$term) == n_vars) {
             df[[model_name]] <- factor("one")
@@ -188,6 +191,8 @@ dwplot <- function(x,
                         line_args = line_args,
                         dist_args = dist_args) +
             scale_y_continuous(breaks = unique(df$y_ind), labels = var_names) +
+            guides(color = guide_legend(reverse = TRUE),
+                   fill = guide_legend(reverse = TRUE)) +
             ylab("") + xlab("")
 
     } else {
@@ -205,6 +210,7 @@ dwplot <- function(x,
                 segment_args = segment_args,
                 dodge_size = dodge_size
             ) +
+            guides(color = guide_legend(reverse = TRUE)) +
             ylab("") + xlab("")
     }
 

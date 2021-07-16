@@ -108,10 +108,11 @@ Using `tidy` can be helpful when one wishes to omit certain model estimates from
 ```{r tidy, out.width="100%"}
 m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
 m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2")
+m3_df <- tidy(m3) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 3")
 
-two_models <- rbind(m1_df, m2_df)
+three_models <- rbind(m1_df, m2_df, m3_df)
 
-dwplot(two_models)
+dwplot(three_models)
 ```
 
 You can also filter by regular expressions. This can be helpful, for instance, if a model contains a factor with many levels (e.g., a dummy variable for each country) which you might not want to include in your plot.
@@ -173,13 +174,18 @@ dwplot(by_trans,
           legend.justification = c(0, 0),
           legend.background = element_rect(colour="grey80"),
           legend.title.align = .5) +
-    scale_colour_grey(start = .1, end = .1, # if start and end same value, use same colour for all models 
-                      name = "Model", 
+    scale_colour_grey(start = .3, end = .7,
+        name = "Model", 
                       breaks = c(0, 1),
                       labels = c("Automatic", "Manual")) +
     scale_shape_discrete(name = "Model",
                          breaks = c(0, 1),
-                         labels = c("Automatic", "Manual"))
+                         labels = c("Automatic", "Manual")) +
+    # guides function is used to combine the legends produced by color and shape settings
+    guides(
+    colour = guide_legend("Model"),
+    shape = guide_legend("Model")
+ )
 ```
 
 It is also easy to plot classes of model objects that are not supported by `tidy`: one simply extracts the results from the model object and builds the data frame to pass to `dwplot` oneself.  Many functions generate results that can be extracted by `coef()`.

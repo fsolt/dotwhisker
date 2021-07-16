@@ -1,3 +1,13 @@
+## Version 0.7.0
+
+### New features
+
+1. Adding argument `model_order` to allow customizing the order of models to present.
+
+### Bug fixed
+
+1. Models and margins present in the correct order.
+
 ## Version 0.6.0
 
 ### New features
