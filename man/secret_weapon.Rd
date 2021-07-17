@@ -7,7 +7,7 @@
 secret_weapon(x, var = NULL, ci = 0.95, margins = FALSE, by_2sd = FALSE, ...)
 }
 \arguments{
-\item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broomExtra]{tidy_parameters}}}
+\item{x}{Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').}
 
 \item{var}{The predictor whose results are to be shown in the 'secret weapon' plot}
 
@@ -32,12 +32,12 @@ Andrew Gelman has coined the term \href{https://statmodeling.stat.columbia.edu/2
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
 
-Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broomExtra]{tidy_parameters}}.
+Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[broomExtra]{tidy_parameters}}, \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 }
 \examples{
 
 library(dplyr)
-library(broomExtra)
+library(broom)
 
 # Estimate models across many samples, put results in a tidy data frame
 by_clarity <- diamonds \%>\% group_by(clarity) \%>\%

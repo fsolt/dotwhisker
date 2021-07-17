@@ -16,7 +16,7 @@ small_multiple(
 )
 }
 \arguments{
-\item{x}{Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broomExtra]{tidy_parameters}}}
+\item{x}{Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').}
 
 \item{ci}{A number indicating the level of confidence intervals; the default is .95.}
 
@@ -30,7 +30,7 @@ small_multiple(
 
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
 
-\item{\dots}{Extra arguments to pass to \code{\link[broomExtra]{tidy_parameters}}.}
+\item{\dots}{Arguments to pass to \code{\link[dotwhisker]{dwplot}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
@@ -44,12 +44,12 @@ The function returns a \code{ggplot} object.
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 
-Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broomExtra]{tidy_parameters}}.
+Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[broomExtra]{tidy_parameters}}, \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 
 Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data frame should also include a variable \code{submodel} identifying the submodel of the results.
 }
 \examples{
-library(broomExtra)
+library(broom)
 library(dplyr)
 
 # Generate a tidy data frame of regression results from six models

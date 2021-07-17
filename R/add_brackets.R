@@ -6,6 +6,7 @@
 #' @param brackets A list of brackets; each element of the list should be a character vector consisting of (1) a label for the bracket, (2) the name of the topmost variable to be enclosed by the bracket, and (3) the name of the bottom most variable to be enclosed by the bracket.
 #' @param fontSize A number defining the size of the bracket label. The default value is .7.
 #' @param face A typeface for the bracket labels; options are "plain", "bold", "italic", "oblique", and "bold.italic".
+#' @param \dots Extra arguments to pass to \code{\link[grid]{gpar}}.
 #'
 #' @details The brackets are drawn by `grid` functions. Apart from font size and typeface, users can customize the appearance of the bracket labels by setting `gpar` arguments in `add_brackets`.
 #'

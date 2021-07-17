@@ -71,7 +71,11 @@ Model intercepts are rarely theoretically interesting [see @Kastellec2007, 765],
 dwplot(list(m1, m2, m3), show_intercept = TRUE)
 ```
 
+Users are free to customize the order of the models and variables to present with the arguments `model_order` and `vars_order`.
 Moreover, the output of `dwplot` is a `ggplot` object. Add or change any `ggplot` layers after calling `dwplot` to achieve the desired presentation.
+Users can provide a named character vector to `relabel_predictors`, a `dotwhisker` function, conveniently renames the predictors.
+Note that both `vars_order` and `relabel_predictors` changes the presenting order of variables. 
+When both are used, the later overwrites the former.
 
 ```{r ggplot}
 dwplot(list(m1, m2, m3),
@@ -79,15 +83,19 @@ dwplot(list(m1, m2, m3),
            xintercept = 0,
            colour = "grey60",
            linetype = 2
-       )) %>% # plot line at zero _behind_coefs
+       ),
+       vars_order = c("am", "cyl", "disp", "gear", "hp", "wt"),
+       model_order = c("Model 2", "Model 1", "Model 3")
+       ) %>% # plot line at zero _behind_coefs
     relabel_predictors(
         c(
-            wt = "Weight",
+            am = "Manual",
             cyl = "Cylinders",
             disp = "Displacement",
-            hp = "Horsepower",
+            wt = "Weight",
             gear = "Gears",
-            am = "Manual"
+            hp = "Horsepower"
+            
         )
     ) +
     theme_bw(base_size = 4) + 
@@ -106,8 +114,6 @@ dwplot(list(m1, m2, m3),
         legend.title = element_blank()
     ) 
 ```
-
-Note that providing a named character vector to `relabel_predictors`, a `dotwhisker` function, conveniently renames the predictors.
 
 There are many other packages (e.g., `coefplot`) that have the ability to draw dot-and-whisker plots of at least a single set of regression results taking model objects as input. While this is very convenient, it also comes with some severe limitations.  First, many less common model objects are not supported. Second, rescaling coefficients, reordering them, or just plotting a subset of results is typically impossible.  And third, quantities of interest beyond coefficient estimates cannot be plotted.  The `dotwhisker` package avoids all of these limitations by optionally taking as its input a tidy data frame of estimates drawn from a model object rather than the model object itself.
 

@@ -14,6 +14,8 @@ add_brackets(p, brackets, fontSize = 0.7, face = "italic", ...)
 \item{fontSize}{A number defining the size of the bracket label. The default value is .7.}
 
 \item{face}{A typeface for the bracket labels; options are "plain", "bold", "italic", "oblique", and "bold.italic".}
+
+\item{\dots}{Extra arguments to pass to \code{\link[grid]{gpar}}.}
 }
 \value{
 The function returns a \code{ggplot} object.

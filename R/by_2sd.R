@@ -12,7 +12,7 @@
 #'
 #' @return A tidy data frame
 #' @examples
-#' library(broomExtra)
+#' library(broom)
 #' library(dplyr)
 #'
 #' data(mtcars)

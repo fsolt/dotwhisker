@@ -2,7 +2,7 @@
 #'
 #' \code{secret_weapon} is a function for plotting regression results of multiple models as a 'secret weapon' plot
 #'
-#' @param x Either a tidy data frame including results from multiple models (see 'Details') or a list of model objects that can be tidied with \code{\link[broomExtra]{tidy_parameters}}
+#' @param x Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
 #' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param var The predictor whose results are to be shown in the 'secret weapon' plot
@@ -16,14 +16,14 @@
 #' Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 #' In place of \code{std.error} one may substitute \code{lb} (the lower bounds of the confidence intervals of each estimate) and \code{ub} (the corresponding upper bounds).
 #'
-#' Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broomExtra]{tidy_parameters}}.
+#' Alternately, \code{secret_weapon} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[broomExtra]{tidy_parameters}}, \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @examples
 #'
 #' library(dplyr)
-#' library(broomExtra)
+#' library(broom)
 #'
 #' # Estimate models across many samples, put results in a tidy data frame
 #' by_clarity <- diamonds %>% group_by(clarity) %>%

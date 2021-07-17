@@ -9,7 +9,7 @@ dwplot(
   x,
   ci = 0.95,
   dodge_size = 0.4,
-  order_vars = NULL,
+  vars_order = NULL,
   show_intercept = FALSE,
   margins = FALSE,
   model_name = "model",
@@ -28,7 +28,7 @@ dw_plot(
   x,
   ci = 0.95,
   dodge_size = 0.4,
-  order_vars = NULL,
+  vars_order = NULL,
   show_intercept = FALSE,
   margins = FALSE,
   model_name = "model",
@@ -50,7 +50,7 @@ dw_plot(
 
 \item{dodge_size}{A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.}
 
-\item{order_vars}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.}
+\item{vars_order}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot. Note that the order will be overwritten by \code{\link[dotwhisker]{relabel_predictors}}, if the function is following called.}
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
 
@@ -74,7 +74,7 @@ dw_plot(
 
 \item{line_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of the line marking the confidence interval beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
 
-\item{\dots}{Extra arguments to pass to \code{\link[broomExtra]{tidy_parameters}}.}
+\item{\dots}{Extra arguments to pass to \code{\link[parameters]{parameters}}.}
 }
 \value{
 The function returns a \code{ggplot} object.
