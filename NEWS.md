@@ -1,3 +1,9 @@
+## Version 0.7.1
+
+### Bug fixed
+
+1. Fixed the error when setting `style = "distribution"`. Thanks for Indrajee @IndrajeetPatil pointing [that](https://github.com/fsolt/dotwhisker/issues/104#issuecomment-881838631) out.
+
 ## Version 0.7.0
 
 ### New features

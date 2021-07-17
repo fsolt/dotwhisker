@@ -43,7 +43,7 @@
 #'
 #' @import ggplot2
 #' @importFrom parameters parameters standardize_names
-#' @importFrom dplyr "%>%" filter arrange left_join full_join bind_rows group_by if_else mutate distinct
+#' @importFrom dplyr "%>%" n filter arrange left_join full_join bind_rows group_by if_else mutate distinct
 #' @importFrom stats qnorm reorder model.matrix
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
 #' @importFrom purrr map_dfr map
@@ -178,7 +178,7 @@ dwplot <- function(x,
             arrange(term, model) %>%
             group_by(term, model) %>%
             dplyr::mutate(
-                n = 1:n(),
+                n = 1:dplyr::n(),
                 loc = estimate - 3 * std.error + (6 * std.error) /
                     100 * (n - 1),
                 dens = dnorm(loc, mean = estimate, sd = std.error) + y_ind
