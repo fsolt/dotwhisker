@@ -7,6 +7,8 @@
 #' @param fontSize A number defining the size of the bracket label. The default value is .7.
 #' @param face A typeface for the bracket labels; options are "plain", "bold", "italic", "oblique", and "bold.italic".
 #'
+#' @details The brackets are drawn by `grid` functions. Apart from font size and typeface, users can customize the appearance of the bracket labels by setting `gpar` arguments in `add_brackets`.
+#'
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @examples
@@ -30,7 +32,7 @@
 #'
 #' @export
 
-add_brackets <- function(p, brackets, fontSize = .7, face = "italic") {
+add_brackets <- function(p, brackets, fontSize = .7, face = "italic", ...) {
   y_ind <- term <- estimate <- ymax <- ymin <- x <- NULL # not functional, just for CRAN check
 
   coef_layer <- 0
@@ -58,7 +60,7 @@ add_brackets <- function(p, brackets, fontSize = .7, face = "italic") {
 
   if (!is.list(brackets)) stop('Error: argument "brackets" is not a list')
 
-  draw_bracket_label <- function(x, fs = fontSize, f = face) {
+  draw_bracket_label <- function(x, fs = fontSize, f = face, ...) {
       top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
       bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
       shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
@@ -66,7 +68,7 @@ add_brackets <- function(p, brackets, fontSize = .7, face = "italic") {
       bottom <- round(bottom) - shift
 
       annotation_custom(
-          grob = grid::textGrob(label = x[1], gp = grid::gpar(cex = fs, fontface = f), rot = 90),
+          grob = grid::textGrob(label = x[1], gp = grid::gpar(cex = fs, fontface = f, ...), rot = 90),
           xmin = farout, xmax = farout,
           ymin = (top + bottom)/2, ymax = (top + bottom)/2)
   }

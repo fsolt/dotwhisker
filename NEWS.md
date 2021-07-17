@@ -2,7 +2,9 @@
 
 ### New features
 
-1. Adding argument `model_order` to allow customizing the order of models to present.
+1. Adding argument `model_order` in `dwplot` to allow customizing the order of models to present.
+1. Adding argument `fontSize` in `add_brackets` to allow customizing the font size of bracket labels, and opening possibility for users to further customize bracket labels.
+1. Using the `parameters` instead of `broomExtra` as the plotting data frame creator. Thanks for the [suggestion](https://github.com/fsolt/dotwhisker/issues/106#issue-923843565) from @IndrajeetPatil. 
 
 ### Bug fixed
 
