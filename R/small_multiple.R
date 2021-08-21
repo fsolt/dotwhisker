@@ -7,8 +7,11 @@
 #' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted
-#' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
+#' @param model_order A character vector defining the order of the models when multiple models are involved.
+#' @param submodel_order A character vector defining the order of the submodels when multiple submodels are involved.
+#' @param axis_switch A logical constant indicating the position of variable labels and y axis ticks. Default is FALSE, when the variable label is on the right side, and y axis ticks is on the left size.
+#' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param \dots Arguments to pass to \code{\link[dotwhisker]{dwplot}}.
 #'
 #' @details
@@ -92,6 +95,9 @@ small_multiple <- function(x,
                            margins = FALSE,
                            dodge_size = .4,
                            show_intercept = FALSE,
+                           model_order = NULL,
+                           submodel_order = NULL,
+                           axis_switch = FALSE,
                            by_2sd = FALSE,
                            dot_args = list(size = .3),
                            ...) {
@@ -156,11 +162,49 @@ small_multiple <- function(x,
     point_args0 <- list(na.rm = TRUE, position=position_dodge(width = dodge_size))
     point_args <- c(point_args0, dot_args)
 
+
+    # Model order
+    if (!is.null(model_order)) df <- mutate(df, model = factor(model, levels = model_order))
+    if(!is.null(submodel_order)) df <- mutate(df, submodel = factor(submodel, levels = submodel_order))
+
+
     # Plot
-    p <- ggplot(df, aes(y = estimate, ymin = conf.low, ymax = conf.high, x = as.factor(model), colour = submodel))+
-        do.call(geom_pointrange, point_args) +
-        ylab("") + xlab("") +
-        facet_grid(term ~ ., scales = "free_y")
+    if (axis_switch) {
+        p <-
+            ggplot(
+                df,
+                aes(
+                    y = estimate,
+                    ymin = conf.low,
+                    ymax = conf.high,
+                    x = as.factor(model),
+                    colour = submodel
+                )
+            ) +
+            do.call(geom_pointrange, point_args) +
+            ylab("") + xlab("") +
+            facet_grid(term ~ .,
+                       scales = "free_y",
+                       switch = "y") +
+            scale_y_continuous(position = "right")
+    } else {
+        p <-
+            ggplot(
+                df,
+                aes(
+                    y = estimate,
+                    ymin = conf.low,
+                    ymax = conf.high,
+                    x = as.factor(model),
+                    colour = submodel
+                )
+            ) +
+            do.call(geom_pointrange, point_args) +
+            ylab("") + xlab("") +
+            facet_grid(term ~ ., scales = "free_y")
+    }
+
+
 
     if (n_sub == 1) {
         p <- p + theme(legend.position="none")

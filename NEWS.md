@@ -1,3 +1,10 @@
+## Version 0.7.3
+
+### New features
+
+1. Adding argument `model_order` and `submodel_order` in `small_multiple` to allow customizing the order of models to present.
+1. Adding argument `axis_switch` in `small_multiple` to allow switching the positions of the variable labels and y axis ticks.
+
 ## Version 0.7.1
 
 ### Bug fixed

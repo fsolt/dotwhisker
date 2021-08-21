@@ -10,6 +10,9 @@ small_multiple(
   margins = FALSE,
   dodge_size = 0.4,
   show_intercept = FALSE,
+  model_order = NULL,
+  submodel_order = NULL,
+  axis_switch = FALSE,
   by_2sd = FALSE,
   dot_args = list(size = 0.3),
   ...
@@ -25,6 +28,12 @@ small_multiple(
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
+
+\item{model_order}{A character vector defining the order of the models when multiple models are involved.}
+
+\item{submodel_order}{A character vector defining the order of the submodels when multiple submodels are involved.}
+
+\item{axis_switch}{A logical constant indicating the position of variable labels and y axis ticks. Default is FALSE, when the variable label is on the right side, and y axis ticks is on the left size.}
 
 \item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
 
