@@ -38,6 +38,6 @@ Suggests:
     rmarkdown,
     broom
 License: MIT + file LICENSE
-LazyData: TRUE
+LazyData: FALSE
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
