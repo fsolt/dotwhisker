@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dotwhisker</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.9999</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
       </span>
     </div>
 
@@ -139,10 +139,11 @@
   <span class='va'>x</span>,
   ci <span class='op'>=</span> <span class='fl'>0.95</span>,
   dodge_size <span class='op'>=</span> <span class='fl'>0.4</span>,
-  order_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vars_order <span class='op'>=</span> <span class='cn'>NULL</span>,
   show_intercept <span class='op'>=</span> <span class='cn'>FALSE</span>,
   margins <span class='op'>=</span> <span class='cn'>FALSE</span>,
   model_name <span class='op'>=</span> <span class='st'>"model"</span>,
+  model_order <span class='op'>=</span> <span class='cn'>NULL</span>,
   style <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dotwhisker"</span>, <span class='st'>"distribution"</span><span class='op'>)</span>,
   by_2sd <span class='op'>=</span> <span class='cn'>FALSE</span>,
   vline <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -157,10 +158,11 @@
   <span class='va'>x</span>,
   ci <span class='op'>=</span> <span class='fl'>0.95</span>,
   dodge_size <span class='op'>=</span> <span class='fl'>0.4</span>,
-  order_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
+  vars_order <span class='op'>=</span> <span class='cn'>NULL</span>,
   show_intercept <span class='op'>=</span> <span class='cn'>FALSE</span>,
   margins <span class='op'>=</span> <span class='cn'>FALSE</span>,
   model_name <span class='op'>=</span> <span class='st'>"model"</span>,
+  model_order <span class='op'>=</span> <span class='cn'>NULL</span>,
   style <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dotwhisker"</span>, <span class='st'>"distribution"</span><span class='op'>)</span>,
   by_2sd <span class='op'>=</span> <span class='cn'>FALSE</span>,
   vline <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -176,7 +178,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Either a model object to be tidied with <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code>, or a list of such model objects, or a tidy data frame of regression results (see 'Details').</p></td>
+      <td><p>Either a model object to be tidied with <code><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></code>, or a list of such model objects, or a tidy data frame of regression results (see 'Details').</p></td>
     </tr>
     <tr>
       <th>ci</th>
@@ -187,8 +189,8 @@
       <td><p>A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.</p></td>
     </tr>
     <tr>
-      <th>order_vars</th>
-      <td><p>A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot.</p></td>
+      <th>vars_order</th>
+      <td><p>A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot. Note that the order will be overwritten by <code><a href='relabel_predictors.html'>relabel_predictors</a></code>, if the function is following called.</p></td>
     </tr>
     <tr>
       <th>show_intercept</th>
@@ -201,6 +203,10 @@
     <tr>
       <th>model_name</th>
       <td><p>The name of a variable that distinguishes separate models within a tidy data frame.</p></td>
+    </tr>
+    <tr>
+      <th>model_order</th>
+      <td><p>A character vector defining the order of the models when multiple models are involved.</p></td>
     </tr>
     <tr>
       <th>style</th>
@@ -232,7 +238,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Extra arguments to pass to <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code>.</p></td>
+      <td><p>Extra arguments to pass to <code><a href='https://easystats.github.io/parameters/reference/model_parameters.html'>parameters</a></code>.</p></td>
     </tr>
     </table>
 
@@ -241,12 +247,12 @@
     <p>The function returns a <code>ggplot</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>dwplot</code> visualizes regression model objects or regression results saved in tidy data frames by, e.g., <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code> as dot-and-whisker plots generated by <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code>.</p>
+    <p><code>dwplot</code> visualizes regression model objects or regression results saved in tidy data frames as dot-and-whisker plots generated by <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code>.</p>
 <p>Tidy data frames to be plotted should include the variables <code>term</code> (names of predictors), <code>estimate</code> (corresponding estimates of coefficients or other quantities of interest), <code>std.error</code> (corresponding standard errors), and optionally <code>model</code> (when multiple models are desired on a single plot; a different name for this last variable may be specified using the model_name argument).
 In place of <code>std.error</code> one may substitute <code>conf.low</code> (the lower bounds of the confidence intervals of each estimate) and <code>conf.high</code> (the corresponding upper bounds).</p>
-<p>For convenience, <code>dwplot</code> also accepts as input those model objects that can be tidied by <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code>, or a list of such model objects.</p>
-<p>By default, the plot will display 95-percent confidence intervals.  To display a different interval when passing a model object or objects, specify a <code>ci</code> argument to pass to <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code>.  When passing a data frame of results, include the variables <code>conf.low</code> and <code>conf.high</code> describing the bounds of the desired interval.</p>
-<p>Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code>.
+<p>For convenience, <code>dwplot</code> also accepts as input those model objects that can be tidied by <code><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></code> (or <code><a href='https://indrajeetpatil.github.io/broomExtra//reference/tidy_parameters.html'>tidy_parameters</a></code>, <code><a href='https://easystats.github.io/parameters/reference/model_parameters.html'>parameters</a></code> (with proper formatting)), or a list of such model objects.</p>
+<p>By default, the plot will display 95-percent confidence intervals.  To display a different interval when passing a model object or objects, specify a <code>ci</code> argument.  When passing a data frame of results, include the variables <code>conf.low</code> and <code>conf.high</code> describing the bounds of the desired interval.</p>
+<p>Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by <code>broom</code>, <code>broomExtra</code>, or <code>parameters</code>.
 And because the output is a <code>ggplot</code> object, it can easily be further customized with any additional arguments and layers supported by <code>ggplot2</code>.
 Together, these two features make <code>dwplot</code> extremely flexible.</p>
 <p><code>dwplot</code> provides an option to present the average marginal effect directly based on <code><a href='https://rdrr.io/pkg/margins/man/margins.html'>margins</a></code>. Users can alter the confidence intervals of the margins through the <code>ci</code> argument. See the full list of supported functions in the document of the package <code>margins</code>. The `margins` argument also works for <code>small_multiple</code> and <code>secret_weapon</code>.</p>

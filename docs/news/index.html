@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dotwhisker</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.9999</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
       </span>
     </div>
 
@@ -129,20 +129,63 @@
       <small>Source: <a href='https://github.com/fsolt/dotwhisker/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="version-060" class="section level2">
+    <div id="version-073" class="section level2">
 <h2 class="hasAnchor">
-<a href="#version-060" class="anchor"></a>Version 0.6.0</h2>
+<a href="#version-073" class="anchor"></a>Version 0.7.3</h2>
 <div id="new-features" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New features</h3>
+<ol>
+<li>Adding argument <code>model_order</code> and <code>submodel_order</code> in <code>small_multiple</code> to allow customizing the order of models to present.</li>
+<li>Adding argument <code>axis_switch</code> in <code>small_multiple</code> to allow switching the positions of the variable labels and y axis ticks.</li>
+</ol>
+</div>
+</div>
+    <div id="version-071" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-071" class="anchor"></a>Version 0.7.1</h2>
+<div id="bug-fixed" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixed" class="anchor"></a>Bug fixed</h3>
+<ol>
+<li>Fixed the error when setting <code>style = "distribution"</code>. Thanks for Indrajee <a href='https://github.com/IndrajeetPatil'>@IndrajeetPatil</a> pointing <a href="https://github.com/fsolt/dotwhisker/issues/104#issuecomment-881838631">that</a> out.</li>
+</ol>
+</div>
+</div>
+    <div id="version-070" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-070" class="anchor"></a>Version 0.7.0</h2>
+<div id="new-features-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-features-1" class="anchor"></a>New features</h3>
+<ol>
+<li>Adding argument <code>model_order</code> in <code>dwplot</code> to allow customizing the order of models to present.</li>
+<li>Adding argument <code>fontSize</code> in <code>add_brackets</code> to allow customizing the font size of bracket labels, and opening possibility for users to further customize bracket labels.</li>
+<li>Using the <code>parameters</code> instead of <code>broomExtra</code> as the plotting data frame creator. Thanks for the <a href="https://github.com/fsolt/dotwhisker/issues/106#issue-923843565">suggestion</a> from <a href='https://github.com/IndrajeetPatil'>@IndrajeetPatil</a>.</li>
+</ol>
+</div>
+<div id="bug-fixed-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixed-1" class="anchor"></a>Bug fixed</h3>
+<ol>
+<li>Models and margins present in the correct order.</li>
+</ol>
+</div>
+</div>
+    <div id="version-060" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-060" class="anchor"></a>Version 0.6.0</h2>
+<div id="new-features-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-features-2" class="anchor"></a>New features</h3>
 <ol>
 <li>Adding changing the <code>dw_tidy</code> engine to <code>broomExtra::tidy_parapmeter</code>. Thanks for Indrajeet Patil’s amazing <a href="https://indrajeetpatil.github.io/broomExtra/">package</a>.</li>
 <li>Adding the function to plot AME based on <a href="https://CRAN.R-project.org/package=margins"><code>margins::margins</code></a>.</li>
 </ol>
 </div>
-<div id="bug-fixed" class="section level3">
+<div id="bug-fixed-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixed" class="anchor"></a>Bug fixed</h3>
+<a href="#bug-fixed-2" class="anchor"></a>Bug fixed</h3>
 <ol>
 <li>Allowing the data.frame output varying based on confidence intervals.</li>
 <li>Setting the default value of <code>by_2sd</code> to FALSE.</li>
@@ -152,9 +195,9 @@
     <div id="version-050" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-050" class="anchor"></a>Version 0.5.0</h2>
-<div id="new-features-1" class="section level4">
+<div id="new-features-3" class="section level4">
 <h4 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>New features</h4>
+<a href="#new-features-3" class="anchor"></a>New features</h4>
 <ol>
 <li><p>The <code>vline</code> argument is now available for <code><a href="../reference/dwplot.html">dwplot()</a></code>. Passing a <code>geom_vline()</code> object to this argument, typically one with <code>xintercept = 0</code>, will <a href="https://github.com/fsolt/dotwhisker/issues/84">plot this line <em>behind</em> the plotted coefficients</a>, which most will find aesthetically preferable. The default for this argument is <code>NULL</code>, so if you prefer not to include such lines or just like them plotted last and foremost, there’s no need to change your code.</p></li>
 <li><p><code><a href="../reference/dwplot.html">dwplot()</a></code> now again accepts the <code>whisker_arg</code> argument to change the appearance of the whiskers representing the confidence intervals that has been lost since v0.3.0. This means you can, for example, <a href="https://github.com/fsolt/dotwhisker/issues/81">specify different colors for the dots and the whiskers</a>:</p></li>
@@ -194,9 +237,9 @@
     <div id="version-040" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-040" class="anchor"></a>Version 0.4.0</h2>
-<div id="new-features-2" class="section level4">
+<div id="new-features-4" class="section level4">
 <h4 class="hasAnchor">
-<a href="#new-features-2" class="anchor"></a>New features</h4>
+<a href="#new-features-4" class="anchor"></a>New features</h4>
 <ol>
 <li>A new plot style! Specifying <code>style = "distribution"</code> in the arguments to <code><a href="../reference/dwplot.html">dwplot()</a></code> presents regression coefficients as normal distributions, underscored with a line representing the desired confidence interval.</li>
 <li>
