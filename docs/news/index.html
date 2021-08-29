@@ -44,6 +44,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -55,9 +57,15 @@
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -71,19 +79,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dotwhisker</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.4</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -129,13 +131,25 @@
       <small>Source: <a href='https://github.com/fsolt/dotwhisker/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="version-074" class="section level2">
+<h2 class="hasAnchor">
+<a href="#version-074" class="anchor"></a>Version 0.7.4</h2>
+<div id="bug-fixed" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixed" class="anchor"></a>Bug fixed</h3>
+<ol style="list-style-type: decimal">
+<li>Allowing <code>model_order</code> accurately work when <code>relabel_predictors</code> is used.</li>
+<li>Letting the vignette correctly shown.</li>
+</ol>
+</div>
+</div>
     <div id="version-073" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-073" class="anchor"></a>Version 0.7.3</h2>
 <div id="new-features" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New features</h3>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Adding argument <code>model_order</code> and <code>submodel_order</code> in <code>small_multiple</code> to allow customizing the order of models to present.</li>
 <li>Adding argument <code>axis_switch</code> in <code>small_multiple</code> to allow switching the positions of the variable labels and y axis ticks.</li>
 </ol>
@@ -144,10 +158,10 @@
     <div id="version-071" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-071" class="anchor"></a>Version 0.7.1</h2>
-<div id="bug-fixed" class="section level3">
+<div id="bug-fixed-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixed" class="anchor"></a>Bug fixed</h3>
-<ol>
+<a href="#bug-fixed-1" class="anchor"></a>Bug fixed</h3>
+<ol style="list-style-type: decimal">
 <li>Fixed the error when setting <code>style = "distribution"</code>. Thanks for Indrajee <a href='https://github.com/IndrajeetPatil'>@IndrajeetPatil</a> pointing <a href="https://github.com/fsolt/dotwhisker/issues/104#issuecomment-881838631">that</a> out.</li>
 </ol>
 </div>
@@ -158,16 +172,16 @@
 <div id="new-features-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features-1" class="anchor"></a>New features</h3>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Adding argument <code>model_order</code> in <code>dwplot</code> to allow customizing the order of models to present.</li>
 <li>Adding argument <code>fontSize</code> in <code>add_brackets</code> to allow customizing the font size of bracket labels, and opening possibility for users to further customize bracket labels.</li>
 <li>Using the <code>parameters</code> instead of <code>broomExtra</code> as the plotting data frame creator. Thanks for the <a href="https://github.com/fsolt/dotwhisker/issues/106#issue-923843565">suggestion</a> from <a href='https://github.com/IndrajeetPatil'>@IndrajeetPatil</a>.</li>
 </ol>
 </div>
-<div id="bug-fixed-1" class="section level3">
+<div id="bug-fixed-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixed-1" class="anchor"></a>Bug fixed</h3>
-<ol>
+<a href="#bug-fixed-2" class="anchor"></a>Bug fixed</h3>
+<ol style="list-style-type: decimal">
 <li>Models and margins present in the correct order.</li>
 </ol>
 </div>
@@ -178,15 +192,15 @@
 <div id="new-features-2" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features-2" class="anchor"></a>New features</h3>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Adding changing the <code>dw_tidy</code> engine to <code>broomExtra::tidy_parapmeter</code>. Thanks for Indrajeet Patil’s amazing <a href="https://indrajeetpatil.github.io/broomExtra/">package</a>.</li>
 <li>Adding the function to plot AME based on <a href="https://CRAN.R-project.org/package=margins"><code>margins::margins</code></a>.</li>
 </ol>
 </div>
-<div id="bug-fixed-2" class="section level3">
+<div id="bug-fixed-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixed-2" class="anchor"></a>Bug fixed</h3>
-<ol>
+<a href="#bug-fixed-3" class="anchor"></a>Bug fixed</h3>
+<ol style="list-style-type: decimal">
 <li>Allowing the data.frame output varying based on confidence intervals.</li>
 <li>Setting the default value of <code>by_2sd</code> to FALSE.</li>
 </ol>
@@ -198,7 +212,7 @@
 <div id="new-features-3" class="section level4">
 <h4 class="hasAnchor">
 <a href="#new-features-3" class="anchor"></a>New features</h4>
-<ol>
+<ol style="list-style-type: decimal">
 <li><p>The <code>vline</code> argument is now available for <code><a href="../reference/dwplot.html">dwplot()</a></code>. Passing a <code>geom_vline()</code> object to this argument, typically one with <code>xintercept = 0</code>, will <a href="https://github.com/fsolt/dotwhisker/issues/84">plot this line <em>behind</em> the plotted coefficients</a>, which most will find aesthetically preferable. The default for this argument is <code>NULL</code>, so if you prefer not to include such lines or just like them plotted last and foremost, there’s no need to change your code.</p></li>
 <li><p><code><a href="../reference/dwplot.html">dwplot()</a></code> now again accepts the <code>whisker_arg</code> argument to change the appearance of the whiskers representing the confidence intervals that has been lost since v0.3.0. This means you can, for example, <a href="https://github.com/fsolt/dotwhisker/issues/81">specify different colors for the dots and the whiskers</a>:</p></li>
 </ol>
@@ -229,7 +243,7 @@
 <div id="bug-fixes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>Bug fixes</h4>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed a bug in <code><a href="../reference/add_brackets.html">add_brackets()</a></code> that caused brackets to overlap in large models or when many models were included in a single plot.</li>
 </ol>
 </div>
@@ -240,7 +254,7 @@
 <div id="new-features-4" class="section level4">
 <h4 class="hasAnchor">
 <a href="#new-features-4" class="anchor"></a>New features</h4>
-<ol>
+<ol style="list-style-type: decimal">
 <li>A new plot style! Specifying <code>style = "distribution"</code> in the arguments to <code><a href="../reference/dwplot.html">dwplot()</a></code> presents regression coefficients as normal distributions, underscored with a line representing the desired confidence interval.</li>
 <li>
 <code><a href="../reference/relabel_predictors.html">relabel_predictors()</a></code> now conveniently <em>reorders</em> the predictors as well.</li>
@@ -251,7 +265,7 @@
 <div id="syntax-changes" class="section level4">
 <h4 class="hasAnchor">
 <a href="#syntax-changes" class="anchor"></a>Syntax changes</h4>
-<ol>
+<ol style="list-style-type: decimal">
 <li>The <code>alpha</code> argument to <code><a href="../reference/dwplot.html">dwplot()</a></code> should no longer be used to change the width of confidence intervals; use <code>conf.int</code> (to be passed to <code><a href="https://generics.r-lib.org/reference/tidy.html">broom::tidy</a></code> via <code>...</code>) instead.</li>
 <li>When <code><a href="../reference/dwplot.html">dwplot()</a></code> is passed model objects rather than a tidy data frame, the regression coefficients are now rescaled by two standard deviations of their respective variables in the analyzed data (per <code><a href="../reference/by_2sd.html">by_2sd()</a></code>) by default. This may be changed by setting <code>by_2sd = FALSE</code>.</li>
 </ol>
@@ -259,7 +273,7 @@
 <div id="bug-fixes-1" class="section level4">
 <h4 class="hasAnchor">
 <a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h4>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed a bug in <code><a href="../reference/add_brackets.html">add_brackets()</a></code> that <a href="https://twitter.com/stevenvmiller/status/954379043058659328">de-centered the brackets</a>
 </li>
 <li>Fixed a bug that caused <code>dot_args</code> <a href="https://github.com/fsolt/dotwhisker/issues/74">to be ignored</a> after plots were passed to <code><a href="../reference/relabel_predictors.html">relabel_predictors()</a></code>
@@ -273,7 +287,7 @@
     <div id="version-030" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-030" class="anchor"></a>Version 0.3.0</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Rewrote the plotting functions based on the <code>ggstance</code> functions. The new <code>dwplot</code> allows cooperating with more <code>ggplot</code> functions, such as <code>facet_*</code>.</li>
 <li>Drew whiskers based on the CI estimates directly from the model output. See more details in <a href="https://github.com/tidymodels/broom/blob/master/R/stats-lm-tidiers.R"><code>tidy.lm</code></a>) and <a href="https://github.com/cran/MASS/blob/master/R/confint.R"><code>confint</code></a>.</li>
 <li>Clarified the description of <code>by_2sd</code>.</li>
@@ -282,14 +296,14 @@
     <div id="version-026" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-026" class="anchor"></a>Version 0.2.6</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the bug in <code>relabel_predictors</code>.</li>
 </ol>
 </div>
     <div id="version-025" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-025" class="anchor"></a>Version 0.2.5</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Expanded capabilities of <code>relabel_predictors</code>. <code>relabel_predictors</code> now accepts plots as well as tidy dataframes as input; that is, it may now be used both before and after calls to <code>dwplot</code>.</li>
 <li>Deprecated <code>relabel_y_axis</code>. It is easy to mistakenly mislabel variables with <code>relabel_y_axis</code>, and it has a conflict with <code>add_brackets</code> in single-model plots.</li>
 <li>Provided example of using multiple shapes for multiple models in vignette.</li>
@@ -300,28 +314,28 @@
     <div id="version-024" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-024" class="anchor"></a>Version 0.2.4</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Improved the presentation of <code>small_multiple</code>.</li>
 </ol>
 </div>
     <div id="version-023" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-023" class="anchor"></a>Version 0.2.3</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the error of variable ordering with a single model.</li>
 </ol>
 </div>
     <div id="version-022" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-022" class="anchor"></a>Version 0.2.2</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the error in presenting multiple models.</li>
 </ol>
 </div>
     <div id="version-021" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-021" class="anchor"></a>Version 0.2.1</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the error due to the update of <code><a href="https://dplyr.tidyverse.org/reference/group_by.html">dplyr::group_by</a></code>
 </li>
 <li>Fixing the errors in vignette.</li>
@@ -332,7 +346,7 @@
     <div id="version-0205" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-0205" class="anchor"></a>Version 0.2.0.5</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the error due to the update of <code>gridExtra</code>.</li>
 <li>Fixed the error due to the update of <code>ggplot2</code>.</li>
 </ol>
@@ -340,21 +354,21 @@
     <div id="version-0204" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-0204" class="anchor"></a>Version 0.2.0.4</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed presenting error in multilevel models (<a href='https://github.com/fsolt/dotwhisker/issues/44'>#44</a>)</li>
 </ol>
 </div>
     <div id="version-0203" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-0203" class="anchor"></a>Version 0.2.0.3</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the link error in <code>kl2007_example.Rmd</code>.</li>
 </ol>
 </div>
     <div id="version-0202" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-0202" class="anchor"></a>Version 0.2.0.2</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Improving the vignette.</li>
 <li>The function works for <code>ggplot2</code> 2.0.0.</li>
 </ol>
@@ -362,14 +376,14 @@
     <div id="version-0201" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-0201" class="anchor"></a>Version 0.2.0.1</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Fixed the error in the vignette.</li>
 </ol>
 </div>
     <div id="version-0200" class="section level2">
 <h2 class="hasAnchor">
 <a href="#version-0200" class="anchor"></a>Version 0.2.0.0</h2>
-<ol>
+<ol style="list-style-type: decimal">
 <li>Allowing directly using model objects besides <code>tidy</code> data.frame.</li>
 <li>Adding two new special plotting functions: <code>secret_weapon</code> and <code>small_multiple</code>.</li>
 <li>Adding two graph adjusting functions: <code>relabel_predictor</code> and <code>relabel_y_axis</code>.</li>
@@ -393,7 +407,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
@@ -401,6 +415,8 @@
 
   
 
+
+  
 
   </body>
 </html>

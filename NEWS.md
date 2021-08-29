@@ -1,3 +1,10 @@
+## Version 0.7.4
+
+### Bug fixed
+
+1. Allowing `model_order` accurately work when `relabel_predictors` is used.
+1. Letting the vignette correctly shown.
+
 ## Version 0.7.3
 
 ### New features
