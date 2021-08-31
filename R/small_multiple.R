@@ -102,7 +102,7 @@ small_multiple <- function(x,
                            dot_args = list(size = .3),
                            ...) {
     # If x is list of model objects, convert to a tidy data frame
-    df <- dw_tidy(x, ci, by_2sd, ...)
+    df <- dw_tidy(x, ci, by_2sd, margins, ...)
 
     # Drop intercept if show_intercept = FALSE
     if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
