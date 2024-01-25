@@ -24,11 +24,11 @@
 #' Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot; a different name for this last variable may be specified using the model_name argument).
 #' In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 #'
-#' For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[broomExtra]{tidy_parameters}}, \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
+#' For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 #'
 #' By default, the plot will display 95-percent confidence intervals.  To display a different interval when passing a model object or objects, specify a \code{ci} argument.  When passing a data frame of results, include the variables \code{conf.low} and \code{conf.high} describing the bounds of the desired interval.
 #'
-#' Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{broom}, \code{broomExtra}, or \code{parameters}.
+#' Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{broom} or \code{parameters}.
 #' And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #' Together, these two features make \code{dwplot} extremely flexible.
 #'
