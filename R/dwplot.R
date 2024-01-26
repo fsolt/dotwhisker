@@ -6,7 +6,14 @@
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
 #' @param dodge_size A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.
 #' @param vars_order A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot. Note that the order will be overwritten by \code{\link[dotwhisker]{relabel_predictors}}, if the function is following called.
-#' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
+#' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted. The default is \code{FALSE}.
+#' @param show_stats A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.
+#' @param stats_tb Customized table of model fit. The table should be in a \code{data.frame}.
+#' @param stats_digits A numeric value specifying the digits to display in the fitness table. This parameter is relevant only when \code{show_stats = TRUE}. Default is 3, providing a balance between precision and readability.
+#' @param stats_compare A logical constant to enable comparison of statistics in the fitness table. Applicable only when \code{show_stats = TRUE}. The default value is \code{FALSE}. That is, it presents all the statistics across different modeling methods, yet potentially expanding the table's breadth. When set to \code{TRUE}, only the shared, comparable statistics are remained.
+#' @param stats_size A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.
+#' @param stats_padding Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.
+#' @param stats_layout Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.
 #' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
 #' @param model_order A character vector defining the order of the models when multiple models are involved.
@@ -15,7 +22,7 @@
 #' @param vline A \code{geom_vline()} object, typically with \code{xintercept = 0}, to be drawn behind the coefficients.
 #' @param dot_args When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_point}}.
 #' @param whisker_args When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.
-#' @param dist_args When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.
+#' @param dist_args When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates. For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.
 #' @param line_args When \code{style} is "distribution", a list of arguments specifying the appearance of the line marking the confidence interval beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.
 #' @param \dots Extra arguments to pass to \code{\link[parameters]{parameters}}.
 #'
@@ -26,13 +33,15 @@
 #'
 #' For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 #'
-#' By default, the plot will display 95-percent confidence intervals.  To display a different interval when passing a model object or objects, specify a \code{ci} argument.  When passing a data frame of results, include the variables \code{conf.low} and \code{conf.high} describing the bounds of the desired interval.
+#' By default, the plot will display 95-percent confidence intervals. To display a different interval when passing a model object or objects, specify a \code{ci} argument. When passing a data frame of results, include the variables \code{conf.low} and \code{conf.high} describing the bounds of the desired interval.
 #'
 #' Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{broom} or \code{parameters}.
 #' And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #' Together, these two features make \code{dwplot} extremely flexible.
 #'
 #' \code{dwplot} provides an option to present the average marginal effect directly based on \code{\link[margins]{margins}}. Users can alter the confidence intervals of the margins through the \code{ci} argument. See the full list of supported functions in the document of the package \code{\link{margins}}. The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
+#'
+#' To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
 #'
 #' @references
 #' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
@@ -42,14 +51,15 @@
 #' @return The function returns a \code{ggplot} object.
 #'
 #' @import ggplot2
+#' @import patchwork
+#' @import performance
 #' @importFrom parameters parameters standardize_names
-#' @importFrom dplyr "%>%" n filter arrange left_join full_join bind_rows group_by if_else mutate distinct
-#' @importFrom stats qnorm reorder model.matrix
+#' @importFrom dplyr "%>%" n filter arrange left_join full_join bind_rows group_by if_else mutate distinct relocate ends_with across where
+#' @importFrom stats qnorm reorder model.matrix dnorm model.frame nobs
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
-#' @importFrom purrr map_dfr map
-#' @importFrom stats dnorm model.frame
-#' @importFrom utils modifyList
-#' @importFrom utils globalVariables
+#' @importFrom purrr map_dfr map list_c
+#' @importFrom utils modifyList globalVariables
+#' @importFrom gridExtra tableGrob ttheme_default
 #'
 #' @examples
 #' library(dplyr)
@@ -91,6 +101,13 @@ dwplot <- function(x,
                    dodge_size = .4,
                    vars_order = NULL,
                    show_intercept = FALSE,
+                   show_stats = FALSE,
+                   stats_tb = NULL,
+                   stats_digits = 3,
+                   stats_compare = FALSE,
+                   stats_size = 10,
+                   stats_padding = unit(c(4, 4), "mm"),
+                   stats_layout = c(2, -1, 1),
                    margins = FALSE,
                    model_name = "model",
                    model_order = NULL,
@@ -219,6 +236,7 @@ dwplot <- function(x,
         p <- p + theme(legend.position = "none")
     }
 
+
     p$args <- list(
         dodge_size = dodge_size,
         vars_order = vars_order,
@@ -234,6 +252,21 @@ dwplot <- function(x,
         line_args = line_args,
         list(...)
     )
+
+    # Adding the stats
+    if(show_stats){
+        df_stats <- stats_tb
+
+        if(is.null(df_stats)){ # No customized df_stats input
+            df_stats <- dw_stats(x, stats_digits = stats_digits, stats_compare = stats_compare)
+        } else {
+            if(!is.data.frame(df_stats)) stop("The customized fitness table has to be a data.frame.")
+        }
+
+        p <- p / tableGrob(df_stats, rows = NULL,
+                      theme = ttheme_default(base_size = stats_size)) +
+        plot_layout(heights = stats_layout) # remove the space between the plot and table
+    }
 
     return(p)
 }
@@ -351,8 +384,37 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
     return(df)
 }
 
-add_NAs <-
-    function(df = df,
+dw_stats <- function(x,
+                     stats_digits,
+                     stats_compare) {
+    N <- Name <- Model <- NULL
+
+    if (!inherits(x, "list")) {
+        # single model
+        df_stats <- data.frame(N = nobs(x)) |>
+            cbind(model_performance(x, metrics = "common"))
+    } else {
+        # multiple models
+        df_stats <- map(x, nobs) |>
+            list_c() |>
+            data.frame(N = _) |>
+            cbind(compare_performance(x, metrics = "common")) |>
+            relocate(N, .after = Name) |>
+            select(-ends_with("_wt"), -Model)
+
+        if (stats_compare)
+            df_stats <-
+                select(df_stats, where(\(var) ! any(is.na(var)))) # removed model special stats
+    }
+
+    df_stats <- mutate(df_stats,
+                       across(where(is.numeric),
+                              \(stats) round(stats, digits = stats_digits)))
+
+    return(df_stats)
+}
+
+add_NAs <-function(df = df,
              n_models = n_models,
              mod_names = mod_names,
              model_name = "model") {

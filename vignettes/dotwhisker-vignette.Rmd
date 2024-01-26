@@ -22,7 +22,7 @@ library(parameters)
 library(margins)
 library(ggplot2)
 
-theme_set(theme_gray(base_size = 4))
+theme_set(theme_gray(base_size = 6))
 
 ```
 
@@ -86,7 +86,7 @@ dwplot(list(m1, m2, m3),
        ),
        vars_order = c("am", "cyl", "disp", "gear", "hp", "wt"),
        model_order = c("Model 2", "Model 1", "Model 3")
-       ) %>% # plot line at zero _behind_coefs
+       )  |>  # plot line at zero _behind_coefs
     relabel_predictors(
         c(
             am = "Manual",
@@ -530,6 +530,125 @@ small_multiple(by_trans2) +
     ) +
     ggtitle("Predicting Gas Mileage\nby Transmission Type")
 ```
+
+## Model Fit Statistics
+
+When presenting visualized outputs, users often receive comments that the plots cannot convey all the information a regression table contains, such as the model fits. 
+Upon such comments, there are usually two types of solution.
+One is to present the regression tables in an appendix, despite the primary information has already been given by the dot-whisker plots.
+The second option is to add the statistics manually into the plots as an annotation [e.g., @Kastellec2007, fig. 6].
+To make the application of the second solution more user friendly and minimize the need for lengthy, distracting regression tables (even relegated into an appendix), we provide an option to incorporates model fit statistics directly beneath the dot-whisker plots.
+
+Thanks for the functiona from the excellent package `performance`, the model fits can be easily extracted into an `data.frame`. 
+Based on `performance`, together with another life-saving package for ggplot visualization, `patchwork`, we offer the `show_stats` argument in `dwplot` and `small_multiple`.
+When the argument is set to be `TRUE`, users will see the model fits appearing below the dot-whisker plot:
+
+```{r stats}
+dwplot(m1, show_stats = TRUE, stats_size = 3)
+
+dwplot(list(m1, m2, m3), show_stats = TRUE, stats_size = 3)
+
+small_multiple(list(m1, m2, m3), show_stats = TRUE, stats_size = 3)
+```
+
+For added flexibility, we also include a suit of `stats_*` functions for users' fine-tuning the presentation of these statistics.
+Furthermore, we offer the `stats_tb` argument, by which users can input customized fitness information as a `data.frame`.
+
+Here are some tips for using this advanced function:
+
+- Different model types often yield varied model fit statistics. 
+    By default, `dotwhisker` displays all these statistics collectively. 
+    However, this can lead to an excessively wide bin beneath the plot. 
+    To address this, users have the option to set `stats_compare` to `TRUE`.
+    Activating this argument ensures that only the shared, comparable metrics are retained, streamlining the presentation.
+
+    
+```{r stats_compare}
+dwplot(list(m1, m4, m5), show_stats = TRUE, stats_size = 3)
+
+dwplot(
+  list(m1, m4, m5),
+  show_stats = TRUE,
+  stats_compare = TRUE,
+  stats_size = 3
+)
+```
+
+- Since the model fits needs to be calculated with the raw model outputs, the model fits will not be able to presented with customized model outputs (i.e., a `data.frame` or `tibble`). 
+Users have to give the customized model fit statistics, as well.
+It is an easy job, though, with our hidden `dw_stats` function, if the original models are compatible with the `performance`package
+
+
+- `dotwhisker` requires raw model outputs to calculate model fit statistics.
+    Consequently, when using customized model outputs (like a `data.frame` or `tibble`), the automatic generation of model fit statistics is not feasible. 
+    In such cases, users must provide the customized model fit statistics separately. 
+    Fortunately, this task can be simplified by the hidden `dw_stats` function of `dotwhisker`. 
+    This function is particularly efficient if the original models are compatible with the `performance` package, facilitating seamless integration of model fit statistics.
+
+
+```{r stats_custom}
+stats_fakeCustom <-
+  dotwhisker:::dw_stats(m1, stats_digits = 2, stats_compare = FALSE)
+
+dwplot(
+  m1_df,
+  show_stats = TRUE,
+  stats_tb = stats_fakeCustom,
+  stats_size = 3
+)
+```
+
+- Currently, the function for displaying model fit is not directly compatible with the `relabel_predictors` and `add_brackets` functions. 
+    However, there is a workaround for integrating these features. 
+    The example below illustrates this method. 
+    It involves separately generating the model fits and then manually merging them with the bracket-enhanced dotwhisker plot.
+
+
+```{r combo}
+library(gridExtra)
+library(patchwork)
+
+three_brackets <- list(
+    c("Overall", "Weight", "Weight"),
+    c("Engine", "Cylinders", "Horsepower"),
+    c("Transmission", "Gears", "Manual")
+)
+
+plot_brackets <- {
+    dwplot(m3, 
+           vline = geom_vline(
+               xintercept = 0,
+               colour = "grey60",
+               linetype = 2
+           )) %>% # plot line at zero _behind_ coefs
+        relabel_predictors(
+            c(
+                wt = "Weight",
+                # relabel predictors
+                cyl = "Cylinders",
+                disp = "Displacement",
+                hp = "Horsepower",
+                gear = "Gears",
+                am = "Manual"
+            )
+        ) + xlab("Coefficient Estimate") + ylab("") +
+        ggtitle("Predicting Gas Mileage") 
+} %>%
+    add_brackets(three_brackets, fontSize = 0.3)
+
+plot_brackets / tableGrob(
+  dotwhisker:::dw_stats(
+    m3,
+    stats_digits = 2,
+    stats_compare = FALSE
+  ),
+  rows = NULL,
+  theme = ttheme_default(base_size = 3)
+) +
+  plot_layout(heights = c(5, -1.5, 1)) # the negative value is used to adjust the space between the plot and the model fits
+
+```
+
 
 ## Conclusion
 

@@ -6,7 +6,14 @@
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
 #' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
-#' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted
+#' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
+#' @param show_stats A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.
+#' @param stats_tb Customized table of model fitness. The table should be in a \code{data.frame}.
+#' @param stats_digits A numeric value specifying the digits to display in the fitness table. This parameter is relevant only when \code{show_stats = TRUE}. Default is 3, providing a balance between precision and readability.
+#' @param stats_compare A logical constant to enable comparison of statistics in the fitness table. Applicable only when \code{show_stats = TRUE}. The default value is \code{FALSE}. That is, it presents all the statistics across different modeling methods, yet potentially expanding the table's breadth. When set to \code{TRUE}, only the shared, comparable statistics are remained.
+#' @param stats_size A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.
+#' @param stats_padding Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.
+#' @param stats_layout Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.
 #' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
 #' @param model_order A character vector defining the order of the models when multiple models are involved.
 #' @param submodel_order A character vector defining the order of the submodels when multiple submodels are involved.
@@ -24,8 +31,10 @@
 #'
 #' Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data frame should also include a variable \code{submodel} identifying the submodel of the results.
 #'
+#' To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
+#'
 #' @references
-#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
+#' Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
 #'
 #' @return The function returns a \code{ggplot} object.
 #'
@@ -95,6 +104,13 @@ small_multiple <- function(x,
                            margins = FALSE,
                            dodge_size = .4,
                            show_intercept = FALSE,
+                           show_stats = FALSE,
+                           stats_tb = NULL,
+                           stats_digits = 3,
+                           stats_compare = FALSE,
+                           stats_size = 10,
+                           stats_padding = unit(c(4, 4), "mm"),
+                           stats_layout = c(2, -1, 1),
                            model_order = NULL,
                            submodel_order = NULL,
                            axis_switch = FALSE,
@@ -208,6 +224,21 @@ small_multiple <- function(x,
 
     if (n_sub == 1) {
         p <- p + theme(legend.position="none")
+    }
+
+    # Adding the stats
+    if(show_stats){
+        df_stats <- stats_tb
+
+        if(is.null(df_stats)){ # No customized df_stats input
+            df_stats <- dw_stats(x, stats_digits = stats_digits, stats_compare = stats_compare)
+        } else {
+            if(!is.data.frame(df_stats)) stop("The customized fitness table has to be a data.frame.")
+        }
+
+        p <- p / tableGrob(df_stats, rows = NULL,
+                           theme = ttheme_default(base_size = stats_size)) +
+            plot_layout(heights = stats_layout) # remove the space between the plot and table
     }
 
     return(p)

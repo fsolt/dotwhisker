@@ -80,7 +80,7 @@ results_df <- data.frame(term=var.names, estimate=coef.vec,
                                std.error=se.vec)
 
 # Draw dot-and-whisker plot
-results_df %>% dwplot + theme_bw() + theme(legend.position="none") +
+results_df %>% dwplot(show_stats = FALSE) + theme_bw() + theme(legend.position="none") +
     ggtitle("Determinants of Authoritarian Aggression\nStevens, Bishin, and Barr (2006)\nvia Kastellec and Leoni (2007)") +
     geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
     annotate("text", x = 1.05, y = 10, size = 4, hjust = 0,
@@ -201,7 +201,7 @@ results_df <- data.frame(term = rep(var.names, times = 2),
                          stringsAsFactors = FALSE)
 
 # Draw dot-and-whisker plot
-p <- dwplot(results_df) +
+p <- dwplot(results_df, show_stats = FALSE) +
     theme_bw() +
     theme(legend.justification=c(.02, .993), legend.position=c(.02, .99),
            legend.title = element_blank(), legend.background =
@@ -703,7 +703,7 @@ results_df <- data.frame(term = rep(varnames[1:6], times = 6),
                          stringsAsFactors = FALSE)
 
 
-small_multiple(results_df) + 
+small_multiple(results_df, show_stats = FALSE) + 
     scale_x_discrete(limits = model_names) + # order the models 
     theme_bw() + ylab("Coefficient Estimate") +
     geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +

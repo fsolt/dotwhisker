@@ -10,6 +10,13 @@ small_multiple(
   margins = FALSE,
   dodge_size = 0.4,
   show_intercept = FALSE,
+  show_stats = FALSE,
+  stats_tb = NULL,
+  stats_digits = 3,
+  stats_compare = FALSE,
+  stats_size = 10,
+  stats_padding = unit(c(4, 4), "mm"),
+  stats_layout = c(2, -1, 1),
   model_order = NULL,
   submodel_order = NULL,
   axis_switch = FALSE,
@@ -27,7 +34,21 @@ small_multiple(
 
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
-\item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted}
+\item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
+
+\item{show_stats}{A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.}
+
+\item{stats_tb}{Customized table of model fitness. The table should be in a \code{data.frame}.}
+
+\item{stats_digits}{A numeric value specifying the digits to display in the fitness table. This parameter is relevant only when \code{show_stats = TRUE}. Default is 3, providing a balance between precision and readability.}
+
+\item{stats_compare}{A logical constant to enable comparison of statistics in the fitness table. Applicable only when \code{show_stats = TRUE}. The default value is \code{FALSE}. That is, it presents all the statistics across different modeling methods, yet potentially expanding the table's breadth. When set to \code{TRUE}, only the shared, comparable statistics are remained.}
+
+\item{stats_size}{A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.}
+
+\item{stats_padding}{Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.}
+
+\item{stats_layout}{Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.}
 
 \item{model_order}{A character vector defining the order of the models when multiple models are involved.}
 
@@ -53,9 +74,11 @@ The function returns a \code{ggplot} object.
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and \code{model} (identifying the corresponding model).
 In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 
-Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[broomExtra]{tidy_parameters}}, \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
+Alternately, \code{small_multiple} accepts as input a list of model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 
 Optionally, more than one set of results can be clustered to facilitate comparison within each \code{model}; one example of when this may be desirable is to compare results across samples.  In that case, the data frame should also include a variable \code{submodel} identifying the submodel of the results.
+
+To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
 }
 \examples{
 library(broom)
@@ -114,5 +137,5 @@ theme_bw() + ylab("Coefficient Estimate") +
 
 }
 \references{
-Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." Perspectives on Politics, 5(4):755-771.
+Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
 }

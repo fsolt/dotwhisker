@@ -11,6 +11,13 @@ dwplot(
   dodge_size = 0.4,
   vars_order = NULL,
   show_intercept = FALSE,
+  show_stats = FALSE,
+  stats_tb = NULL,
+  stats_digits = 3,
+  stats_compare = FALSE,
+  stats_size = 10,
+  stats_padding = unit(c(4, 4), "mm"),
+  stats_layout = c(2, -1, 1),
   margins = FALSE,
   model_name = "model",
   model_order = NULL,
@@ -30,6 +37,13 @@ dw_plot(
   dodge_size = 0.4,
   vars_order = NULL,
   show_intercept = FALSE,
+  show_stats = FALSE,
+  stats_tb = NULL,
+  stats_digits = 3,
+  stats_compare = FALSE,
+  stats_size = 10,
+  stats_padding = unit(c(4, 4), "mm"),
+  stats_layout = c(2, -1, 1),
   margins = FALSE,
   model_name = "model",
   model_order = NULL,
@@ -52,7 +66,21 @@ dw_plot(
 
 \item{vars_order}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot. Note that the order will be overwritten by \code{\link[dotwhisker]{relabel_predictors}}, if the function is following called.}
 
-\item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
+\item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted. The default is \code{FALSE}.}
+
+\item{show_stats}{A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.}
+
+\item{stats_tb}{Customized table of model fit. The table should be in a \code{data.frame}.}
+
+\item{stats_digits}{A numeric value specifying the digits to display in the fitness table. This parameter is relevant only when \code{show_stats = TRUE}. Default is 3, providing a balance between precision and readability.}
+
+\item{stats_compare}{A logical constant to enable comparison of statistics in the fitness table. Applicable only when \code{show_stats = TRUE}. The default value is \code{FALSE}. That is, it presents all the statistics across different modeling methods, yet potentially expanding the table's breadth. When set to \code{TRUE}, only the shared, comparable statistics are remained.}
+
+\item{stats_size}{A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.}
+
+\item{stats_padding}{Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.}
+
+\item{stats_layout}{Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.}
 
 \item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
 
@@ -70,7 +98,7 @@ dw_plot(
 
 \item{whisker_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
 
-\item{dist_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates.  For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.}
+\item{dist_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates. For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.}
 
 \item{line_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of the line marking the confidence interval beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
 
@@ -88,15 +116,17 @@ The function returns a \code{ggplot} object.
 Tidy data frames to be plotted should include the variables \code{term} (names of predictors), \code{estimate} (corresponding estimates of coefficients or other quantities of interest), \code{std.error} (corresponding standard errors), and optionally \code{model} (when multiple models are desired on a single plot; a different name for this last variable may be specified using the model_name argument).
 In place of \code{std.error} one may substitute \code{conf.low} (the lower bounds of the confidence intervals of each estimate) and \code{conf.high} (the corresponding upper bounds).
 
-For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[broomExtra]{tidy_parameters}}, \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
+For convenience, \code{dwplot} also accepts as input those model objects that can be tidied by \code{\link[broom]{tidy}} (or \code{\link[parameters]{parameters}} (with proper formatting)), or a list of such model objects.
 
-By default, the plot will display 95-percent confidence intervals.  To display a different interval when passing a model object or objects, specify a \code{ci} argument.  When passing a data frame of results, include the variables \code{conf.low} and \code{conf.high} describing the bounds of the desired interval.
+By default, the plot will display 95-percent confidence intervals. To display a different interval when passing a model object or objects, specify a \code{ci} argument. When passing a data frame of results, include the variables \code{conf.low} and \code{conf.high} describing the bounds of the desired interval.
 
-Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{broom}, \code{broomExtra}, or \code{parameters}.
+Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by \code{broom} or \code{parameters}.
 And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 Together, these two features make \code{dwplot} extremely flexible.
 
 \code{dwplot} provides an option to present the average marginal effect directly based on \code{\link[margins]{margins}}. Users can alter the confidence intervals of the margins through the \code{ci} argument. See the full list of supported functions in the document of the package \code{\link{margins}}. The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
+
+To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
 }
 \examples{
 library(dplyr)

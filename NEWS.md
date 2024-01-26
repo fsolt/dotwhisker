@@ -1,3 +1,14 @@
+## Version 0.8.0
+
+### Bug fixed
+
+1. Removed the reference to `broomExtra` per CRAN's requirement (email on 2024-01-23)
+
+### New features
+
+1. Adding the argument `show_stats` to `dwplot` and `small_multiple` to show model fits beneath the plot
+1. Adding a hidden function `dw_stats` to extract model fits from the model outputs.
+
 ## Version 0.7.4
 
 ### Bug fixed
