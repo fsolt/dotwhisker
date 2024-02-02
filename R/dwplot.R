@@ -132,12 +132,6 @@ dwplot <- function(x,
         df <-
         df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
 
-    # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <-
-        model <-
-        conf.low <-
-        conf.high <- term <- std.error <- n <- loc <- dens <- NULL
-
     n_vars <- length(unique(df$term))
     dodge_size <- dodge_size
 
@@ -272,10 +266,6 @@ dwplot <- function(x,
 }
 
 dw_tidy <- function(x, ci, by_2sd, margins,...) {
-    # Set variables that will appear in pipelines to NULL to make R CMD check happy
-    estimate <- model <- std.error <- conf.high <- conf.low <- NULL
-
-    AME <- SE <- lower <- p <- upper <- z <- NULL
 
     ## return model matrix *or* model frame
     get_dat <- function(x) {
