@@ -45,7 +45,7 @@
 
 ### New features
 
-1. Adding changing the `dw_tidy` engine to `broomExtra::tidy_parapmeter`. Thanks for Indrajeet Patil's amazing [package](https://indrajeetpatil.github.io/broomExtra/).
+1. Adding changing the `dw_tidy` engine to `broomExtra::tidy_parapmeter`.
 1. Adding the function to plot AME based on [`margins::margins`]( https://CRAN.R-project.org/package=margins).
 
 ### Bug fixed
