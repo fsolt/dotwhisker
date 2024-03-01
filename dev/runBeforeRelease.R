@@ -3,6 +3,7 @@
 ## Vignette building
 
 devtools::install(build_vignettes = TRUE)
+pkgdown::build_site()
 
 ## Spell checking
 
