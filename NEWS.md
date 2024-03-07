@@ -111,7 +111,7 @@ Thanks to [Steven V. Miller](https://github.com/svmiller) and [Ryan Burge](https
 
 ## Version 0.3.0
 1. Rewrote the plotting functions based on the `ggstance` functions. The new `dwplot` allows cooperating with more `ggplot` functions, such as `facet_*`. 
-1. Drew whiskers based on the CI estimates directly from the model output. See more details in [`tidy.lm`](https://github.com/tidymodels/broom/blob/master/R/stats-lm-tidiers.R)) and [`confint`](https://github.com/cran/MASS/blob/master/R/confint.R).
+1. Drew whiskers based on the CI estimates directly from the model output. See more details in [`tidy.lm`](https://github.com/tidymodels/broom/blob/master/R/stats-lm-tidiers.R)) and `confint`.
 1. Clarified the description of `by_2sd`.
 
 ## Version 0.2.6
