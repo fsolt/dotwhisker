@@ -14,6 +14,7 @@ Authors@R:
 Maintainer: Yue Hu <yuehu@tsinghua.edu.cn>
 Description: Quick and easy dot-and-whisker plots of regression results.
 Encoding: UTF-8
+URL: https://fsolt.org/dotwhisker/
 BugReports: https://github.com/fsolt/dotwhisker/issues
 Depends:
     R (>= 3.2.0),
