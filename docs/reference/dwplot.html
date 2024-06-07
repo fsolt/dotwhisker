@@ -170,7 +170,7 @@
 
 
 <dt>margins</dt>
-<dd><p>A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.</p></dd>
+<dd><p>[Suspended] A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.</p></dd>
 
 
 <dt>model_name</dt>
@@ -229,7 +229,7 @@ In place of <code>std.error</code> one may substitute <code>conf.low</code> (the
 <p>Because the function can take a data frame as input, it is easily employed for a wide range of models, including those not supported by <code>broom</code> or <code>parameters</code>.
 And because the output is a <code>ggplot</code> object, it can easily be further customized with any additional arguments and layers supported by <code>ggplot2</code>.
 Together, these two features make <code>dwplot</code> extremely flexible.</p>
-<p><code>dwplot</code> provides an option to present the average marginal effect directly based on <code><a href="https://rdrr.io/pkg/margins/man/margins.html" class="external-link">margins</a></code>. Users can alter the confidence intervals of the margins through the <code>ci</code> argument. See the full list of supported functions in the document of the package <code>margins</code>. The `margins` argument also works for <code>small_multiple</code> and <code>secret_weapon</code>.</p>
+<p><code>dwplot</code> provides an option to present the average marginal effect directly. Users can alter the confidence intervals of the margins through the <code>ci</code> argument. ^[The function is suspended due to the dependency issue. We'll work on getting it back in the next update.] The `margins` argument also works for <code>small_multiple</code> and <code>secret_weapon</code>.</p>
 <p>To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), <code>dwplot</code> incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent <code><a href="https://easystats.github.io/performance/reference/model_performance.html" class="external-link">performance</a></code> functions and integrated at the plot's base via <code><a href="https://patchwork.data-imaginist.com/reference/patchwork-package.html" class="external-link">patchwork</a></code> and <code><a href="https://rdrr.io/pkg/gridExtra/man/tableGrob.html" class="external-link">tableGrob</a></code> functions. For added flexibility, <code>dwplot</code> includes the <code>stats_tb</code> feature, allowing users to input customized statistics. Furthermore, a suite of <code>stats_*</code> functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.</p>
     </div>
     <div id="references">

@@ -4,7 +4,7 @@
 #'
 #' @param x Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
-#' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
+#' @param margins [Suspended] A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param show_stats A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.

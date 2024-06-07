@@ -13,17 +13,13 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE,
-  warning = FALSE,
-  dpi = 300,
-  fig.dim=c(2.2,2.5)
+  warning = FALSE
+  # dpi = 300,
+  # fig.dim = c(2.2, 2.5)
 )
 
 library(parameters)
-library(margins)
 library(ggplot2)
-
-theme_set(theme_gray(base_size = 6))
-
 ```
 
 
@@ -267,37 +263,6 @@ m1_df_mod <-
 m1_df_mod  # rescaled, with variables reordered alphabetically
 dwplot(m1_df_mod)
 ```
-
-An input data frame can also be constructed from estimates of other quantities of interest, such as margins, odds ratios, or predicted probabilities, rather than coefficients. 
-
-```{r margins}
-# Create a data.frame of marginal effects
-m5 <- glm(am ~ wt + cyl + mpg, data = mtcars, family = binomial)
-m5_margin <- margins::margins(m5) %>%
-    summary() %>%
-    dplyr::rename(
-        term = factor,
-        estimate = AME,
-        std.error = SE,
-        conf.low = lower,
-        conf.high = upper,
-        statistic = z,
-        p.value = p
-    )
-m5_margin
-
-dwplot(m5_margin)
-```
-
-Since the marginal effects are widely used in nowadays social science, `dwplot` offers a convenient shortcut `margins`.
-Users can plot the average marginal effects (AME) instead of regression coefficients by setting `margins` to TRUE. 
-The confidence intervals of the AME can be set by the argument `ci`.
-
-```{r marginsShort}
-dwplot(m5, margins = TRUE)
-dwplot(m5, margins = TRUE, ci = .8)
-```
-
 
 
 ## Grouping Predictors 
@@ -564,10 +529,10 @@ Here are some tips for using this advanced function:
 
     
 ```{r stats_compare}
-dwplot(list(m1, m4, m5), show_stats = TRUE, stats_size = 3)
+dwplot(list(m1, m4), show_stats = TRUE, stats_size = 3)
 
 dwplot(
-  list(m1, m4, m5),
+  list(m1, m4),
   show_stats = TRUE,
   stats_compare = TRUE,
   stats_size = 3

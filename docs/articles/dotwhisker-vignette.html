@@ -86,7 +86,7 @@ Results</h1>
                         <h4 data-toc-skip class="author">Frederick Solt
 and Yue Hu</h4>
             
-            <h4 data-toc-skip class="date">2024-05-02</h4>
+            <h4 data-toc-skip class="date">2024-06-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fsolt/dotwhisker/blob/HEAD/vignettes/dotwhisker-vignette.Rmd" class="external-link"><code>vignettes/dotwhisker-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>dotwhisker-vignette.Rmd</code></div>
@@ -130,7 +130,7 @@ simply pass it to <code>dwplot</code>. For these examples, we’ll use the
 magazine, <em>Motor Trend</em>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Package preload</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">dotwhisker</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fsolt.org/dotwhisker/" class="external-link">dotwhisker</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># run a regression compatible with tidy</span></span>
@@ -138,14 +138,14 @@ magazine, <em>Motor Trend</em>.</p>
 <span></span>
 <span><span class="co"># draw a dot-and-whisker plot</span></span>
 <span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/basic-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/basic-1.png" width="700"></p>
 <p>By default, the whiskers span the 95% confidence interval. To change
 the width of the confidence interval, specify a <code>ci</code> argument
 to pass to <code><a href="https://easystats.github.io/parameters/reference/model_parameters.html" class="external-link">parameters::parameters()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m1</span>, ci <span class="op">=</span> <span class="fl">.60</span><span class="op">)</span> <span class="op">+</span>   <span class="co"># using 60% of confidence intervals</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/ci-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/ci-1.png" width="700"></p>
 <p>Plotting the results of more than one regression model is just as
 easy. Just pass the model objects to <code>dwplot</code> as a list. The
 <code>dodge_size</code> argument is used to adjust the space between the
@@ -160,14 +160,14 @@ higher values when many models appear on the same plot.</p>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html" class="external-link">update</a></span><span class="op">(</span><span class="va">m2</span>, <span class="va">.</span> <span class="op">~</span> <span class="va">.</span> <span class="op">+</span> <span class="va">am</span><span class="op">)</span> <span class="co"># and another </span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, <span class="va">m3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/multipleModels-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/multipleModels-1.png" width="700"></p>
 <p>Model intercepts are rarely theoretically interesting <span class="citation">(see Kastellec and Leoni 2007, 765)</span>, so they are
 excluded by <code>dwplot</code> by default. They are easy to include if
 desired, however, by setting the <code>show_intercept</code> argument to
 true.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, <span class="va">m3</span><span class="op">)</span>, show_intercept <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/intercept-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/intercept-1.png" width="700"></p>
 <p>Users are free to customize the order of the models and variables to
 present with the arguments <code>model_order</code> and
 <code>vars_order</code>. Moreover, the output of <code>dwplot</code> is
@@ -214,7 +214,7 @@ the former.</p>
 <span>        legend.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"grey80"</span><span class="op">)</span>,</span>
 <span>        legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="op">)</span> </span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/ggplot-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/ggplot-1.png" width="700"></p>
 <p>There are many other packages (e.g., <code>coefplot</code>) that have
 the ability to draw dot-and-whisker plots of at least a single set of
 regression results taking model objects as input. While this is very
@@ -264,7 +264,7 @@ argument).</p>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> gear        -<span style="color: #BB0000;">0.490</span>      0.790     -<span style="color: #BB0000;">0.621</span> 0.540</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m1_df</span><span class="op">)</span> <span class="co">#same as dwplot(m1)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/tidyData-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/tidyData-1.png" width="700"></p>
 <p>Using <code>tidy</code> can be helpful when one wishes to omit
 certain model estimates from the plot. To illustrate, we drop the
 intercept (although this is in fact done by <code>dwplot</code>
@@ -278,7 +278,7 @@ automatically by default):</p>
 <span><span class="va">two_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">m1_df</span>, <span class="va">m2_df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">two_models</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/tidy-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/tidy-1.png" width="700"></p>
 <p>You can also filter by regular expressions. This can be helpful, for
 instance, if a model contains a factor with many levels (e.g., a dummy
 variable for each country) which you might not want to include in your
@@ -293,7 +293,7 @@ plot.</p>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'cyl*'</span>, <span class="va">term</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m_factor_df</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/regularExpression-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/regularExpression-1.png" width="700"></p>
 <p>It can also be convenient to build a tidy data frame of regression
 results directly, that is, without first creating model objects:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -348,7 +348,7 @@ results directly, that is, without first creating model objects:</p>
 <span>        breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Automatic"</span>, <span class="st">"Manual"</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/relabel-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/relabel-1.png" width="700"></p>
 <p>Also note in the above example the additional manner of using the
 <code>relabel_predictors</code> function: in addition to being used on
 the <code>ggplot</code> object created by <code>dwplot</code> before
@@ -396,7 +396,7 @@ of the whiskers.</p>
 <span>        shape <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span><span class="st">"Model"</span><span class="op">)</span>, </span>
 <span>        colour <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span><span class="st">"Model"</span><span class="op">)</span></span>
 <span>    <span class="op">)</span> <span class="co"># Combine the legends for shape and color</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/custom-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/custom-1.png" width="700"></p>
 <p>It is also easy to plot classes of model objects that are not
 supported by <code>tidy</code> or <code><a href="https://easystats.github.io/parameters/reference/model_parameters.html" class="external-link">parameters::parameters</a></code>:
 one simply extracts the results from the model object and builds the
@@ -418,7 +418,7 @@ generate results that can be extracted by <code><a href="https://rdrr.io/r/stats
 <span><span class="co">## 5 disp -0.01343896 0.01188167 -1.1310664 0.2580271</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m4_df</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/clm-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/clm-1.png" width="700"></p>
 <p>Working with a tidy data frame, it is similarly straightforward to
 plot just a subset of results or to rescale or reorder coefficients. One
 often desirable manipulation is to standardize the scales of variables.
@@ -447,44 +447,7 @@ calculation.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> wt      -<span style="color: #BB0000;">7.42</span>       2.12    -<span style="color: #BB0000;">3.51</span>  0.001<span style="text-decoration: underline;">61</span> Model 1 TRUE</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m1_df_mod</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/by2sd-1.png" width="660"></p>
-<p>An input data frame can also be constructed from estimates of other
-quantities of interest, such as margins, odds ratios, or predicted
-probabilities, rather than coefficients.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create a data.frame of marginal effects</span></span>
-<span><span class="va">m5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">am</span> <span class="op">~</span> <span class="va">wt</span> <span class="op">+</span> <span class="va">cyl</span> <span class="op">+</span> <span class="va">mpg</span>, data <span class="op">=</span> <span class="va">mtcars</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span></span>
-<span><span class="va">m5_margin</span> <span class="op">&lt;-</span> <span class="fu">margins</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/margins/man/margins.html" class="external-link">margins</a></span><span class="op">(</span><span class="va">m5</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
-<span>        term <span class="op">=</span> <span class="va">factor</span>,</span>
-<span>        estimate <span class="op">=</span> <span class="va">AME</span>,</span>
-<span>        std.error <span class="op">=</span> <span class="va">SE</span>,</span>
-<span>        conf.low <span class="op">=</span> <span class="va">lower</span>,</span>
-<span>        conf.high <span class="op">=</span> <span class="va">upper</span>,</span>
-<span>        statistic <span class="op">=</span> <span class="va">z</span>,</span>
-<span>        p.value <span class="op">=</span> <span class="va">p</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="va">m5_margin</span></span></code></pre></div>
-<pre><code><span><span class="co">##  term  estimate std.error statistic   p.value conf.low conf.high</span></span>
-<span><span class="co">##   cyl  0.084403   0.05464    1.5447 1.224e-01 -0.02269   0.19150</span></span>
-<span><span class="co">##   mpg -0.005115   0.02485   -0.2058 8.369e-01 -0.05382   0.04359</span></span>
-<span><span class="co">##    wt -0.550800   0.12266   -4.4904 7.107e-06 -0.79121  -0.31039</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m5_margin</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/margins-1.png" width="660"></p>
-<p>Since the marginal effects are widely used in nowadays social
-science, <code>dwplot</code> offers a convenient shortcut
-<code>margins</code>. Users can plot the average marginal effects (AME)
-instead of regression coefficients by setting <code>margins</code> to
-TRUE. The confidence intervals of the AME can be set by the argument
-<code>ci</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m5</span>, margins <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/marginsShort-1.png" width="660"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m5</span>, margins <span class="op">=</span> <span class="cn">TRUE</span>, ci <span class="op">=</span> <span class="fl">.8</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/marginsShort-2.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/by2sd-1.png" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="grouping-predictors">Grouping Predictors<a class="anchor" aria-label="anchor" href="#grouping-predictors"></a>
@@ -495,7 +458,7 @@ achieved by passing the finalized plot to the <code>add_brackets</code>
 function. To pass the finalized plot to <code>add_brackets</code>
 without creating an intermediate object, simply wrap the code that
 generates it in braces (<code>{</code> and <code>}</code>):</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create list of brackets (label, topmost included predictor, bottommost included predictor)</span></span>
 <span><span class="va">three_brackets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Overall"</span>, <span class="st">"Weight"</span>, <span class="st">"Weight"</span><span class="op">)</span>,</span>
@@ -531,7 +494,7 @@ generates it in braces (<code>{</code> and <code>}</code>):</p>
 <span>        <span class="op">)</span></span>
 <span><span class="op">}</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="../reference/add_brackets.html">add_brackets</a></span><span class="op">(</span><span class="va">three_brackets</span>, fontSize <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/brackets-1.png" width="1500"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/brackets-1.png" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="presenting-regression-results-as-normal-distributions">Presenting Regression Results as Normal Distributions<a class="anchor" aria-label="anchor" href="#presenting-regression-results-as-normal-distributions"></a>
@@ -544,7 +507,7 @@ similar plots. To create such plots, call <code>dwplot</code> as always
 but include the argument <code>style = "distribution"</code>, then
 customize with other <code>dotwhisker</code> functions and
 <code>ggplot</code> additions as usual:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">by_transmission_brackets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Overall"</span>, <span class="st">"Weight"</span>, <span class="st">"Weight"</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Engine"</span>, <span class="st">"Cylinders"</span>, <span class="st">"Horsepower"</span><span class="op">)</span>,</span>
@@ -592,7 +555,7 @@ customize with other <code>dotwhisker</code> functions and
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span>, hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="../reference/add_brackets.html">add_brackets</a></span><span class="op">(</span><span class="va">by_transmission_brackets</span>, fontSize <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/distribution-1.png" width="1500"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/distribution-1.png" width="480"></p>
 </div>
 <div class="section level3">
 <h3 id="the-secret-weapon-and-small-multiple-plots">The ‘Secret Weapon’ and ‘Small Multiple’ Plots<a class="anchor" aria-label="anchor" href="#the-secret-weapon-and-small-multiple-plots"></a>
@@ -605,7 +568,7 @@ Andrew Gelman calls such plots <a href="https://statmodeling.stat.columbia.edu/2
 function accepts both lists of model objects and tidy data frames as
 input. The <code>var</code> argument is used to specify the predictor
 for which results are to be plotted.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">diamonds</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Estimate models for many subsets of data, put results in a tidy data.frame</span></span>
@@ -619,7 +582,7 @@ for which results are to be plotted.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Estimated Coefficient (Dollars)"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Diamond Clarity"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Estimates for Diamond Size Across Clarity Grades"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/secretWeapon-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/secretWeapon-1.png" width="480"></p>
 <p>A final means of presenting many models’ results at once in a
 particularly compact format is the “small multiple” plot of regression
 results <span class="citation">(see Kastellec and Leoni 2007,
@@ -629,7 +592,7 @@ plots. The <code>small_multiple</code> function makes generating these
 plots simple. Here, we pass a tidy data frame of six models to the
 function so we can to rescale the coefficients first, but the function
 can accept a list of model objects as well.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a tidy data frame of regression results from six models</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ordered_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wt"</span>, <span class="st">"cyl"</span>, <span class="st">"disp"</span>, <span class="st">"hp"</span>, <span class="st">"gear"</span>, <span class="st">"am"</span><span class="op">)</span></span>
@@ -673,7 +636,7 @@ can accept a list of model objects as well.</p>
 <span>        legend.position <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>        axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">60</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span>    <span class="op">)</span> </span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/smallMultiple-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/smallMultiple-1.png" width="700"></p>
 <p>To facilitate comparisons across, e.g., results generated across
 different samples, one can cluster the results presented in a small
 multiple plot. To do so, results that should be clustered should have
@@ -683,7 +646,7 @@ tidy data frame passed to <code>small_multiple</code>. (We also
 replicate three examples in <span class="citation">Kastellec and Leoni
 (2007)</span> with <code>dotwhisker</code> in a separate vignette,
 “kl2007_examples”.)</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a tidy data frame of regression results from five models on</span></span>
 <span><span class="co"># the mtcars data subset by transmission type</span></span>
 <span><span class="va">ordered_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"wt"</span>, <span class="st">"cyl"</span>, <span class="st">"disp"</span>, <span class="st">"hp"</span>, <span class="st">"gear"</span><span class="op">)</span></span>
@@ -738,7 +701,7 @@ replicate three examples in <span class="citation">Kastellec and Leoni
 <span><span class="co">## <span style="color: #BCBCBC;"> 9</span> Cylinders   -<span style="color: #BB0000;">1.30</span>      0.379    -<span style="color: #BB0000;">3.43</span>  3.43<span style="color: #949494;">e</span><span style="color: #BB0000;">- 3</span> Model 2        0</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">10</span> Cylinders   -<span style="color: #BB0000;">0.789</span>     0.953    -<span style="color: #BB0000;">0.828</span> 4.27<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> Model 2        1</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 30 more rows</span></span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/small_multiple.html">small_multiple</a></span><span class="op">(</span><span class="va">by_trans2</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Coefficient Estimate"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -760,7 +723,7 @@ replicate three examples in <span class="citation">Kastellec and Leoni
 <span>        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Automatic"</span>, <span class="st">"Manual"</span><span class="op">)</span></span>
 <span>    <span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Predicting Gas Mileage\nby Transmission Type"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/smallMultiple2-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/smallMultiple2-1.png" width="384"></p>
 </div>
 <div class="section level3">
 <h3 id="model-fit-statistics">Model Fit Statistics<a class="anchor" aria-label="anchor" href="#model-fit-statistics"></a>
@@ -785,15 +748,15 @@ with another life-saving package for ggplot visualization,
 <code>dwplot</code> and <code>small_multiple</code>. When the argument
 is set to be <code>TRUE</code>, users will see the model fits appearing
 below the dot-whisker plot:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="va">m1</span>, show_stats <span class="op">=</span> <span class="cn">TRUE</span>, stats_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/stats-1.png" width="660"></p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<p><img src="dotwhisker-vignette_files/figure-html/stats-1.png" width="700"></p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, <span class="va">m3</span><span class="op">)</span>, show_stats <span class="op">=</span> <span class="cn">TRUE</span>, stats_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/stats-2.png" width="660"></p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<p><img src="dotwhisker-vignette_files/figure-html/stats-2.png" width="700"></p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/small_multiple.html">small_multiple</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, <span class="va">m3</span><span class="op">)</span>, show_stats <span class="op">=</span> <span class="cn">TRUE</span>, stats_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/stats-3.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/stats-3.png" width="700"></p>
 <p>For added flexibility, we also include a suit of <code>stats_*</code>
 functions for users’ fine-tuning the presentation of these statistics.
 Furthermore, we offer the <code>stats_tb</code> argument, by which users
@@ -809,17 +772,17 @@ the plot. To address this, users have the option to set
 argument ensures that only the shared, comparable metrics are retained,
 streamlining the presentation.</li>
 </ul>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m4</span>, <span class="va">m5</span><span class="op">)</span>, show_stats <span class="op">=</span> <span class="cn">TRUE</span>, stats_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/stats_compare-1.png" width="660"></p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m4</span><span class="op">)</span>, show_stats <span class="op">=</span> <span class="cn">TRUE</span>, stats_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="dotwhisker-vignette_files/figure-html/stats_compare-1.png" width="700"></p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dwplot.html">dwplot</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m4</span>, <span class="va">m5</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m4</span><span class="op">)</span>,</span>
 <span>  show_stats <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  stats_compare <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  stats_size <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/stats_compare-2.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/stats_compare-2.png" width="700"></p>
 <ul>
 <li><p>Since the model fits needs to be calculated with the raw model
 outputs, the model fits will not be able to presented with customized
@@ -839,7 +802,7 @@ is particularly efficient if the original models are compatible with the
 <code>performance</code> package, facilitating seamless integration of
 model fit statistics.</p></li>
 </ul>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stats_fakeCustom</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">dotwhisker</span><span class="fu">:::</span><span class="fu">dw_stats</span><span class="op">(</span><span class="va">m1</span>, stats_digits <span class="op">=</span> <span class="fl">2</span>, stats_compare <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
@@ -849,7 +812,7 @@ model fit statistics.</p></li>
 <span>  stats_tb <span class="op">=</span> <span class="va">stats_fakeCustom</span>,</span>
 <span>  stats_size <span class="op">=</span> <span class="fl">3</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/stats_custom-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/stats_custom-1.png" width="700"></p>
 <ul>
 <li>Currently, the function for displaying model fit is not directly
 compatible with the <code>relabel_predictors</code> and
@@ -858,7 +821,7 @@ integrating these features. The example below illustrates this method.
 It involves separately generating the model fits and then manually
 merging them with the bracket-enhanced dotwhisker plot.</li>
 </ul>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">gridExtra</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span></span>
@@ -900,7 +863,7 @@ merging them with the bracket-enhanced dotwhisker plot.</li>
 <span>  theme <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/tableGrob.html" class="external-link">ttheme_default</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="co"># the negative value is used to adjust the space between the plot and the model fits</span></span></code></pre></div>
-<p><img src="dotwhisker-vignette_files/figure-html/combo-1.png" width="660"></p>
+<p><img src="dotwhisker-vignette_files/figure-html/combo-1.png" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>

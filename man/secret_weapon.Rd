@@ -13,7 +13,7 @@ secret_weapon(x, var = NULL, ci = 0.95, margins = FALSE, by_2sd = FALSE, ...)
 
 \item{ci}{A number indicating the level of confidence intervals; the default is .95.}
 
-\item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
+\item{margins}{[Suspended] A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
 
 \item{by_2sd}{When x is a list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
 

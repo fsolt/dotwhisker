@@ -82,7 +82,7 @@ dw_plot(
 
 \item{stats_layout}{Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.}
 
-\item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
+\item{margins}{[Suspended] A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
 
 \item{model_name}{The name of a variable that distinguishes separate models within a tidy data frame.}
 
@@ -124,7 +124,7 @@ Because the function can take a data frame as input, it is easily employed for a
 And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 Together, these two features make \code{dwplot} extremely flexible.
 
-\code{dwplot} provides an option to present the average marginal effect directly based on \code{\link[margins]{margins}}. Users can alter the confidence intervals of the margins through the \code{ci} argument. See the full list of supported functions in the document of the package \code{\link{margins}}. The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
+\code{dwplot} provides an option to present the average marginal effect directly. Users can alter the confidence intervals of the margins through the \code{ci} argument. ^[The function is suspended due to the dependency issue. We'll work on getting it back in the next update.] The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
 
 To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
 }
