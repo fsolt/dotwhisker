@@ -14,6 +14,7 @@ small_multiple(
   stats_tb = NULL,
   stats_digits = 3,
   stats_compare = FALSE,
+  stats_verbose = FALSE,
   stats_size = 10,
   stats_padding = unit(c(4, 4), "mm"),
   stats_layout = c(2, -1, 1),
@@ -43,6 +44,8 @@ small_multiple(
 \item{stats_digits}{A numeric value specifying the digits to display in the fitness table. This parameter is relevant only when \code{show_stats = TRUE}. Default is 3, providing a balance between precision and readability.}
 
 \item{stats_compare}{A logical constant to enable comparison of statistics in the fitness table. Applicable only when \code{show_stats = TRUE}. The default value is \code{FALSE}. That is, it presents all the statistics across different modeling methods, yet potentially expanding the table's breadth. When set to \code{TRUE}, only the shared, comparable statistics are remained.}
+
+\item{stats_verbose}{A logical constant to turn on/off the toggle warnings and messages of model fits. The default is \code{FALSE}.}
 
 \item{stats_size}{A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.}
 

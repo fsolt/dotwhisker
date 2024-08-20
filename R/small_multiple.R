@@ -11,6 +11,7 @@
 #' @param stats_tb Customized table of model fitness. The table should be in a \code{data.frame}.
 #' @param stats_digits A numeric value specifying the digits to display in the fitness table. This parameter is relevant only when \code{show_stats = TRUE}. Default is 3, providing a balance between precision and readability.
 #' @param stats_compare A logical constant to enable comparison of statistics in the fitness table. Applicable only when \code{show_stats = TRUE}. The default value is \code{FALSE}. That is, it presents all the statistics across different modeling methods, yet potentially expanding the table's breadth. When set to \code{TRUE}, only the shared, comparable statistics are remained.
+#' @param stats_verbose A logical constant to turn on/off the toggle warnings and messages of model fits. The default is \code{FALSE}.
 #' @param stats_size A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.
 #' @param stats_padding Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.
 #' @param stats_layout Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.
@@ -108,6 +109,7 @@ small_multiple <- function(x,
                            stats_tb = NULL,
                            stats_digits = 3,
                            stats_compare = FALSE,
+                           stats_verbose = FALSE,
                            stats_size = 10,
                            stats_padding = unit(c(4, 4), "mm"),
                            stats_layout = c(2, -1, 1),
@@ -231,7 +233,7 @@ small_multiple <- function(x,
         df_stats <- stats_tb
 
         if(is.null(df_stats)){ # No customized df_stats input
-            df_stats <- dw_stats(x, stats_digits = stats_digits, stats_compare = stats_compare)
+            df_stats <- dw_stats(x, stats_digits = stats_digits, stats_compare = stats_compare, stats_verbose = stats_verbose)
         } else {
             if(!is.data.frame(df_stats)) stop("The customized fitness table has to be a data.frame.")
         }

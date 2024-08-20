@@ -1,6 +1,11 @@
+## Version 0.8.3
+
+- Add argument to turn on/off the toggle warnings and messages when showing the model fit table.
+
 ## Version 0.8.2
 
-Submitted just for the upstream package (`prediction`) issue.
+- Submitted just for the upstream package (`prediction`) issue.
+- Removed `margins` for the author would not maintain or update it in the foreseeable future.
 
 ## Version 0.8.1
 

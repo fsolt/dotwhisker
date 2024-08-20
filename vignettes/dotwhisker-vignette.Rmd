@@ -535,6 +535,7 @@ dwplot(
   list(m1, m4),
   show_stats = TRUE,
   stats_compare = TRUE,
+  stats_verbose = TRUE,
   stats_size = 3
 )
 ```
@@ -553,7 +554,7 @@ It is an easy job, though, with our hidden `dw_stats` function, if the original 
 
 ```{r stats_custom}
 stats_fakeCustom <-
-  dotwhisker:::dw_stats(m1, stats_digits = 2, stats_compare = FALSE)
+  dotwhisker:::dw_stats(m1, stats_digits = 2, stats_compare = FALSE, stats_verbose = FALSE)
 
 dwplot(
   m1_df,
@@ -605,7 +606,8 @@ plot_brackets / tableGrob(
   dotwhisker:::dw_stats(
     m3,
     stats_digits = 2,
-    stats_compare = FALSE
+    stats_compare = FALSE,
+    stats_verbose = FALSE
   ),
   rows = NULL,
   theme = ttheme_default(base_size = 3)
