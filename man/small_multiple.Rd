@@ -84,60 +84,15 @@ Optionally, more than one set of results can be clustered to facilitate comparis
 To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
 }
 \examples{
-library(broom)
-library(dplyr)
 
-# Generate a tidy data frame of regression results from six models
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another
 
-m <- list()
-ordered_vars <- c("wt", "cyl", "disp", "hp", "gear", "am")
-m[[1]] <- lm(mpg ~ wt, data = mtcars)
-m123456_df <- m[[1]] \%>\% tidy \%>\% by_2sd(mtcars) \%>\%
-  mutate(model = "Model 1")
-
-for (i in 2:6) {
- m[[i]] <- update(m[[i-1]], paste(". ~ . +", ordered_vars[i]))
- m123456_df <- rbind(m123456_df, m[[i]] \%>\% tidy \%>\% by_2sd(mtcars) \%>\%
-   mutate(model = paste("Model", i)))
-}
 
 # Generate a 'small multiple' plot
-small_multiple(m123456_df)
-
-
-## Using submodels to compare results across different samples
-# Generate a tidy data frame of regression results from five models on
-# the mtcars data subset by transmission type (am)
-ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
-mod <- "mpg ~ wt"
-by_trans <- mtcars \%>\% group_by(am) \%>\%  # group data by transmission
-  do(tidy(lm(mod, data = .))) \%>\%        # run model on each group
-  rename(submodel = am) \%>\%              # make submodel variable
-  mutate(model = "Model 1") \%>\%          # make model variable
- ungroup()
-
-for (i in 2:5) {
-   mod <- paste(mod, "+", ordered_vars[i])
-   by_trans <- rbind(by_trans, mtcars \%>\% group_by(am) \%>\%
-                         do(tidy(lm(mod, data = .))) \%>\%
-                         rename(submodel = am) \%>\%
-                         mutate(model = paste("Model", i)) \%>\%
-                         ungroup())
-}
-
-small_multiple(by_trans) +
-theme_bw() + ylab("Coefficient Estimate") +
-    geom_hline(yintercept = 0, colour = "grey60", linetype = 2) +
-    theme(axis.text.x  = element_text(angle = 45, hjust = 1),
-          legend.position=c(0, 0), legend.justification=c(0, 0),
-          legend.title = element_text(size=9),
-          legend.background = element_rect(color="gray90"),
-          legend.spacing = unit(-3, "pt"),
-          legend.key.size = unit(10, "pt")) +
-    scale_colour_hue(name = "Transmission",
-    breaks = c(0, 1),
-    labels = c("Automatic", "Manual"))
-
+list(m1, m2, m3) |>
+small_multiple()
 }
 \references{
 Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.

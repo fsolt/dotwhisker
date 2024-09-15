@@ -12,10 +12,7 @@ library(roxygen2)
 
 spell_check()
 
-rhub::validate_email(email = "yuehu@tsinghua.edu.cn", token = "345011f4ca60404abf76007e9ae89e3e")
-
-check_rhub(email = "yuehu@tsinghua.edu.cn")
-
+check_rhub()
 
 ## Run the CRAN check
 # 1. Under the `Build` tab

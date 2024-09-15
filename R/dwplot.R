@@ -382,8 +382,8 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
 
 dw_stats <- function(x,
                      stats_digits,
-                     stats_compare,
-                     stats_verbose) {
+                     stats_compare = FALSE,
+                     stats_verbose = FALSE) {
     N <- Name <- Model <- NULL
 
     if (!inherits(x, "list")) {

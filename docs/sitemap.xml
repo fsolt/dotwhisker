@@ -1,54 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/articles/dotwhisker-vignette.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/kl2007_examples.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/add_brackets.html</loc>
-  </url>
-  <url>
-    <loc>/reference/by_2sd.html</loc>
-  </url>
-  <url>
-    <loc>/reference/dwplot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/relabel_predictors.html</loc>
-  </url>
-  <url>
-    <loc>/reference/relabel_y_axis.html</loc>
-  </url>
-  <url>
-    <loc>/reference/secret_weapon.html</loc>
-  </url>
-  <url>
-    <loc>/reference/small_multiple.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/dotwhisker-vignette.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/kl2007_examples.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/CONDUCT.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/add_brackets.html</loc></url>
+<url><loc>/reference/by_2sd.html</loc></url>
+<url><loc>/reference/dwplot.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/relabel_predictors.html</loc></url>
+<url><loc>/reference/relabel_y_axis.html</loc></url>
+<url><loc>/reference/secret_weapon.html</loc></url>
+<url><loc>/reference/small_multiple.html</loc></url>
 </urlset>
+
