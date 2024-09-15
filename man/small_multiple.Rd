@@ -86,13 +86,11 @@ To minimize the need for lengthy, distracting regression tables (often relegated
 \examples{
 
 m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
-m2 <- update(m1, . ~ . + hp) # add another predictor
-m3 <- update(m2, . ~ . + am) # and another
+m2 <- update(m1, . ~ . + hp)
 
 
 # Generate a 'small multiple' plot
-list(m1, m2, m3) |>
-small_multiple()
+small_multiple(list(m1, m2))
 }
 \references{
 Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
