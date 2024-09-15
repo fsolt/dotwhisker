@@ -12,7 +12,7 @@ library(roxygen2)
 
 spell_check()
 
-check_rhub()
+rhub::rhub_check()
 
 ## Run the CRAN check
 # 1. Under the `Build` tab
