@@ -53,16 +53,12 @@ relabel_predictors <- function(x, ...) {
         return(x)
     }
     else if (is.ggplot(x)) {
-        if ("model" %in% names(x$data)) {
-            x$data <- arrange(x$data, model, match(term, names(dots))) %>%
-                select(-y_ind)
-            x$data$term <- factor(x$data$term, levels = unique(x$data$term))
-        } else {
-            x$data <- arrange(x$data, match(term, names(dots))) %>%
-                select(-y_ind)
-            x$data$term <- factor(x$data$term, levels = unique(x$data$term))
-        }
-
+        m <- if ("model" %in% names(x$data)) x$data$model else NULL
+        x$data <- arrange(x$data, m, match(term, names(dots))) %>%
+            select(-y_ind) %>%
+            filter(!is.na(term)) %>%
+            mutate(across(term, \(x) factor(x, levels = unique(x))))
+        
         x$data$term <- dplyr::recode(x$data$term, !!! dots)
 
         args_list <- list(x = x$data, x$args)
