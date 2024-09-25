@@ -42,7 +42,7 @@ var.names <- c("Argentina", "Chile", "Colombia", "Mexico", "Venezuela", #for lon
     
 y.axis <- c(length(coef.vec):1)#create indicator for y.axis, descending so that R orders vars from top to bottom on y-axis
 
-par(mar=c(2, 13, 0, 0))#set margins for plot, leaving lots of room on left-margin (2nd number in margin command) for variable names
+oldpar <- par(mar=c(2, 13, 0, 0))#set margins for plot, leaving lots of room on left-margin (2nd number in margin command) for variable names
 plot(coef.vec, y.axis, type = "p", axes = F, xlab = "", ylab = "", pch = 19, cex = 1.2,#plot coefficients as points, turning off axes and labels. 
     xlim = c(-2,2.5), xaxs = "r", main = "") #set limits of x-axis so that they include mins and maxs of 
         #coefficients + .95% confidence intervals and plot is symmetric; use "internal axes", and leave plot title empty
@@ -64,7 +64,7 @@ x.height <- .57
 text(x.height, 10, expression(R^{2} == .15), adj = 0, cex = 1) #add text for R-squared
 text(x.height, 9, expression(paste("Adjusted ", R^{2} == ".12", "")), adj = 0, cex = 1)#add text for Adjusted-R-squared
 text(x.height, 8, "n = 500", adj = 0, cex = 1)#add text for sample size
-
+par(oldpar)
 ```
 
 Redone using `dotwhisker`: 
@@ -136,7 +136,7 @@ layout(matrix(c(2,1),1,2), #in order to add variable categories and braces to le
                 #using c(2,1) in matrix command tells R to create right panel 1st
 #layout.show(2) #can use this command to check results of layout command (but it must be commented out when creating PDF).
 
-par(mar=c(2,8,.5,1), lheight = .8)#set margins for regression plot
+oldpar <- par(mar=c(2,8,.5,1), lheight = .8)#set margins for regression plot
 plot(coef.vec.1, y.axis+adjust, type = "p", axes = F, xlab = "", ylab = "", pch = 19, cex = 1.2, #plot model 1 coefs using black points (pch = 19, default = black), adding the "adjust amount" to the y.axis indicator to move points up
     xlim = c(min((coef.vec.1-qnorm(.975)*se.vec.1 -.1), (coef.vec.2-qnorm(.975)*se.vec.2 -.1), na.rm = T), #set xlims at mins and maximums (from both models) of confidence intervals, plus .1 to leave room at ends of plots
     max((coef.vec.1+qnorm(.975)*se.vec.1 -.1), (coef.vec.2+qnorm(.975)*se.vec.2 -.1), na.rm = T)),  #use na.rm=T since vectors have missing values
@@ -162,10 +162,11 @@ points(-4, 19.5, pch = 19, cex  = 1.2)
 text(-3.7, 19.5, "Model 1", adj = 0,cex  = 1.2)#left-justify text using adj  = 0
 points(-4, 18.5, pch = 21,cex  = 1.2)
 text(-3.7, 18.5, "Model 2", adj = 0,cex  = 1.2)#left-justify text using adj  = 0
+par(oldpar)
 
 #Create Variable Categories and Braces to go in 2nd plot
 
-par(mar=c(2,0,.5,0)) #set margins--- bottom (1st number) and top (3rd number) must be the same as in 1st plot
+oldpar <- par(mar=c(2,0,.5,0)) #set margins--- bottom (1st number) and top (3rd number) must be the same as in 1st plot
 plot(seq(0,1,length=length(var.names)), y.axis, type = "n", axes = F,  xlab = "", ylab = "")#call empty plot using type="n"
     #use a sequence of length 20 so that x and y have same length
 
@@ -187,7 +188,7 @@ segments(left.side,12.15,left.side,1.8) #add brackets around "Seniority"
 segments(left.side,12.15,left.side+.15,12.15)   #one segment at a time
 segments(left.side,1.8,left.side+.15,1.8)
 text(.4, 7, "Seniority", srt = 90, font = 3, cex  = 1.5)#Add text; "srt" rotates to 90 degrees, font = 3 == italics
-
+par(oldpar)
 ```
 
 Redone using `dotwhisker`: 
