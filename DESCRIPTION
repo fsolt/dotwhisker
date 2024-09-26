@@ -5,8 +5,8 @@ Version: 0.8.3
 Authors@R: 
    c(person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
     person("Yue", "Hu", role = c("aut", "cre"), email = "yuehu@tsinghua.edu.cn"),
-    person("Os", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
     person("Ben", "Bolker", role = "ctb", email = "bolker@mcmaster.ca"),
+    person("Os", "Keyes", role = "ctb", email = "ironholds@gmail.com"),
     person("Stefan", "Müller", role = "ctb", email = "stefan.mueller@ucd.ie"),
     person("Thomas", "Leeper", role = "ctb", email = "thosjleeper@gmail.com"),
     person("Chris", "Wallace", role = "ctb", email = "cew54@cam.ac.uk"),

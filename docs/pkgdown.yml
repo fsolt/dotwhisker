@@ -1,7 +1,7 @@
 pandoc: '3.2'
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   dotwhisker-vignette: dotwhisker-vignette.html
   kl2007_examples: kl2007_examples.html
-last_built: 2024-09-18T06:35Z
+last_built: 2024-09-26T00:43Z
