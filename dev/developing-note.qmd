@@ -1,0 +1,553 @@
+---
+format: html
+tables: true # enable longtable and booktabs
+fontsize: 12pt
+indent: true
+geometry: margin=1in
+linestretch: 1.5 # double spacing using linestretch 1.5
+colorlinks: false
+link-citations: true
+execute:
+    echo: false
+    message: false
+    warning: false
+    dpi: 600
+editor_options: 
+    chunk_output_type: console
+editor:
+    render-on-save: true
+
+title: "Developing Notes"
+author: "Yue Hu"
+---
+
+This is a developing note for package `dotwhisker`.
+The goal is to record every issue and changes following the time order. 
+This is just a lab note and thus unnecessary to be added in a public folder.
+
+```{r}
+#| label: setup
+
+library(broom)
+library(parameters)
+library(dplyr)
+library(ggplot2)
+
+# runing the function of dw_tidy et al. from the function script
+
+ci = .95
+dodge_size = .4
+order_vars = NULL
+show_intercept = FALSE
+model_name = "model"
+model_order = NULL
+style = c("dotwhisker", "distribution")
+margins = FALSE
+by_2sd = FALSE
+vline = NULL
+dot_args = list(size = 1.2)
+whisker_args = list(size = .5)
+dist_args = list(alpha = .5)
+line_args = list(alpha = .75, size = 1)
+margins = FALSE
+
+```
+
+```{r}
+#| label: x_model
+
+x <- lm(mpg ~ wt + cyl + disp + gear + hp + am, data = mtcars)
+```
+
+```{r}
+#| label: x_list
+
+# regression results
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another 
+
+x <- list(m1, m2, m3)
+```
+
+```{r}
+#| label: x_dataframe
+
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another 
+
+x <- list(m1, m2, m3)
+
+model_order <- c("Model 3", "Model 5", "Model 1", "Model 4", "Model 2")
+submodel_order <- c("1", "0")
+
+ordered_vars <- c("wt", "cyl", "disp", "hp", "gear")
+mod <- "mpg ~ wt"
+
+by_trans2 <- mtcars %>%
+    group_by(am) %>%                        # group data by transmission
+    do(broom::tidy(lm(mod, data = .))) %>%         # run model on each group
+    rename(submodel = am) %>%               # make submodel variable
+    mutate(model = "Model 1") %>%           # make model variable
+    ungroup()
+
+for (i in 2:5) {
+    mod <- paste(mod, "+", ordered_vars[i])
+    by_trans2 <- rbind(
+        by_trans2,
+        mtcars %>%
+            group_by(am) %>%
+            do(broom::tidy(lm(mod, data = .))) %>%
+            rename(submodel = am) %>%
+            mutate(model = paste("Model", i)) %>%
+            ungroup()
+    )
+}
+
+x <- by_trans2
+```
+
+# 2016-07-01
+* Change the "creator" (maintainer) of the package as only Hu.
+
+# 2016-07-08
+* Detect the y axis issue
+```{r}
+library(dotwhisker)
+library(broom)
+library(dplyr)
+
+# run a regression compatible with tidy
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another 
+
+dwplot(list(m1, m2, m3))
+
+x <- list(m1, m2, m3)
+
+
+
+
+m1_df <- tidy(m1) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 1")
+m2_df <- tidy(m2) %>% filter(term != "(Intercept)") %>% mutate(model = "Model 2")
+
+two_models <- rbind(m1_df, m2_df)
+
+dwplot(two_models)
+
+```
+
+
+The problem is at the code in add_NAs. When deleting `%>% group_by(model) %>% arrange(term) %>% ungroup`, everything looks fine.
+
+# 2017-06-24
+Starting rewriting `dwplot` with `ggstance` based on [Ben's comment](https://github.com/fsolt/dotwhisker/issues/66). 
+
+```{r}
+# New dwplot function without notes and cleaning
+dwplot <- function(x, alpha = .05, dodge_size = .4, order_vars = NULL,
+                   show_intercept = FALSE, model_name = "model",
+                   dot_args = NULL, ...) {
+    # If x is model object(s), convert to a tidy data.frame
+    df <- dw_tidy(x,...)
+    
+    if (!show_intercept) df <- df %>% filter(!grepl("^\\(Intercept\\)$|^\\w+\\|\\w+$", term)) # enable detecting intercept in polr objects
+    
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
+    estimate <- model <- lb <- ub <- term <- std.error <- NULL
+    
+    n_vars <- length(unique(df$term))
+    dodge_size <- dodge_size
+    
+    # Confirm number of models, get model names
+    if (model_name %in% names(df)) {
+        dfmod <- df[[model_name]]
+        n_models <- length(unique(dfmod))
+        ## re-order/restore levels by order in data set
+        df[[model_name]] <- factor(dfmod, levels = unique(dfmod))
+    } else {
+        if (length(df$term) == n_vars) {
+            df[[model_name]] <- factor("one")
+            n_models <- 1
+        } else {
+            stop("Please add a variable named '",
+                 model_name,"' to distinguish different models")
+        }
+    }
+    mod_names <- unique(df[[model_name]])
+    
+    # Specify order of variables if an order is provided
+    if (!is.null(order_vars)) {
+        df$term <- factor(df$term, levels = order_vars)
+        df <- df[match(order_vars, df$term),] %>% stats::na.omit()
+    }
+    
+    # Add rows of NAs for variables not included in a particular model
+    if (n_models > 1) {
+        df <- add_NAs(df, n_models, mod_names)
+    }
+    
+    # Prep arguments to ggplot
+    var_names <- df$term
+    
+    y_ind <- rep(seq(n_vars, 1), n_models)
+    df$y_ind <- y_ind
+    
+    # Confirm alpha within bounds
+    if (alpha < 0 | alpha > 1) {
+        stop("Value of alpha for the confidence intervals should be between 0 and 1.")
+    }
+    
+    # Generate lower and upper bound if not included in results
+    if ((!"lb" %in% names(df)) || (!"ub" %in% names(df))) {
+        if ("std.error" %in% names(df)) {
+            ci <- 1 - alpha/2
+            df <- transform(df,
+                            lb = estimate - stats::qnorm(ci) * std.error,
+                            ub = estimate + stats::qnorm(ci) * df$std.error)
+        } else {
+            df <- transform(df, lb=NA, ub=NA)
+        }
+    }
+    
+    # Calculate y-axis shift for plotting multiple models
+    # if (n_models == 1) {
+    #     shift <- 0
+    # } else {
+    #     shift <- seq(dodge_size, -dodge_size, length.out = n_models)
+    # }
+    # shift_index <- data.frame(model = mod_names, shift)
+    # df <- left_join(df, shift_index, by="model")
+    
+    # Catch difference between single and multiple models
+    if (length(y_ind) != length(var_names)) {
+        var_names <- unique(var_names)
+    }
+    
+    # # Generate arguments to geom_segment and geom_point
+    # seg_args0 <- list(aes(x = lb, xend = ub,
+    #                       y = y_ind + shift, yend = y_ind + shift),
+    #                   na.rm = TRUE)
+    # segment_args <- c(seg_args0, whisker_args)
+    
+    point_args0 <- list(na.rm = TRUE, position=position_dodgev(height = dodge_size))
+    point_args <- c(point_args0, dot_args)
+    
+    
+    # Make the plot
+    
+    
+    
+    
+    p <- ggplot(df,aes(y = estimate, ymin = lb,ymax = ub, x = reorder(term, y_ind), colour = model))+
+        do.call(geom_pointrange, point_args) +
+        ylab("") + xlab("")
+    
+    
+    ggplot(df,aes(y = estimate, ymin = lb,ymax = ub, x = reorder(term, y_ind), colour = model))+
+        geom_pointrange(position = position_dodge(width = dodge_size)) +
+        ylab("") + xlab("")
+    
+    
+    ggplot(df,aes(y = estimate, ymin = lb,ymax = ub, x = as.factor(model), colour = submodel))+
+        geom_pointrange(position = position_dodge(width = .5)) +
+        ylab("") + xlab("") +
+        facet_grid(term ~ ., scales = "free_y")
+    
+    # Omit the legend if there is only one model
+    if (!"model" %in% names(df) | length(mod_names) == 1){
+        p <- p + theme(legend.position="none")
+    }
+    
+    return(p)
+}
+
+dwplot(two_models)
+```
+
+```{r}
+library(broom)
+library(dplyr)
+# Plot regression coefficients from a single model object
+data(mtcars)
+m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars)
+dwplot(m1) +
+    xlab("Coefficient") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey50", linetype = 2) +
+    theme(legend.position="none")
+# Plot regression coefficients from multiple models on the fly
+m2 <- update(m1, . ~ . - disp)
+dwplot(list(full = m1, nodisp = m2))
+# Change the appearance of dots and whiskers
+dwplot(m1, dot_args = list(size = 6, pch = 21, fill = "white"),
+     whisker_args = list(lwd = 2))
+# Plot regression coefficients from multiple models in a tidy data.frame
+by_trans <- mtcars %>% group_by(am) %>%
+    do(tidy(lm(mpg ~ wt + cyl + disp, data = .))) %>% rename(model=am)
+dwplot(by_trans) +
+    theme_bw() + xlab("Coefficient") + ylab("") +
+    geom_vline(xintercept = 0, colour = "grey60", linetype = 2) +
+    ggtitle("Predicting Gas Mileage, OLS Estimates") +
+    theme(plot.title = element_text(face = "bold"),
+          legend.justification=c(0, 0), legend.position=c(0, 0),
+          legend.background = element_rect(colour="grey80"),
+          legend.title.align = .5) +
+    scale_colour_grey(start = .4, end = .8,
+                      name = "Transmission",
+                      breaks = c(0, 1),
+                      labels = c("Automatic", "Manual"))
+```
+
+# 2021-02-14
+
+Expanding the range with `broomExtra`
+
+
+```{r}
+library(broomExtra)
+
+broomExtra::tidy_parameters(x)
+
+# library(lme4)
+# x <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
+#               data = cbpp, family = binomial)
+
+dw_tidy <- function(x, by_2sd, ...) {
+    # Set variables that will appear in pipelines to NULL to make R CMD check happy
+    estimate <- model <- std.error <- conf.high <- conf.low <- NULL
+
+    ## return model matrix *or* model frame
+    get_dat <- function(x) {
+        tryCatch(as.data.frame(model.matrix(x)),
+                 error=function(e) model.frame(x))
+    }
+    ## prepend "Model" to numeric-convertable model labels
+    mk_model <- function(x) {
+        if (all(!is.na(suppressWarnings(as.numeric(x))))) {
+            paste("Model",x)
+        } else x
+    }
+
+    if (!is.data.frame(x)) {
+        if (!inherits(x,"list")) {
+            df <- broomExtra::tidy_parameters(x, conf.int = TRUE, ...)
+            if (by_2sd) {
+                df <- df %>% by_2sd(get_dat(x))
+            }
+        } else {    # list of models
+            if (by_2sd) {
+                df <- purrr::map_dfr(x, .id = "model",
+                                     ## . has special semantics, can't use
+                                     ## it here ...
+                                     function(x) {
+                                 broom::tidy(x, conf.int = TRUE, ...) %>%
+                                     dotwhisker::by_2sd(dataset=get_dat(x))
+                                 }) %>%
+                    mutate(model = mk_model(model))
+            } else {
+                df <- purrr::map_dfr(x, .id = "model",
+                          function(x) {
+                              broomExtra::tidy_parameters(x, conf.int = TRUE, ...) }) %>%
+                    mutate(model = if_else(!is.na(suppressWarnings(as.numeric(model))),
+                                           paste("Model", model), model))
+            }
+        }
+    } else { # x is a dataframe
+        df <- x
+        if ((!"conf.low" %in% names(df)) || (!"conf.high" %in% names(df))) {
+            if ("std.error" %in% names(df)) {
+                df <- transform(df,
+                                conf.low = estimate - stats::qnorm(.975) * std.error,
+                                conf.high = estimate + stats::qnorm(.975) * std.error)
+            } else {
+                df <- transform(df, conf.low=NA, conf.high=NA)
+            }
+        }
+    }
+    return(df)
+}
+```
+
+```{r}
+library(broom)
+library(dplyr)
+library(dotwhisker)
+
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+
+m2 <- glm(vs ~wt + cyl + disp + gear, data = mtcars)
+
+m3 <- ordinal::clm(as.factor(cyl) ~ wt + cyl + disp + gear, data = mtcars)
+
+margins::margins(m2) %>% 
+  summary(level = .95) %>% 
+  rename(term = factor, 
+         estimate = AME, 
+         std.error = SE,
+         conf.low = lower,
+         conf.high = upper,
+         statistic = z,
+         p.value = p) %>% dwplot
+
+dwplot(m2)
+```
+
+## Deaing with the order of models
+
+```{r}
+df <- dw_tidy(x, ci, by_2sd, margins)
+
+library(broom)
+library(dplyr)
+data(mtcars)
+m1 <- lm(mpg ~ wt + cyl + disp, data = mtcars) %>% 
+  tidy()
+two_brackets <- list(c("Engine", "Cylinder", "Displacement"),
+                     c("Not Engine", "Intercept", "Weight"))
+
+{dwplot(m1, show_intercept = T) %>%
+    relabel_predictors("(Intercept)" = "Intercept",
+                       wt = "Weight",
+                       cyl = "Cylinder",
+                       disp = "Displacement") +
+    annotate(ymin = seq(.5,length(unique(m1$term)), 2), ymax = seq(1.5,length(unique(m1$term))+1, 2), 
+             xmin = -Inf, xmax = Inf, 
+             geom = "rect", alpha = 0.1) } %>%
+  add_brackets(two_brackets)
+
+
+dwplot(x, 
+       order_vars = c("am", "cyl", "disp", "gear", "hp", "wt")) 
+```
+
+```{r}
+library(lme4)
+#> Loading required package: Matrix
+library(broomExtra)
+library(parameters)
+
+model <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+standardize_names(parameters(model, conf.int = TRUE), style = "broom")
+
+```
+
+# 2022-02-07
+
+1. Sending dot options to `small_multiple`
+
+```{r}
+df <- dw_tidy(by_trans2, ci, by_2sd, margins)
+
+whisker_args = list("shape = model")
+
+small_multiple(by_trans2, whisker_args = list(aes(linetype = model)))
+```
+
+
+# 2023-01-26
+
+```{r}
+library(dotwhisker)
+library(purrr)
+library(performance)
+library(patchwork)
+
+m1 <- lm(mpg ~ wt + cyl + disp + gear + disp + hp + qsec + carb + vs + am, data = mtcars)
+
+
+df_stat <- data.frame(N = nobs(m1)) |> 
+  cbind(model_performance(m1, metrics = "common"))
+
+ls_m <- list(m1, m2)
+
+df_stats <- map(ls_m, nobs) |> 
+  list_c() |> 
+  data.frame(N = _) |> 
+  cbind(compare_performance(ls_m, metrics = "common")) |> 
+  relocate(N, .after = Model) |> 
+  mutate(across(where(is.numeric), \(stats) round(stats, digits = 2)))
+
+
+p1 <- dwplot(m1) + xlab("abc") + ylab("def")
+
+p1 / gridExtra::tableGrob(df_stats, rows = NULL, theme = gridExtra::ttheme_default(base_size = 10)) +
+  plot_layout(heights = c(2, -1, 1))
+
+wrap_elements(gridExtra::tableGrob(df_stats, rows = NULL, theme = gridExtra::ttheme_default(base_size = 10))) / dwplot(ls_m) + 
+  plot_layout(heights = c(2, -1, 1))
+
+dw_stats <- function(x,
+                     digits = 3,
+                     comparable = FALSE) {
+  if (!inherits(x, "list")) { # single model
+    data.frame(N = nobs(x)) |>
+      cbind(model_performance(x, metrics = "common"))
+  } else { # multiple models
+    df_stats <- map(x, nobs) |>
+      list_c() |>
+      data.frame(N = _) |>
+      cbind(compare_performance(x, metrics = "common")) |>
+      relocate(N, .after = Name) |>
+      select(-ends_with("_wt"), -Model) |>
+      mutate(across(where(is.numeric),
+                    \(stats) round(stats, digits = digits)))
+    
+    if(comparable) df_stats <- select(df_stats, where(\(var) !any(is.na(var)))) # removed model special stats
+    
+    return(df_stats)
+  }
+}
+
+library(lme4)
+fm1 <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+fm2 <- lmer(Reaction ~ Days + (Days || Subject), sleepstudy)
+
+library(ordinal)
+
+fm3 <- clm(Sat ~ Infl + Type + Cont, weights = Freq, data = MASS::housing)
+
+ls_m <- list(a = m1, b = fm1, c = fm2, d = fm3)
+
+dw_stats(ls_m, comparable = TRUE)
+
+dw_stats(ls_m, digits = 2, comparable = TRUE)
+
+    df_stats <- map(ls_m, nobs) |>
+      list_c() |>
+      data.frame(N = _) |>
+      cbind(compare_performance(ls_m, metrics = "common")) |>
+      relocate(N, .after = Name) |>
+      select(-ends_with("_wt"), -Model) |>
+      mutate(across(where(is.numeric),
+                    \(stats) round(stats, digits = 3)))
+    
+    if(comparable) df_stats <- na.omit(df_stats) # removed model special stats
+
+```
+
+
+# 2025-05-04
+
+- Goal: Bring the `margins` option back
+
+
+```{r}
+#| label: marginBack
+
+# Load `x_model` chunk first
+
+library(marginaleffects)
+library(purrr)
+
+margins <- TRUE
+
+x <- list(a = m1, b = m2, c = m3)
+
+dwplot(x, margins = TRUE)
+
+names(x) <- paste0("Model ", seq(x))
+
+```
