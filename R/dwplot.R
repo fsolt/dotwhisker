@@ -60,7 +60,7 @@
 #' @importFrom dplyr "%>%" n filter arrange left_join full_join bind_rows group_by if_else mutate distinct relocate ends_with across where
 #' @importFrom stats qnorm reorder model.matrix dnorm model.frame nobs
 #' @importFrom ggstance geom_pointrangeh position_dodgev GeomLinerangeh
-#' @importFrom purrr map_dfr map list_c
+#' @importFrom purrr map list_c list_rbind
 #' @importFrom utils modifyList globalVariables
 #' @importFrom gridExtra tableGrob ttheme_default
 #'
@@ -309,7 +309,7 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
                                             df <- standardize_names(parameters(x, ci, conf.int = TRUE, ...), style = "broom")
                                         }
                                         dotwhisker::by_2sd(df, dataset = get_dat(x))
-                } |> 
+                }) |> 
                     list_rbind(names_to = "model")
             } else {
                 if(is.null(names(x))) names(x) <- paste0("Model ", seq(x))
@@ -391,7 +391,8 @@ add_NAs <-function(df = df,
         for (i in seq(n_models)) {
             m <-
                 df %>% filter(model == factor(mod_names[[i]], levels = mod_names))
-            not_in <- setdiff(unique(df$term), m$term)
+            not_in <- setdiff(unique(df$term), m$term) |> as.character() # if keeping the factor class, sometimes produce NA weirdly 
+
             for (j in seq(not_in)) {
                 t <- data.frame(
                     term = factor(not_in[j], levels = levels(df$term)),
@@ -406,6 +407,7 @@ add_NAs <-function(df = df,
                     m <- full_join(m, t, by = c("term", "model"))
                 }
             }
+
             if (i == 1) {
                 dft <- m %>% arrange(term)
             } else {
