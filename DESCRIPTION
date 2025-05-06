@@ -3,7 +3,7 @@ Type: Package
 Title: Dot-and-Whisker Plots of Regression Results
 Version: 0.8.4
 Authors@R: 
-   c(person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
+    c(person("Frederick", "Solt", role = c("aut"), email = "frederick-solt@uiowa.edu"),
     person("Yue", "Hu", role = c("aut", "cre"), email = "yuehu@tsinghua.edu.cn"),
     person("Ben", "Bolker", role = "ctb", email = "bolker@mcmaster.ca"),
     person("Os", "Keyes", role = "ctb", email = "ironholds@gmail.com"),

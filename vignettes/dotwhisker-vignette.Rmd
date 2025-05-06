@@ -309,7 +309,7 @@ three_brackets <- list(
 
 ## Presenting Regression Results as Normal Distributions
 
-[Inspired by](https://twitter.com/BenJamesEdwards/status/979751070254747650) the way @Edwards2016 [p.5] displayed regression coefficients as normal distributions, `dotwhisker` now provides an easy way to make similar plots.  To create such plots, call `dwplot` as always but include the argument `style = "distribution"`, then customize with other `dotwhisker` functions and `ggplot` additions as usual:
+Inspired by the way @Edwards2016 [p.5] displayed regression coefficients as normal distributions, `dotwhisker` now provides an easy way to make similar plots.  To create such plots, call `dwplot` as always but include the argument `style = "distribution"`, then customize with other `dotwhisker` functions and `ggplot` additions as usual:
 
 ```{r distribution, fig.dim=c(5, 2.5)}
 by_transmission_brackets <- list(
@@ -363,7 +363,7 @@ by_transmission_brackets <- list(
 ```
 
 ## The 'Secret Weapon' and 'Small Multiple' Plots 
-A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots [the 'secret weapon'](https://statmodeling.stat.columbia.edu/2005/03/07/the_secret_weap/).  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input. The `var` argument is used to specify the predictor for which results are to be plotted.
+A variation of dot-and-whisker plot is used to compare the estimated coefficients for a single predictor across many models or datasets: Andrew Gelman calls such plots the 'secret weapon'.  They are easy to make with the `secret_weapon` function.  Like `dwplot`, the function accepts both lists of model objects and tidy data frames as input. The `var` argument is used to specify the predictor for which results are to be plotted.
 
 ```{r secretWeapon, fig.width=5}
 data(diamonds)
