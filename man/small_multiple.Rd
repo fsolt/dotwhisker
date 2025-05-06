@@ -31,7 +31,7 @@ small_multiple(
 
 \item{ci}{A number indicating the level of confidence intervals; the default is .95.}
 
-\item{margins}{[Suspended] A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.}
+\item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details of \code{dwplot} for more information.}
 
 \item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 

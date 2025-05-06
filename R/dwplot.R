@@ -54,7 +54,7 @@
 #' @import ggplot2
 #' @import patchwork
 #' @import performance
-#' @import margineffects
+#' @import marginaleffects
 #' 
 #' @importFrom parameters parameters standardize_names
 #' @importFrom dplyr "%>%" n filter arrange left_join full_join bind_rows group_by if_else mutate distinct relocate ends_with across where
