@@ -22,7 +22,7 @@ author: "Yue Hu"
 ---
 
 This is a developing note for package `dotwhisker`.
-The goal is to record every issue and changes following the time order. 
+The goal is to record every issue and change following the time order. 
 This is just a lab note and thus unnecessary to be added in a public folder.
 
 ```{r}
@@ -533,7 +533,6 @@ dw_stats(ls_m, digits = 2, comparable = TRUE)
 
 - Goal: Bring the `margins` option back
 
-
 ```{r}
 #| label: marginBack
 
@@ -549,5 +548,25 @@ x <- list(a = m1, b = m2, c = m3)
 dwplot(x, margins = TRUE)
 
 names(x) <- paste0("Model ", seq(x))
+
+# more test on glm
+
+library(tidyverse)
+
+mtcars_m <- mutate(mtcars, gear = as.factor(gear))
+
+m_lm <- lm(mpg ~ hp + wt, data = mtcars_m)
+m_logit <- glm(am ~ hp + wt, family = binomial, data = mtcars_m)
+m_ordered <- MASS::polr(gear ~ hp + wt + cyl + disp, data = mtcars_m)
+
+x <- list(m_lm, m_logit, m_ordered)
+
+dwplot(x, margins = TRUE)
+
+avg_slopes(m_ordered)
+
+x <- list(m_lm)
+
+m_multinom <- nnet::multinom(gear ~ hp + wt + cyl + disp, data = mtcars_m)
 
 ```

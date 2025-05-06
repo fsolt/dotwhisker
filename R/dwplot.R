@@ -15,7 +15,7 @@
 #' @param stats_size A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.
 #' @param stats_padding Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.
 #' @param stats_layout Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.
-#' @param margins [Suspended] A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
+#' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details for more information.
 #' @param model_name The name of a variable that distinguishes separate models within a tidy data frame.
 #' @param model_order A character vector defining the order of the models when multiple models are involved.
 #' @param style Either \code{"dotwhisker"} or \code{"distribution"}. \code{"dotwhisker"}, the default, shows the regression coefficients' point estimates as dots with confidence interval whiskers.  \code{"distribution"} shows the normal distribution with mean equal to the point estimate and standard deviation equal to the standard error, underscored with a confidence interval whisker.
@@ -40,7 +40,7 @@
 #' And because the output is a \code{ggplot} object, it can easily be further customized with any additional arguments and layers supported by \code{ggplot2}.
 #' Together, these two features make \code{dwplot} extremely flexible.
 #'
-#' \code{dwplot} provides an option to present the average marginal effect directly. Users can alter the confidence intervals of the margins through the \code{ci} argument. ^[The function is suspended due to the dependency issue. We'll work on getting it back in the next update.] The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}.
+#' \code{dwplot} provides an option to present the average marginal effect directly. Users can alter the confidence intervals of the margins through the \code{ci} argument. The `margins` argument also works for \code{small_multiple} and \code{secret_weapon}. Note that for models with categorical outcome variables (such as ordered logit or multinomial regression), each category (level) has its own average marignal effects. To maintain visualization consistency with models with continuous or binary outcomes, \code{dwplot} only displays marginal effects for the first category.
 #'
 #' To minimize the need for lengthy, distracting regression tables (often relegated to an appendix for dot-whisker plot users), \code{dwplot} incorporates optimal model fit statistics directly beneath the dot-whisker plots. These statistics are derived using the excellent \code{\link[performance]{performance}} functions and integrated at the plot's base via \code{\link[patchwork]{patchwork}} and \code{\link[gridExtra]{tableGrob}} functions. For added flexibility, \code{dwplot} includes the \code{stats_tb} feature, allowing users to input customized statistics. Furthermore, a suite of \code{stats_*} functions is available for fine-tuning the presentation of these statistics, enhancing user control over the visual output.
 #'
@@ -291,6 +291,7 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
         if (!inherits(x, "list")) {
             if(margins){
                 df <- avg_slopes(x, conf_level = ci)
+                if(!is.null(df$group)) df <- df[!duplicated(df$term), ] # used the marginal effects for the first category of y
             }else{
                 df <- standardize_names(parameters(x, ci, conf.int = TRUE, ...), style = "broom")
             }
@@ -305,7 +306,8 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
                 df <- purrr::map(x, \(x){
                     if(margins){
                                             df <- avg_slopes(x, conf_level = ci)
-                                        }else{
+                                            if(!is.null(df$group)) df <- df[!duplicated(df$term), ] # used the marginal effects for the first category of y
+                    }else{
                                             df <- standardize_names(parameters(x, ci, conf.int = TRUE, ...), style = "broom")
                                         }
                                         dotwhisker::by_2sd(df, dataset = get_dat(x))
@@ -315,8 +317,9 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
                 if(is.null(names(x))) names(x) <- paste0("Model ", seq(x))
                 df <- purrr::map(x, \(x){
                     if(margins){
-                                df <- avg_slopes(x, conf_level = ci)
-                            }else{
+                                result <- avg_slopes(x, conf_level = ci)
+                                if(!is.null(df$group)) result <- result[!duplicated(result$term), ] # used the marginal effects for the first category of y
+                    }else{
                                 df <- standardize_names(parameters(x, ci, conf.int = TRUE, ...), style = "broom")
                             }
                 }) |> 
