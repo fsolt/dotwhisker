@@ -4,7 +4,7 @@
 #'
 #' @param x Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
-#' @param dodge_size A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.
+#' @param dodge_size A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot. Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4. Note that when using the \code{\link[dotwhisker]{add_brackets}} to group the coefficients, a `dodge_size` above 1 might cause an overlap of the brackets.
 #' @param vars_order A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot. Note that the order will be overwritten by \code{\link[dotwhisker]{relabel_predictors}}, if the function is following called.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted. The default is \code{FALSE}.
 #' @param show_stats A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.
