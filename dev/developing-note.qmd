@@ -574,6 +574,7 @@ m_multinom <- nnet::multinom(gear ~ hp + wt + cyl + disp, data = mtcars_m)
 
 ## 2026-04-07
 
+### Issue 113
 I struggeld the last three days finding an error: Values of dodge_size >= 1 mess up the brackets. There should at least be a note in the documentation.
 
 ```{r}
@@ -584,4 +585,16 @@ m2 <- lm(mpg ~ wt + disp + cyl + gear, data = mtcars)
 
 dwplot(list(m1, m2), dodge_size = 1) |> 
     add_brackets(list(c("G1", "wt", "disp"), c("G2", "cyl", "gear")))
+```
+
+### Issue 114
+
+```{r}
+library(dotwhisker)
+
+m1 <- lm(mpg ~ wt + cyl + disp + gear, data = mtcars)
+m2 <- update(m1, . ~ . + hp) # add another predictor
+m3 <- update(m2, . ~ . + am) # and another
+
+secret_weapon(list(m1, m2, m3), var = "wt", margins = TRUE)
 ```

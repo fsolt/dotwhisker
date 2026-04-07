@@ -318,11 +318,12 @@ dw_tidy <- function(x, ci, by_2sd, margins,...) {
                 df <- purrr::map(x, \(x){
                     if(margins){
                                 result <- avg_slopes(x, conf_level = ci)
-                                if(!is.null(df$group)) result <- result[!duplicated(result$term), ] # used the marginal effects for the first category of y
+                                if(!is.null(result$group)) result <- result[!duplicated(result$term), ] # used the marginal effects for the first category of y
+                                result
                     }else{
-                                df <- standardize_names(parameters(x, ci, conf.int = TRUE, ...), style = "broom")
+                                standardize_names(parameters(x, ci, conf.int = TRUE, ...), style = "broom")
                             }
-                }) |> 
+                }) |>
                     list_rbind(names_to = "model")
             }
         }
