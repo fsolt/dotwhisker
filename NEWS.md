@@ -1,6 +1,12 @@
+## Version 0.8.5
+
+- Fixed the `margins` issue for multiple models (Issue #119)
+- Added a note about the bracket overlap (Issue #113)
+
+
 ## Version 0.8.4
 
-- Bring the `margin` function back based on Vincent Arel-Bundock's `marginaleffects`.
+- Bring the `margins` function back based on Vincent Arel-Bundock's `marginaleffects`.
 
 ## Version 0.8.3
 
