@@ -15,7 +15,7 @@
 #' @param stats_size A numeric value determining the font size in the fitness table, effective only if \code{show_stats = TRUE}. The standard setting is 10.
 #' @param stats_padding Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.
 #' @param stats_layout Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.
-#' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.
+#' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_pointrange}}.
 #' @param model_order A character vector defining the order of the models when multiple models are involved.
 #' @param submodel_order A character vector defining the order of the submodels when multiple submodels are involved.
 #' @param axis_switch A logical constant indicating the position of variable labels and y axis ticks. Default is FALSE, when the variable label is on the right side, and y axis ticks is on the left size.

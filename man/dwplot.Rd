@@ -26,9 +26,9 @@ dwplot(
   by_2sd = FALSE,
   vline = NULL,
   dot_args = list(size = 1.2),
-  whisker_args = list(size = 0.5),
+  whisker_args = list(linewidth = 0.5),
   dist_args = list(alpha = 0.5),
-  line_args = list(alpha = 0.75, size = 1),
+  line_args = list(alpha = 0.75, linewidth = 1),
   ...
 )
 
@@ -53,9 +53,9 @@ dw_plot(
   by_2sd = FALSE,
   vline = NULL,
   dot_args = list(size = 1.2),
-  whisker_args = list(size = 0.5),
+  whisker_args = list(linewidth = 0.5),
   dist_args = list(alpha = 0.5),
-  line_args = list(alpha = 0.75, size = 1),
+  line_args = list(alpha = 0.75, linewidth = 1),
   ...
 )
 }
@@ -64,7 +64,7 @@ dw_plot(
 
 \item{ci}{A number indicating the level of confidence intervals; the default is .95.}
 
-\item{dodge_size}{A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot.  Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4.}
+\item{dodge_size}{A number indicating how much vertical separation should be between different models' coefficients when multiple models are graphed in a single plot. Lower values tend to look better when the number of independent variables is small, while a higher value may be helpful when many models appear on the same plot; the default is 0.4. Note that when using the \code{\link[dotwhisker]{add_brackets}} to group the coefficients, a `dodge_size` above 1 might cause an overlap of the brackets.}
 
 \item{vars_order}{A vector of variable names that specifies the order in which the variables are to appear along the y-axis of the plot. Note that the order will be overwritten by \code{\link[dotwhisker]{relabel_predictors}}, if the function is following called.}
 
@@ -100,11 +100,11 @@ dw_plot(
 
 \item{dot_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_point}}.}
 
-\item{whisker_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
+\item{whisker_args}{When \code{style} is "dotwhisker", a list of arguments specifying the appearance of the whiskers representing the confidence intervals.  For supported arguments, see \code{\link[ggplot2]{geom_linerange}}.}
 
 \item{dist_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of normally distributed regression estimates. For supported arguments, see \code{\link[ggplot2]{geom_polygon}}.}
 
-\item{line_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of the line marking the confidence interval beneath the normal distribution.  For supported arguments, see \code{\link[ggstance]{geom_linerangeh}}.}
+\item{line_args}{When \code{style} is "distribution", a list of arguments specifying the appearance of the line marking the confidence interval beneath the normal distribution.  For supported arguments, see \code{\link[ggplot2]{geom_linerange}}.}
 
 \item{\dots}{Extra arguments to pass to \code{\link[parameters]{parameters}}.}
 }

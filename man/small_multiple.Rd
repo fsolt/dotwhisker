@@ -61,7 +61,7 @@ small_multiple(
 
 \item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
 
-\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggstance]{geom_pointrangeh}}.}
+\item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_pointrange}}.}
 
 \item{\dots}{Arguments to pass to \code{\link[dotwhisker]{dwplot}}.}
 }

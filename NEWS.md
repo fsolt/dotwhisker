@@ -1,3 +1,15 @@
+## Version 0.8.6
+
+- Replaced the now-unmaintained `ggstance` dependency with native `ggplot2`
+  horizontal geoms (`geom_linerange(orientation = "y")` + `position_dodge()`).
+  This removes the `size`-aesthetic deprecation warning in `dwplot()`
+  (Issue #120) without changing any plot output.
+- Replaced the deprecated `aes_string()` (in `add_brackets()`) and `is.ggplot()`
+  (in `relabel_predictors()`) calls to be compatible with `ggplot2` 4.0.
+- Internal cleanup: de-duplicated `dw_tidy()` and the layer-building code in
+  `dwplot()`, removed a fragile join and dead code in `add_brackets()`, and
+  dropped unused/no-op code. No user-facing behavior changes.
+
 ## Version 0.8.5
 
 - Fixed the `margins` issue for multiple models (Issue #119)

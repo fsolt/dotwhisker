@@ -41,7 +41,7 @@
 
 secret_weapon <- function(x, var = NULL, ci = .95, margins = FALSE, by_2sd = FALSE, ...) {
     # If x is list of model objects, convert to a tidy data frame
-    if (!"data.frame" %in% class(x)) {
+    if (!is.data.frame(x)) {
         df <- dw_tidy(x, ci, by_2sd, margins)
     } else {
         df <- x
@@ -68,7 +68,3 @@ secret_weapon <- function(x, var = NULL, ci = .95, margins = FALSE, by_2sd = FAL
     p <- df %>% dwplot(...)
     return(p)
 }
-
-
-
-

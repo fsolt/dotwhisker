@@ -34,7 +34,7 @@
 #' @export
 
 add_brackets <- function(p, brackets, fontSize = .7, face = "italic", ...) {
-  y_ind <- term <- estimate <- ymax <- ymin <- x <- NULL # not functional, just for CRAN check
+  y_ind <- term <- estimate <- ymax <- ymin <- x <- y <- NULL # not functional, just for CRAN check
 
   coef_layer <- 0
   repeat {
@@ -42,17 +42,12 @@ add_brackets <- function(p, brackets, fontSize = .7, face = "italic", ...) {
       if ("x" %in% names(layer_data(p, i = coef_layer))) break
   }
 
-  if (p$args$style == "dotwhisker") {
-      pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
-                      layer_data(p, i = coef_layer) %>% mutate(xx = signif(x, 9)), by = "xx") %>%
-          left_join(layer_data(p, i = coef_layer - 1),
-                    by = c("colour", "y", "group", "PANEL", "ymin", "ymax", "xmax", "size", "alpha"))
-  } else {
-      pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
-                      layer_data(p, i = coef_layer) %>% mutate(xx = signif(x, 9)), by = "xx")
-      pd <- pd %>%
-          mutate(ymin = y_ind,
-                 ymax = y_ind)
+  # Attach the plotted point geometry (dodged y positions, x extent) to each
+  # coefficient row by matching on the estimate value.
+  pd <- left_join(p$data %>% mutate(xx = signif(estimate, 9)),
+                  layer_data(p, i = coef_layer) %>% mutate(xx = signif(x, 9)), by = "xx")
+  if (p$args$style != "dotwhisker") {
+      pd <- pd %>% mutate(ymin = y_ind, ymax = y_ind)
   }
   overhang <- max(pd$y_ind)/30
   overhang <- ifelse(overhang > .23, .23, overhang)
@@ -61,52 +56,42 @@ add_brackets <- function(p, brackets, fontSize = .7, face = "italic", ...) {
 
   if (!is.list(brackets)) stop('Error: argument "brackets" is not a list')
 
-  draw_bracket_label <- function(x, fs = fontSize, f = face, ...) {
-      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
-      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- max(abs(top - round(top)), abs(round(bottom) - bottom))
-      top <- round(top) + shift
-      bottom <- round(bottom) - shift
+  # Compute the rounded top/bottom y positions enclosed by a bracket. `oh`
+  # extends the span by the overhang; `cap` limits that extension.
+  bracket_bounds <- function(x, oh = 0, cap = Inf) {
+      sel <- which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate))
+      top <- max(pd[sel, "ymax"])
+      bottom <- min(pd[sel, "ymin"])
+      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, cap)
+      c(top = round(top) + shift, bottom = round(bottom) - shift)
+  }
 
+  draw_bracket_label <- function(x, fs = fontSize, f = face, ...) {
+      b <- bracket_bounds(x)
       annotation_custom(
           grob = grid::textGrob(label = x[1], gp = grid::gpar(cex = fs, fontface = f, ...), rot = 90),
           xmin = farout, xmax = farout,
-          ymin = (top + bottom)/2, ymax = (top + bottom)/2)
+          ymin = mean(b), ymax = mean(b))
   }
 
   draw_bracket_vert <- function(x, oh = overhang) {
-      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
-      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, .45)
-      top <- round(top) + shift
-      bottom <- round(bottom) - shift
-
+      b <- bracket_bounds(x, oh, .45)
       annotation_custom(grob = grid::linesGrob(),
                         xmin = farout + 0.5, xmax = farout + 0.5,
-                        ymin = bottom, ymax = top)
+                        ymin = b["bottom"], ymax = b["top"])
   }
 
   draw_bracket_top <- function(x, oh = overhang) {
-      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
-      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, .45)
-      top <- round(top) + shift
-      bottom <- round(bottom) - shift
-
+      b <- bracket_bounds(x, oh, .45)
       annotation_custom(grob = grid::linesGrob(),
                         xmin = farout + 0.5, farout + 1,
-                        ymin = top, ymax = top)
+                        ymin = b["top"], ymax = b["top"])
   }
 
   draw_bracket_bottom <- function(x, oh = overhang) {
-      top <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymax"] %>% max()
-      bottom <- pd[which((pd$term == x[2] | pd$term == x[3]) & !is.na(pd$estimate)), "ymin"] %>% min()
-      shift <- min(max(abs(top - round(top)), abs(round(bottom) - bottom)) + oh, .45)
-      top <- round(top) + shift
-      bottom <- round(bottom) - shift
-
+      b <- bracket_bounds(x, oh, .45)
       annotation_custom(grob = grid::linesGrob(), xmin = farout + 0.5, xmax = farout + 1,
-                        ymin = bottom, ymax = bottom)
+                        ymin = b["bottom"], ymax = b["bottom"])
   }
 
   p2 <- p1 +
@@ -143,7 +128,7 @@ add_brackets <- function(p, brackets, fontSize = .7, face = "italic", ...) {
   grobs[[1]]$heights <- max_heights[[1]]
   grobs[[2]]$heights <- max_heights[[1]]
 
-  pp <- ggplot(data.frame(x = 0:1, y = 0:1), aes_string(x = "x", y = "y")) +
+  pp <- ggplot(data.frame(x = 0:1, y = 0:1), aes(x = x, y = y)) +
       scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
       scale_y_continuous(limits = c(0, 1), expand = c(0, 0)) +
       theme_void() +
