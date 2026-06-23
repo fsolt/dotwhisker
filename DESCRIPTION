@@ -37,8 +37,10 @@ Suggests:
     tibble,
     knitr,
     rmarkdown,
-    broom
+    broom,
+    testthat (>= 3.0.0)
 License: MIT + file LICENSE
 LazyData: FALSE
 VignetteBuilder: knitr
+Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0

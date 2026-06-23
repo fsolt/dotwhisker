@@ -5,7 +5,7 @@
 #' @param x Either a model object to be tidied with \code{\link[broom]{tidy}}, or a list of such model objects, or a tidy data frame of regression results (see 'Details').
 #' @param ci A number indicating the level of confidence intervals; the default is .95.
 #' @param margins A logical value indicating whether presenting the average marginal effects of the estimates. See the Details of \code{dwplot} for more information.
-#' @param dodge_size A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
+#' @param dodge_size A number indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot; the default is .4.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.
 #' @param show_intercept A logical constant indicating whether the coefficient of the intercept term should be plotted.
 #' @param show_stats A logical constant indicating whether to show a table of model fitness statistics under the dot-whisker plot. The default is \code{TRUE}.
 #' @param stats_tb Customized table of model fitness. The table should be in a \code{data.frame}.
@@ -16,10 +16,10 @@
 #' @param stats_padding Defining the internal margins of the fitness table. Relevant when \code{show_stats = TRUE}. Set by default to \code{unit(c(4, 4), "mm")}, allowing for a balanced layout. Further customization options refer to \code{\link[gridExtra]{tableGrob}}.
 #' @param stats_layout Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.
 #' @param dot_args A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_pointrange}}.
-#' @param model_order A character vector defining the order of the models when multiple models are involved.
-#' @param submodel_order A character vector defining the order of the submodels when multiple submodels are involved.
+#' @param model_order A character vector defining the order in which the models appear along the x-axis when multiple models are involved. The entries should match the model labels; for an unnamed list of model objects these are \code{"Model 1"}, \code{"Model 2"}, and so on.
+#' @param submodel_order A character vector defining the order of the submodels (mapped to colour) when multiple submodels are involved. The entries should match the submodel labels.
 #' @param axis_switch A logical constant indicating the position of variable labels and y axis ticks. Default is FALSE, when the variable label is on the right side, and y axis ticks is on the left size.
-#' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
+#' @param by_2sd When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{FALSE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.
 #' @param \dots Arguments to pass to \code{\link[dotwhisker]{dwplot}}.
 #'
 #' @details
@@ -47,6 +47,10 @@
 #'
 #' # Generate a 'small multiple' plot
 #' small_multiple(list(m1, m2))
+#'
+#' # Customize the order in which the models appear along the x-axis
+#' small_multiple(list(full = m1, with_hp = m2),
+#'                model_order = c("with_hp", "full"))
 
 #' @importFrom utils globalVariables
 #'
@@ -94,7 +98,6 @@ small_multiple <- function(x,
             if (!is.factor(df$submodel)) {
                 df$submodel <- factor(df$submodel, levels = unique(df$submodel))
             }
-            df$mod <- df$model
             df$model <- paste0(df$model, df$submodel)
             sub_names <- unique(df$submodel)
             n_sub <- length(sub_names)
@@ -109,34 +112,17 @@ small_multiple <- function(x,
     # Add rows of NAs for variables not included in a particular model
     df <- add_NAs(df, n_models, mod_names) %>%
         filter(!is.na(term))
+    # Strip the submodel suffix appended above so the x-axis shows model names
     if (n_sub > 1) {
         df$model <- stringr::str_replace(df$model, as.character(df$submodel), "")
-        mod_names <- unique(df$model)
-        n_models <- length(mod_names)
     }
 
-    # Calculate x-axis shift for plotting multiple submodels, generate x index
-    if (n_sub == 1) {
-        df$shift <- 0
-    } else {
-        shift <- seq(-dodge_size, dodge_size, length.out = n_sub)
-        df$shift <- rep(rep(shift, each = n_vars), times = n_models)
-    }
-    x_ind <- rep(seq(1, n_models), each = n_vars*n_sub)
-    df$x_ind <- x_ind
-
-    # Catch difference between single and multiple submodels
-    if (length(x_ind) != length(mod_names)) {
-        x_ind <- unique(x_ind)
-    }
-
-    point_args0 <- list(na.rm = TRUE, position=position_dodge(width = dodge_size))
+    point_args0 <- list(na.rm = TRUE, position = position_dodge(width = dodge_size))
     point_args <- c(point_args0, dot_args)
 
-
-    # Model order
+    # Apply the user-specified ordering of models (x-axis) and submodels (colour)
     if (!is.null(model_order)) df <- mutate(df, model = factor(model, levels = model_order))
-    if(!is.null(submodel_order)) df <- mutate(df, submodel = factor(submodel, levels = submodel_order))
+    if (!is.null(submodel_order)) df <- mutate(df, submodel = factor(submodel, levels = submodel_order))
 
 
     # Plot

@@ -1,5 +1,11 @@
 ## Version 0.8.6
 
+- `small_multiple()` now lets users customise the order of models (along the
+  x-axis) and submodels (mapped to colour) via the `model_order` and
+  `submodel_order` arguments, matching the behaviour of `dwplot()` (Issue #108).
+  Added tests covering this behaviour.
+- Fixed the documented defaults for `small_multiple()`'s `dodge_size` (.4) and
+  `by_2sd` (FALSE) arguments, and removed dead point-positioning code.
 - Replaced the now-unmaintained `ggstance` dependency with native `ggplot2`
   horizontal geoms (`geom_linerange(orientation = "y")` + `position_dodge()`).
   This removes the `size`-aesthetic deprecation warning in `dwplot()`

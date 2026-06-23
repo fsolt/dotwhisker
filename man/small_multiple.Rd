@@ -33,7 +33,7 @@ small_multiple(
 
 \item{margins}{A logical value indicating whether presenting the average marginal effects of the estimates. See the Details of \code{dwplot} for more information.}
 
-\item{dodge_size}{A number (typically between 0 and 0.3; the default is .06) indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
+\item{dodge_size}{A number indicating how much horizontal separation should appear between different submodels' coefficients when multiple submodels are graphed in a single plot; the default is .4.  Lower values tend to look better when the number of models is small, while a higher value may be helpful when many submodels appear on the same plot.}
 
 \item{show_intercept}{A logical constant indicating whether the coefficient of the intercept term should be plotted.}
 
@@ -53,13 +53,13 @@ small_multiple(
 
 \item{stats_layout}{Adjusting the spacing between the dotwhisker plot and the fitness table. Effective when \code{show_stats = TRUE}. The initial configuration is \code{c(2, -1, 1)}, ensuring a coherent visual flow. Additional layout settings refer to \code{\link[patchwork]{plot_layout}}.}
 
-\item{model_order}{A character vector defining the order of the models when multiple models are involved.}
+\item{model_order}{A character vector defining the order in which the models appear along the x-axis when multiple models are involved. The entries should match the model labels; for an unnamed list of model objects these are \code{"Model 1"}, \code{"Model 2"}, and so on.}
 
-\item{submodel_order}{A character vector defining the order of the submodels when multiple submodels are involved.}
+\item{submodel_order}{A character vector defining the order of the submodels (mapped to colour) when multiple submodels are involved. The entries should match the submodel labels.}
 
 \item{axis_switch}{A logical constant indicating the position of variable labels and y axis ticks. Default is FALSE, when the variable label is on the right side, and y axis ticks is on the left size.}
 
-\item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{TRUE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
+\item{by_2sd}{When x is model object or list of model objects, should the coefficients for predictors that are not binary be rescaled by twice the standard deviation of these variables in the dataset analyzed, per Gelman (2008)?  Defaults to \code{FALSE}.  Note that when x is a tidy data frame, one can use \code{\link[dotwhisker]{by_2sd}} to rescale similarly.}
 
 \item{dot_args}{A list of arguments specifying the appearance of the dots representing mean estimates.  For supported arguments, see \code{\link[ggplot2]{geom_pointrange}}.}
 
@@ -91,6 +91,10 @@ m2 <- update(m1, . ~ . + hp)
 
 # Generate a 'small multiple' plot
 small_multiple(list(m1, m2))
+
+# Customize the order in which the models appear along the x-axis
+small_multiple(list(full = m1, with_hp = m2),
+               model_order = c("with_hp", "full"))
 }
 \references{
 Kastellec, Jonathan P. and Leoni, Eduardo L. 2007. "Using Graphs Instead of Tables in Political Science." *Perspectives on Politics*, 5(4):755-771.
