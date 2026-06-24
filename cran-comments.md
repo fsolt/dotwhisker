@@ -1,8 +1,13 @@
+## Submission
+
+This is an update from version 0.8.4 to 0.8.6. See NEWS.md for changes,
+which include replacing the unmaintained `ggstance` dependency with native
+`ggplot2` horizontal geoms and compatibility fixes for `ggplot2` 4.0.
+
 ## Test environments
 
-* Local OS X install, R 4.2.0
-* Ubuntu 22.04.4 LTS, R 4.2.2
-* Win-builder R Under development (unstable) (2024-06-25 r86831 ucrt)
+* Local Windows 11, R Under development (unstable)
 
 ## R CMD check results
+
 0 errors | 0 warnings | 0 notes
